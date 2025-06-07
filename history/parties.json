@@ -3,66 +3,82 @@
         {
             "id": "united_russia",
             "name": "Единая Россия",
-            "ideology_tags": ["centrism", "conservatism", "statism", "ruling_party"],
+            "ideology_tags_rus": ["центризм", "консерватизм", "государственничество", "правящая партия"],
             "color": "#0D47A1",
             "popularity": 45,
-            "icon_path": "history/parties_emblems/united_russia.png"
+            "icon_path": "history/parties_emblems/united_russia.png",
+            "short_description": "Партия власти, ориентированная на стабильность и укрепление государственности.",
+            "effects_summary": "Поддержка действующего курса: +20%\nПринятие законов: Упрощено"
         },
         {
             "id": "ldpr",
             "name": "ЛДПР",
-            "ideology_tags": ["nationalism", "populism", "right_wing"],
-            "color": "#a98307",
+            "ideology_tags_rus": ["национализм", "популизм", "правые"],
+            "color": "#00008B",
             "popularity": 14,
-            "icon_path": "history/parties_emblems/ldpr.png"
+            "icon_path": "history/parties_emblems/ldpr.png",
+            "short_description": "Патриотическая партия с акцентом на национальные интересы и сильное государство.",
+            "effects_summary": "Национальное единство: +5%\nПоддержка среди военных: +10%"
         },
         {
             "id": "rodina",
             "name": "Родина",
-            "ideology_tags": ["national_conservatism", "patriotism", "left_nationalism"],
+            "ideology_tags_rus": ["национал-консерватизм", "патриотизм", "левый национализм"],
             "color": "#B71C1C",
             "popularity": 12,
-            "icon_path": "history/parties_emblems/rodina.png"
+            "icon_path": "history/parties_emblems/rodina.png",
+            "short_description": "Социально-консервативная партия, выступающая за суверенитет и традиционные ценности.",
+            "effects_summary": "Поддержка традиционных ценностей: +15%\nРост популярности в регионах"
         },
         {
             "id": "kprf",
             "name": "КПРФ",
-            "ideology_tags": ["communism", "socialism", "left_wing"],
+            "ideology_tags_rus": ["коммунизм", "социализм", "левые"],
             "color": "#CC0000",
             "popularity": 10,
-            "icon_path": "history/parties_emblems/kprf.png"
+            "icon_path": "history/parties_emblems/kprf.png",
+            "short_description": "Крупнейшая левая партия, отстаивающая социальную справедливость и плановую экономику.",
+            "effects_summary": "Поддержка среди старшего поколения: +20%\nКритика рыночных реформ"
         },
         {
             "id": "rpzh_new_socdem",
             "name": "РПЖ/Новые Соц-Демы",
-            "ideology_tags": ["social_democracy", "centrism", "progressivism"],
-            "color": "#fc6c85",
+            "ideology_tags_rus": ["социал-демократия", "центризм", "прогрессивизм"],
+            "color": "#4CAF50",
             "popularity": 7,
-            "icon_path": "history/parties_emblems/rpzh_new_socdem.png"
+            "icon_path": "history/parties_emblems/rpzh_new_socdem.png",
+            "short_description": "Партия, стремящаяся к построению социального государства европейского типа.",
+            "effects_summary": "Фокус на экологии: +5%\nПоддержка малого бизнеса"
         },
         {
             "id": "yabloko_sps",
             "name": "Яблоко/СПС",
-            "ideology_tags": ["liberalism", "social_liberalism", "pro_europeanism"],
+            "ideology_tags_rus": ["либерализм", "социал-либерализм", "проевропеизм"],
             "color": "#008000",
             "popularity": 4,
-            "icon_path": "history/parties_emblems/yabloko_sps.png"
+            "icon_path": "history/parties_emblems/yabloko_sps.png",
+            "short_description": "Объединение либеральных сил, выступающее за демократические реформы и права человека.",
+            "effects_summary": "Поддержка интеллигенции: +10%\nТребование политических свобод"
         },
         {
             "id": "new_people",
             "name": "Новые люди",
-            "ideology_tags": ["liberal_conservatism", "centrism", "business_oriented"],
-            "color": "#1faee9",
+            "ideology_tags_rus": ["либерал-консерватизм", "центризм", "ориентация на бизнес"],
+            "color": "#FF8C00",
             "popularity": 3,
-            "icon_path": "history/parties_emblems/new_people.png"
+            "icon_path": "history/parties_emblems/new_people.png",
+            "short_description": "Правоцентристская партия, делающая ставку на развитие предпринимательства и обновление.",
+            "effects_summary": "Поддержка предпринимателей: +15%\nИнновации в экономике"
         },
         {
             "id": "others",
             "name": "Остальные партии",
-            "ideology_tags": ["various", "minor_parties"],
+            "ideology_tags_rus": ["разные", "миноритарные партии"],
             "color": "#808080",
             "popularity": 5,
-            "icon_path": "history/parties_emblems/others.png"
+            "icon_path": "history/parties_emblems/others.png",
+            "short_description": "Совокупность мелких партий различной идеологической направленности.",
+            "effects_summary": "Разнообразие мнений в обществе"
         }
     ]
 }
