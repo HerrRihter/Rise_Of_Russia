@@ -351,21 +351,19 @@ function updatePartyList() {
         colorBox.style.backgroundColor = party.color || '#cccccc';
 
         const partyNameSpan = document.createElement('span');
-        partyNameSpan.textContent = ` ${party.name} (${party.popularity}%)`; // Добавил %
+        partyNameSpan.textContent = ` ${party.name} (${party.popularity}%)`;
 
         listItem.appendChild(colorBox);
         listItem.appendChild(partyNameSpan);
 
         // Формируем текст для тултипа списка партий
-        let effects = `Популярность: ${party.popularity}%`;
+        // УБРАЛИ party.effects_summary из этого блока
+        let effectsForTooltip = `Популярность: ${party.popularity}%`;
         if (party.ideology_tags_rus && party.ideology_tags_rus.length > 0) {
-            effects += `\nИдеологии: ${party.ideology_tags_rus.join(', ')}`;
+            effectsForTooltip += `\nИдеологии: ${party.ideology_tags_rus.join(', ')}`;
         }
-        if (party.effects_summary) { // Если есть общее summary эффектов от партии
-             effects += `\nОсновные эффекты:\n${party.effects_summary}`;
-        }
-
-        addTooltipEventsToElement(listItem, party.name, effects, party.short_description);
+        // Передаем party.short_description как fullDescription
+        addTooltipEventsToElement(listItem, party.name, effectsForTooltip, party.short_description);
         partyListContainer.appendChild(listItem);
     });
 }
