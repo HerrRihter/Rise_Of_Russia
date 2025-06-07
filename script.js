@@ -225,57 +225,147 @@ if(closeSidePanelBtn_SP) closeSidePanelBtn_SP.onclick = () => { if(selectionSide
 // --- Party Politics UI ---
 function drawPoliticalPieChart() {
     const canvas = document.getElementById('partyPieChartCanvas');
-    const pieChartContainer = document.getElementById('politicalPieChart');
+    const pieChartContainer = document.getElementById('politicalPieChart'); // Сам div диаграммы
     if (!canvas || !GAME_DATA.parties_array || GAME_DATA.parties_array.length === 0) {
-        if(pieChartContainer) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет данных о партиях</p>";
+        if(pieChartContainer) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет данных</p>";
         return;
     }
+
     const ctx = canvas.getContext('2d');
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const radius = Math.min(centerX, centerY) - 1;
+
     const parties = GAME_DATA.parties_array.filter(p => p.popularity > 0);
     const totalPopularity = parties.reduce((sum, party) => sum + party.popularity, 0);
-    if (totalPopularity === 0) {  if(pieChartContainer) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет популярности</p>"; return; }
-    let currentAngle = -0.5 * Math.PI;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (totalPopularity === 0) {
+        if(pieChartContainer) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет популярности</p>";
+        return;
+    }
+
+    let currentAngle = -0.5 * Math.PI; // Начать сверху
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Очистить перед перерисовкой
+
+    // Сохраняем информацию о секторах для тултипов
+    const sectors = [];
+
     parties.forEach(party => {
         const sliceAngle = (party.popularity / totalPopularity) * 2 * Math.PI;
+        const endAngle = currentAngle + sliceAngle;
+
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+        ctx.arc(centerX, centerY, radius, currentAngle, endAngle);
         ctx.closePath();
         ctx.fillStyle = party.color || '#cccccc';
         ctx.fill();
-        ctx.strokeStyle = '#3c3c3c'; // Background of screen
+        ctx.strokeStyle = '#3c3c3c';
         ctx.lineWidth = 0.5;
         ctx.stroke();
-        currentAngle += sliceAngle;
+
+        sectors.push({
+            partyName: party.name,
+            popularity: party.popularity,
+            startAngle: currentAngle,
+            endAngle: endAngle,
+            color: party.color || '#cccccc' // Для возможной подсветки сектора при наведении (не реализовано)
+        });
+        currentAngle = endAngle;
     });
+
+    // Добавляем обработчик событий наведения на canvas
+    canvas.removeEventListener('mousemove', handlePieChartMouseMove); // Удаляем старый, если есть
+    canvas.addEventListener('mousemove', function(event) {
+        handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius);
+    });
+    canvas.removeEventListener('mouseleave', handlePieChartMouseLeave);
+    canvas.addEventListener('mouseleave', handlePieChartMouseLeave);
 }
+
+function handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius) {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    const dx = mouseX - centerX;
+    const dy = mouseY - centerY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance <= radius) {
+        let angle = Math.atan2(dy, dx);
+        if (angle < -Math.PI / 2) { // Нормализация угла, чтобы совпадал с отрисовкой
+            angle += 2 * Math.PI;
+        }
+
+        for (const sector of sectors) {
+            // Проверяем, находится ли угол мыши в пределах сектора
+            // Небольшая погрешность для углов
+            let normalizedStartAngle = sector.startAngle;
+            let normalizedEndAngle = sector.endAngle;
+
+            // Нормализация для случаев, когда сектор пересекает 0 радиан (вертикаль вверх)
+            if (normalizedStartAngle > normalizedEndAngle && angle < normalizedStartAngle && angle < normalizedEndAngle + 2*Math.PI ) { // for sector crossing the 0/2PI line (top)
+                angle += 2 * Math.PI; // if mouse angle is small positive and sector endAngle is small positive after crossing 0.
+            } else if (normalizedStartAngle > normalizedEndAngle && normalizedStartAngle > Math.PI && angle < Math.PI/2 ) {
+                 // Edge case for sector that crosses the -PI/2 to +PI/2 line on the right
+            }
+
+
+            if (angle >= normalizedStartAngle && angle < normalizedEndAngle) {
+                tooltipElement.innerHTML = `<strong>${sector.partyName}</strong><hr>${sector.popularity}%`;
+                tooltipElement.style.display = 'block';
+                positionTooltip(event);
+                return;
+            }
+        }
+    }
+    tooltipElement.style.display = 'none'; // Скрыть, если не над сектором
+}
+
+function handlePieChartMouseLeave() {
+    tooltipElement.style.display = 'none';
+}
+
 
 function updatePartyList() {
     const partyListContainer = document.getElementById('partyListContainer');
     if (!partyListContainer || !GAME_DATA.parties_array) {
-        if(partyListContainer) partyListContainer.innerHTML = "<li>Нет данных о партиях</li>";
+        if(partyListContainer) partyListContainer.innerHTML = "<li>Нет данных</li>";
         return;
     }
-    const rulingPartyId = "united_russia"; // TODO: Make dynamic
+
+    const rulingPartyId = "united_russia"; // TODO: Сделать динамическим
     const sortedParties = [...GAME_DATA.parties_array]
         .filter(p => p.popularity > 0 || p.id === rulingPartyId)
         .sort((a, b) => b.popularity - a.popularity);
+
     partyListContainer.innerHTML = '';
+
     sortedParties.forEach(party => {
         const listItem = document.createElement('li');
         if (party.id === rulingPartyId) listItem.classList.add('highlighted');
+
         const colorBox = document.createElement('div');
         colorBox.className = 'party-color-box';
         colorBox.style.backgroundColor = party.color || '#cccccc';
+
         const partyNameSpan = document.createElement('span');
-        partyNameSpan.textContent = ` ${party.name} (${party.popularity})`;
+        partyNameSpan.textContent = ` ${party.name} (${party.popularity}%)`; // Добавил %
+
         listItem.appendChild(colorBox);
         listItem.appendChild(partyNameSpan);
-        addTooltipEventsToElement(listItem, party.name, `Популярность: ${party.popularity}%` + (party.ideology_tags ? `\nИдеологии: ${party.ideology_tags.join(', ')}` : ''), null);
+
+        // Формируем текст для тултипа списка партий
+        let effects = `Популярность: ${party.popularity}%`;
+        if (party.ideology_tags_rus && party.ideology_tags_rus.length > 0) {
+            effects += `\nИдеологии: ${party.ideology_tags_rus.join(', ')}`;
+        }
+        if (party.effects_summary) { // Если есть общее summary эффектов от партии
+             effects += `\nОсновные эффекты:\n${party.effects_summary}`;
+        }
+
+        addTooltipEventsToElement(listItem, party.name, effects, party.short_description);
         partyListContainer.appendChild(listItem);
     });
 }
@@ -337,6 +427,7 @@ function initializeUI() {
     }
 
     // Political Parties Chart and List
+    
     drawPoliticalPieChart();
     updatePartyList();
     const rulingPartyInfoStrongEl = document.querySelector('.ruling-party-info strong');
