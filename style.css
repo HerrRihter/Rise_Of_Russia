@@ -141,7 +141,7 @@ body {
 .party-list li.highlighted .party-color-box { border-color: #1e1e1e; }
 .party-color-box { width: 10px; height: 10px; margin-right: 6px; border: 1px solid #888; flex-shrink: 0;}
 
-.lower-section { max-height: 700px; overflow-y: auto; padding-right: 10px; }
+.lower-section { max-height: 1000px; overflow-y: auto; padding-right: 10px; }
 .category-block { margin-bottom: 15px; }
 .category-header {
     background-color: #2a2a2a; color: white; padding: 8px 12px;
@@ -161,40 +161,35 @@ body {
     background-color: #333;
     border-radius: 0 0 4px 4px;
     gap: 10px; /* Отступы между всеми элементами */
+    box-sizing: border-box;
 }
 
 /* Единые стили для ВСЕХ слотов: советники, принципы, развитие, корпорации */
-.item-slot, /* Если вы используете этот класс для корпораций и других общих слотов */
+.item-slot,
 .advisor-portrait-slot,
 .constitutional-principle,
 .development-area,
-.corporation-slot { /* Добавьте этот класс к div-ам корпораций в HTML или JS */
-    /* Ширина рассчитывается для 8 элементов в ряд.
-       Общая ширина окна 1200px.
-       Минус отступы main-content: 1200 - (2*15) = 1170px
-       Минус отступ lower-section padding-right: 1170 - 10 = 1160px
-       Минус отступы .category-items padding: 1160 - (2*10) = 1140px
-       Доступно для 8 элементов и 7 промежутков (gap=10px -> 70px): 1140 - 70 = 1070px
-       Ширина одного элемента: 1070px / 8 = 133.75px
-       Берем чуть меньше для запаса или точное значение.
-    */
-    width: 132px; /* Например, чуть меньше для гарантии */
-    flex-grow: 0;   /* Не растягивать */
-    flex-shrink: 0; /* Не сжимать */
-    /* flex-basis: 132px; /* Можно и так */
+.corporation-slot {
+    flex-grow: 0;
+    flex-shrink: 0;
+    /* 100% (ширина .category-items) - 7 промежутков по 10px. Делим на 8 элементов. */
+    flex-basis: calc((100% - 7 * 10px) / 8);
+    /* max-width: calc((100% - 7 * 10px) / 8); /* Можно также добавить для страховки */
 
-    min-height: 95px; /* Единая минимальная высота для иконки и 2-3 строк текста */
+    /* ... остальные стили для слота (min-height, padding и т.д.) ... */
+    width: calc((100% - 7 * 10px) / 8); /* Добавьте это, чтобы переопределить любую другую ширину */
+    min-height: 95px;
     background-color: #4a4a4a;
     border: 1px solid #666;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Иконка и текст прижаты к верху */
+    justify-content: flex-start;
     align-items: center;
     cursor: pointer;
     position: relative;
-    box-sizing: border-box;
-    padding: 8px 5px; /* Внутренние отступы */
+    box-sizing: border-box; /* Тоже важно для слотов */
+    padding: 8px 5px;
     overflow: hidden;
 }
 
