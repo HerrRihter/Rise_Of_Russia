@@ -59,7 +59,7 @@ const balanceMarker = document.getElementById('balanceMarker');
 const balanceValueDisplay = document.getElementById('balanceValueDisplay');
 
 function updateBalanceScale(value) {
-    value = Math.max(-50, Math.min(50, Number(value || 0))); // Handle NaN
+    value = Math.max(-50, Math.min(50, Number(value || 0)));
     const percentage = (value + 50);
     if (balanceMarker) balanceMarker.style.left = percentage + '%';
     if (balanceValueDisplay) balanceValueDisplay.textContent = value;
@@ -74,18 +74,18 @@ updateBalanceScale(0);
 // --- Game Data Loading and Management ---
 const GAME_DATA = { leaders: {}, constitutional_principles: {}, development_areas: {}, corporations: {}, ideologies: {}, parties: {}, national_spirits: {} };
 const ALL_DATA_FILES_TO_LOAD = [
-    "history/leaders.json", // Assuming one file with "options": [leader_objects...]
+    "history/leaders.json",
     "history/constitutional_principles.json",
     "history/development_areas.json",
-    // Below are examples, if you keep separate law categories, list them
-    // "history/laws/economic.json",
-    // "history/laws/military.json",
-    // "history/laws/social.json",
-    // "history/laws/conscription.json", // Was development_laws previously in your files
     "history/corporations.json",
     "history/ideologies.json",
     "history/parties.json",
     "history/national_spirits.json"
+    // Если у вас были старые отдельные файлы законов, и вы их еще используете, добавьте их сюда.
+    // "history/laws/economic.json",
+    // "history/laws/military.json",
+    // "history/laws/social.json",
+    // "history/laws/conscription.json",
 ];
 
 async function loadJsonFile(filePath) {
@@ -102,17 +102,15 @@ async function initializeGameData() {
         if (!data) return;
 
         if (filePath.endsWith('leaders.json') && data.options) { GAME_DATA.leaders = {}; data.options.forEach(l => GAME_DATA.leaders[l.id] = l); }
-        else if (filePath.endsWith('constitutional_principles.json') && data.principles) { GAME_DATA.constitutional_principles = {}; data.principles.forEach(p => GAME_DATA.constitutional_principles[p.id] = p); }
-        else if (filePath.endsWith('development_areas.json') && data.areas) { GAME_DATA.development_areas = {}; data.areas.forEach(a => GAME_DATA.development_areas[a.id] = a); }
+        else if (filePath.endsWith('constitutional_principles.json') && data.principles) { GAME_DATA.constitutional_principles = {}; data.principles.forEach(p => {if(p.id)GAME_DATA.constitutional_principles[p.id] = p;}); }
+        else if (filePath.endsWith('development_areas.json') && data.areas) { GAME_DATA.development_areas = {}; data.areas.forEach(a => {if(a.id)GAME_DATA.development_areas[a.id] = a;}); }
         else if (filePath.endsWith('corporations.json') && data.options) { GAME_DATA.corporations = {}; data.options.forEach(c => GAME_DATA.corporations[c.id] = c); }
-        else if (filePath.endsWith('ideologies.json')) { // Can be an array of options or a single ideology object
+        else if (filePath.endsWith('ideologies.json')) {
             if (data.options) { GAME_DATA.ideologies = {}; data.options.forEach(i => GAME_DATA.ideologies[i.id] = i); }
-            else if (data.id) { GAME_DATA.ideologies = { [data.id]: data }; }
+            else if (data.id) { GAME_DATA.ideologies = { [data.id]: data }; } // For single ideology file like sovereign_democracy.json
         }
         else if (filePath.endsWith('parties.json') && data.options) { GAME_DATA.parties_array = data.options; GAME_DATA.parties = {}; data.options.forEach(p => GAME_DATA.parties[p.id] = p); }
         else if (filePath.endsWith('national_spirits.json') && data.options) { GAME_DATA.national_spirits = {}; data.options.forEach(s => GAME_DATA.national_spirits[s.id] = s); }
-        // Add any specific law category files if you still use them
-        // else if (filePath.endsWith('economic.json') && data.options) { GAME_DATA.laws.economic = {}; data.options.forEach(law => GAME_DATA.laws.economic[law.id] = law); }
     });
     await Promise.all(loadPromises);
     console.log("Игровые данные загружены:", GAME_DATA);
@@ -123,7 +121,7 @@ async function initializeGameData() {
 const selectionSidePanel = document.getElementById('selectionSidePanel');
 const sidePanelTitleEl = document.getElementById('sidePanelTitle');
 const sidePanelOptionsContainer = document.getElementById('sidePanelOptionsContainer');
-const closeSidePanelBtn_SP = document.getElementById('closeSidePanelBtn_SP'); // Unique ID
+const closeSidePanelBtn_SP = document.getElementById('closeSidePanelBtn_SP');
 
 let currentCategoryForSidePanel = null;
 let clickedMainSlotElement = null;
@@ -140,7 +138,7 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
     const developmentAreaId = slotType.startsWith("development_area_") ? slotType.replace("development_area_", "") : null;
 
     if (slotType.startsWith("advisor_")) {
-        panelTitle = "Назначить Советника"; optionsToShow = Object.values(GAME_DATA.leaders);
+        panelTitle = "Назначить Советника"; optionsToShow = Object.values(GAME_DATA.leaders || {});
     } else if (principleId) {
         const principleData = GAME_DATA.constitutional_principles[principleId];
         panelTitle = principleData?.name || "Конституционный Принцип";
@@ -150,9 +148,8 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
         panelTitle = areaData?.name || "Область Развития";
         optionsToShow = areaData?.options || [];
     } else if (slotType.startsWith("corporation_slot_")) {
-        panelTitle = "Выбор Корпорации"; optionsToShow = Object.values(GAME_DATA.corporations);
+        panelTitle = "Выбор Корпорации"; optionsToShow = Object.values(GAME_DATA.corporations || {});
     }
-    // Add more cases here for old law categories if you keep them
 
     sidePanelTitleEl.textContent = panelTitle;
     const activeOptionIdInMainSlot = clickedSlotEl.dataset.currentId;
@@ -190,7 +187,6 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
     const principleId = targetSlotType.startsWith("constitutional_principle_") ? targetSlotType.replace("constitutional_principle_", "") : null;
     const developmentAreaId = targetSlotType.startsWith("development_area_") ? targetSlotType.replace("development_area_", "") : null;
 
-
     if (targetSlotType.startsWith("advisor_")) chosenData = GAME_DATA.leaders[selectedOptionId];
     else if (principleId) {
         GAME_DATA.constitutional_principles[principleId]?.options.forEach(opt => opt.is_current = (opt.id === selectedOptionId));
@@ -199,10 +195,8 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
         GAME_DATA.development_areas[developmentAreaId]?.options.forEach(opt => opt.is_current = (opt.id === selectedOptionId));
         chosenData = GAME_DATA.development_areas[developmentAreaId]?.options.find(opt => opt.is_current);
     } else if (targetSlotType.startsWith("corporation_slot_")) chosenData = GAME_DATA.corporations[selectedOptionId];
-    // Add other specific law categories if used
 
-
-    if (!chosenData || !clickedMainSlotElement) { console.error("Data or slot missing", selectedOptionId, targetSlotType); return; }
+    if (!chosenData || !clickedMainSlotElement) { console.error("Data or slot missing for selection", selectedOptionId, targetSlotType); return; }
 
     clickedMainSlotElement.dataset.currentId = chosenData.id;
     const mainSlotImg = clickedMainSlotElement.querySelector('img');
@@ -223,7 +217,7 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
           if (optEl.dataset.optionId === selectedOptionId) optEl.classList.add('active');
       });
     }
-    // if(selectionSidePanel) selectionSidePanel.style.display = 'none'; // Optional close
+    // if(selectionSidePanel) selectionSidePanel.style.display = 'none';
 }
 if(closeSidePanelBtn_SP) closeSidePanelBtn_SP.onclick = () => { if(selectionSidePanel) selectionSidePanel.style.display = 'none'; };
 
@@ -233,7 +227,7 @@ function drawPoliticalPieChart() {
     const canvas = document.getElementById('partyPieChartCanvas');
     const pieChartContainer = document.getElementById('politicalPieChart');
     if (!canvas || !GAME_DATA.parties_array || GAME_DATA.parties_array.length === 0) {
-        if(pieChartContainer) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет данных</p>";
+        if(pieChartContainer) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет данных о партиях</p>";
         return;
     }
     const ctx = canvas.getContext('2d');
@@ -253,7 +247,7 @@ function drawPoliticalPieChart() {
         ctx.closePath();
         ctx.fillStyle = party.color || '#cccccc';
         ctx.fill();
-        ctx.strokeStyle = '#3c3c3c';
+        ctx.strokeStyle = '#3c3c3c'; // Background of screen
         ctx.lineWidth = 0.5;
         ctx.stroke();
         currentAngle += sliceAngle;
@@ -262,8 +256,11 @@ function drawPoliticalPieChart() {
 
 function updatePartyList() {
     const partyListContainer = document.getElementById('partyListContainer');
-    if (!partyListContainer || !GAME_DATA.parties_array) return;
-    const rulingPartyId = "united_russia"; // TODO: Determine this dynamically
+    if (!partyListContainer || !GAME_DATA.parties_array) {
+        if(partyListContainer) partyListContainer.innerHTML = "<li>Нет данных о партиях</li>";
+        return;
+    }
+    const rulingPartyId = "united_russia"; // TODO: Make dynamic
     const sortedParties = [...GAME_DATA.parties_array]
         .filter(p => p.popularity > 0 || p.id === rulingPartyId)
         .sort((a, b) => b.popularity - a.popularity);
@@ -286,46 +283,45 @@ function updatePartyList() {
 // --- UI Initialization Function ---
 function initializeUI() {
     // Leader
-    const countryLeaderId = "putin_vladimir";
+    const countryLeaderId = "putin_vladimir"; // TODO: Should be dynamic from game state
     const leaderData = GAME_DATA.leaders[countryLeaderId];
     const leaderPortraitEl = document.querySelector('.leader-pane .leader-portrait img');
     const leaderNameEl = document.querySelector('.leader-pane .leader-name');
     if (leaderData && leaderPortraitEl && leaderNameEl) {
         leaderPortraitEl.src = leaderData.portrait_path || 'https://via.placeholder.com/180x210/555/fff?text=Ldr';
-        leaderNameEl.textContent = leaderData.name;
+        leaderNameEl.textContent = leaderData.name || "Неизвестный Лидер";
         addTooltipEventsToElement(leaderPortraitEl.parentElement, leaderData.name, leaderData.tooltip_summary, leaderData.description);
     }
 
     // Ideology
-    const currentIdeologyId = "sovereign_democracy"; // Object.keys(GAME_DATA.ideologies)[0] || "default_ideology_id";
+    const currentIdeologyId = "sovereign_democracy"; // TODO: Should be dynamic
     const ideologyData = GAME_DATA.ideologies[currentIdeologyId];
     const ideologyIconContainer = document.querySelector('.ideology-info .ideology-icon');
     const ideologyIconEl = ideologyIconContainer?.querySelector('img');
     const ideologyNameEl = document.querySelector('.ideology-info .ideology-name');
     if (ideologyData && ideologyIconEl && ideologyNameEl && ideologyIconContainer) {
         ideologyIconEl.src = ideologyData.icon_path || 'https://via.placeholder.com/45/666/fff?text=Idlgy';
-        ideologyNameEl.innerHTML = ideologyData.name_multiline || ideologyData.name;
+        ideologyNameEl.innerHTML = ideologyData.name_multiline || ideologyData.name || "Неизв. Идеология";
         addTooltipEventsToElement(ideologyIconContainer, ideologyData.name, ideologyData.effects_summary, ideologyData.description);
-        ideologyIconContainer.dataset.tooltip = ""; // Clear static tooltip to let JS handle it
+        if(ideologyIconContainer.dataset.tooltip) ideologyIconContainer.dataset.tooltip = ""; // Clear static
     }
 
     // Party Emblem (Ruling Party)
-    const rulingPartyId = "united_russia";
+    const rulingPartyId = "united_russia"; // TODO: Should be dynamic
     const partyData = GAME_DATA.parties?.[rulingPartyId];
     const partyEmblemContainer = document.querySelector('.party-emblem');
     const partyEmblemEl = partyEmblemContainer?.querySelector('img');
      if (partyData && partyEmblemEl && partyEmblemContainer) {
         partyEmblemEl.src = partyData.icon_path || 'https://via.placeholder.com/45/666/fff?text=Pty';
         addTooltipEventsToElement(partyEmblemContainer, partyData.name, partyData.effects_summary, partyData.description);
-        partyEmblemContainer.dataset.tooltip = "";
+        if(partyEmblemContainer.dataset.tooltip) partyEmblemContainer.dataset.tooltip = ""; // Clear static
     }
-
 
     // National Spirits
     const nationalSpiritsContainer = document.querySelector('.national-spirits');
     if (nationalSpiritsContainer && GAME_DATA.national_spirits) {
         nationalSpiritsContainer.innerHTML = '';
-        const activeSpiritIds = ["great_power_ambitions", "strong_army"]; // Example
+        const activeSpiritIds = ["great_power_ambitions", "strong_army"]; // TODO: Example, should be dynamic
         activeSpiritIds.forEach(spiritId => {
             const spiritData = GAME_DATA.national_spirits[spiritId];
             if (spiritData) {
@@ -343,7 +339,7 @@ function initializeUI() {
     // Political Parties Chart and List
     drawPoliticalPieChart();
     updatePartyList();
-    const rulingPartyInfoStrongEl = document.querySelector('.ruling-party-info strong'); // More specific selector
+    const rulingPartyInfoStrongEl = document.querySelector('.ruling-party-info strong');
     if (rulingPartyInfoStrongEl && GAME_DATA.parties?.[rulingPartyId]) {
         rulingPartyInfoStrongEl.textContent = GAME_DATA.parties[rulingPartyId].name;
     }
@@ -353,12 +349,12 @@ function initializeUI() {
     if (principlesContainer && GAME_DATA.constitutional_principles) {
         principlesContainer.innerHTML = '';
         Object.values(GAME_DATA.constitutional_principles)
-            .sort((a, b) => (a.article_number || Infinity) - (b.article_number || Infinity)) // Sort by article number
+            .sort((a, b) => (a.article_number || Infinity) - (b.article_number || Infinity))
             .forEach(principle => {
                 const currentOption = principle.options?.find(opt => opt.is_current);
                 if (currentOption) {
                     const slotEl = document.createElement('div');
-                    slotEl.className = 'item-slot constitutional-principle';
+                    slotEl.className = 'item-slot constitutional-principle'; // Class for specific styling
                     slotEl.dataset.slotType = `constitutional_principle_${principle.id}`;
                     slotEl.dataset.currentId = currentOption.id;
                     const imgEl = document.createElement('img');
@@ -371,6 +367,8 @@ function initializeUI() {
                     addTooltipEventsToElement(slotEl, currentOption.name_display, currentOption.effects_summary, null);
                     slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
                     principlesContainer.appendChild(slotEl);
+                } else {
+                    console.warn(`Для конституционного принципа '${principle.id}' не найдена активная опция.`);
                 }
         });
     }
@@ -379,12 +377,13 @@ function initializeUI() {
     const developmentContainer = document.getElementById('development-areas-container');
     if (developmentContainer && GAME_DATA.development_areas) {
         developmentContainer.innerHTML = '';
-        Object.values(GAME_DATA.development_areas) // .sort() if needed
+        Object.values(GAME_DATA.development_areas)
+            .sort((a,b) => (a.order || Infinity) - (b.order || Infinity))
             .forEach(area => {
                 const currentOption = area.options?.find(opt => opt.is_current);
                 if (currentOption) {
                     const slotEl = document.createElement('div');
-                    slotEl.className = 'item-slot development-area';
+                    slotEl.className = 'item-slot development-area'; // Class for specific styling
                     slotEl.dataset.slotType = `development_area_${area.id}`;
                     slotEl.dataset.currentId = currentOption.id;
                     const imgEl = document.createElement('img');
@@ -397,17 +396,19 @@ function initializeUI() {
                     addTooltipEventsToElement(slotEl, currentOption.name_display, currentOption.effects_summary, null);
                     slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
                     developmentContainer.appendChild(slotEl);
+                } else {
+                     console.warn(`Для области развития '${area.id}' не найдена активная опция.`);
                 }
         });
     }
 
     // Initialize pre-defined HTML slots (Advisors, Corporations)
     document.querySelectorAll('[data-slot-type]').forEach(slotEl => {
-        const slotId = slotEl.id || ""; // Use ID if unique containers for dynamic sections
+        const slotId = slotEl.id || "";
         if (slotId === 'constitutional-principles-container' || slotId === 'development-areas-container' ||
             slotEl.dataset.slotType === 'ideology_display' || slotEl.dataset.slotType === 'party_display' ||
             slotEl.classList.contains('constitutional-principle') || slotEl.classList.contains('development-area')) {
-            return; // Already handled or display-only
+            return; // Already handled or is a dynamic container/display-only initialized elsewhere
         }
 
         const slotType = slotEl.dataset.slotType;
@@ -417,19 +418,18 @@ function initializeUI() {
         if (currentItemId) {
             if (slotType.startsWith("advisor_")) currentItemData = GAME_DATA.leaders[currentItemId];
             else if (slotType.startsWith("corporation_slot_")) currentItemData = GAME_DATA.corporations[currentItemId];
-            // Add cases for individual law slots if they still exist and are not dynamically generated
         }
 
         const imgEl = slotEl.querySelector('img');
-        const labelEl = slotEl.querySelector('.item-slot-label-small');
+        const labelEl = slotEl.querySelector('.item-slot-label-small'); // Assuming some item-slots might have labels
 
         if (currentItemData && imgEl) {
             imgEl.src = currentItemData.icon_path || currentItemData.portrait_path || 'https://via.placeholder.com/80/ccc/000?text=N/A';
             imgEl.alt = currentItemData.name?.substring(0, 3) || "ICO";
-            if(labelEl && slotEl.classList.contains('item-slot')) labelEl.textContent = currentItemData.name_display || currentItemData.name; // Label for item-slots, not usually for advisors
+            if(labelEl && slotEl.classList.contains('item-slot') && !slotEl.classList.contains('advisor-portrait-slot')) labelEl.textContent = currentItemData.name_display || currentItemData.name;
             slotEl.classList.add('selected');
             addTooltipEventsToElement(slotEl, currentItemData.name_display || currentItemData.name, currentItemData.tooltip_summary || currentItemData.effects_summary, null);
-        } else if (imgEl) {
+        } else if (imgEl) { // Slot is empty or data missing
             let emptyIconSrc = 'https://via.placeholder.com/50x50/333/666?text=+';
             if (slotEl.classList.contains('advisor-portrait-slot')) emptyIconSrc = 'https://via.placeholder.com/65x65/333/666?text=+';
             imgEl.src = emptyIconSrc;
@@ -438,13 +438,17 @@ function initializeUI() {
             slotEl.classList.remove('selected');
             addTooltipEventsToElement(slotEl, "Назначить / Выбрать", null, null);
         }
+        // Ensure click listener for opening side panel is added to these pre-defined slots
         if(!slotType.includes("_display")) {
            slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
         }
     });
 
+    // General tooltips for static elements (like focus banner, pie chart if they have data-tooltip)
     document.querySelectorAll('.national-focus-banner, .pie-chart').forEach(el => {
-        if(el.dataset.tooltip) addTooltipEventsToElement(el, el.dataset.tooltip, null, null);
+        if(el.dataset.tooltip && !el.dataset.slotType) { // Avoid re-adding if already handled by slot-type logic
+             addTooltipEventsToElement(el, el.dataset.tooltip, null, null);
+        }
     });
 }
 
