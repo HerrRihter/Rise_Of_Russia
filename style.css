@@ -305,4 +305,140 @@ body {
     width: 40px; height: 40px; min-width: 40px; margin-right: 12px;
     object-fit: contain; border-radius: 3px; background-color: #555;
 }
+
+/* --- Адаптивные стили --- */
+
+/* Сначала общие изменения для лучшей гибкости */
+.hoi4-politics-screen {
+    width: 100%; /* Занимать доступную ширину */
+    max-width: 1200px; /* Но не шире этого значения */
+    margin-left: auto;  /* Центрирование, если max-width сработает */
+    margin-right: auto; /* Центрирование */
+}
+
+/* Планшеты и большие телефоны (портрет и ландшафт) */
+@media (max-width: 992px) {
+    body {
+        padding: 10px; /* Уменьшаем отступы страницы */
+    }
+    .main-content {
+        padding: 10px;
+    }
+    .upper-section {
+        flex-direction: column; /* Лидер и инфо-панель друг под другом */
+        align-items: center; /* Центрируем leader-pane */
+    }
+    .leader-pane {
+        margin-right: 0;
+        margin-bottom: 20px;
+        flex-basis: auto; /* Сбросить ширину */
+        width: 90%; /* Занять большую часть ширины */
+        max-width: 400px; /* Но не слишком широко */
+    }
+    .national-info-pane {
+        width: 100%; /* Инфо-панель занимает всю доступную ширину */
+    }
+
+    /* Уменьшаем количество слотов в ряду для нижних секций */
+    .item-slot,
+    .advisor-portrait-slot,
+    .constitutional-principle,
+    .development-area,
+    .corporation-slot {
+        /* 5 в ряд, если gap=10px. Контейнер .category-items ~90%-100% */
+        /* Ширина .category-items примерно (100vw - 20px_body_pad - 20px_main_content_pad - 20px_cat_items_pad)
+           Примерно: (100% - 4*10px)/5 */
+        width: calc((100% - 4 * 10px) / 5);
+        min-height: 85px;
+    }
+    .item-slot img, .advisor-portrait-slot img,
+    .constitutional-principle img, .development-area img,
+    .corporation-slot img {
+        width: 40px;
+        height: 40px;
+    }
+    .advisor-portrait-slot img { height: 55px; }
+    .item-slot-label-small { font-size: 0.65em; max-height: 3.3em; } /* 3 строки */
+
+    .political-details {
+        /* Можно оставить в ряд, если влезает, или сделать column */
+        gap: 8px;
+    }
+    .pie-chart { width: 100px; height: 100px;}
+    #partyPieChartCanvas { width: 100px; height: 100px; }
+    .party-list { font-size: 0.78em; }
+}
+
+/* Маленькие телефоны (портрет) */
+@media (max-width: 576px) {
+    body { padding: 5px; }
+    .main-content { padding: 5px; }
+    .window-title-bar { padding: 8px 10px; font-size: 1.1em; }
+
+    .upper-section { padding-bottom: 15px; margin-bottom: 10px; }
+    .leader-pane { max-width: 300px; } /* Еще уже */
+    .leader-portrait { width: 150px; height: 180px; }
+    .ideology-icon, .party-emblem { min-width: 40px; height: 40px; }
+
+    .national-focus-banner { height: 80px; }
+    .focus-title-bar { font-size: 0.9em; width: 150px; }
+
+    .political-details {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .ruling-party-info, .political-system-info-container, .party-popularity {
+        flex-basis: auto;
+        width: 100%; /* Каждый блок на всю ширину */
+    }
+    .party-popularity { flex-direction: column; align-items: stretch; }
+    .pie-chart { width: 90px; height: 90px; margin-right: 0; margin-bottom: 10px; align-self: center;}
+    #partyPieChartCanvas { width: 90px; height: 90px; }
+    .party-list { max-height: 90px; }
+
+
+    .lower-section { padding-right: 0; max-height: none; /* Убираем скролл для нижней секции, если все помещается */}
+    .category-items {
+        padding: 8px;
+        gap: 8px;
+         /* Элементы могут идти по 2-3 в ряд */
+    }
+    .item-slot,
+    .advisor-portrait-slot,
+    .constitutional-principle,
+    .development-area,
+    .corporation-slot {
+        /* 3 в ряд, если gap=8px. */
+        width: calc((100% - 2 * 8px) / 3);
+        min-height: 75px;
+        padding: 5px;
+    }
+    .item-slot img, .advisor-portrait-slot img,
+    .constitutional-principle img, .development-area img,
+    .corporation-slot img {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 3px;
+    }
+    .advisor-portrait-slot { height: 90px; } /* Переопределяем, если нужно выше для портрета */
+    .advisor-portrait-slot img { width: 38px; height: 50px; }
+    .item-slot-label-small { font-size: 0.6em; max-height: 2.4em; /* 2 строки */ }
+
+    /* Боковая панель */
+    .side-panel {
+        width: 96%;
+        left: 2%;
+        right: 2%;
+        top: 5px;
+        max-height: calc(100vh - 10px);
+        font-size: 0.9em; /* Уменьшаем общий шрифт панели */
+    }
+    .side-panel-header { padding: 8px 10px; }
+    .side-panel-header h4 { font-size: 1em; }
+    .side-panel-option { padding: 8px; margin-bottom: 4px; }
+    .side-panel-option-icon { width: 30px; height: 30px; min-width: 30px; margin-right: 8px;}
+    .side-panel-option-name { font-size: 0.9em; }
+
+    .tooltip { font-size: 0.8em; max-width: 90vw; padding: 8px 10px; }
+}
 .side-panel-option-name { flex-grow: 1; font-size: 0.95em; line-height: 1.3; }
