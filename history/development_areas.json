@@ -1,104 +1,77 @@
-// script.js
-
-// ... (GAME_DATA определение должно включать development_areas: {}) ...
-// const GAME_DATA = { ... development_areas: {}, ... };
-
-// В ALL_DATA_FILES_TO_LOAD:
-// Удалите индивидуальные файлы для development_areas, если были, и добавьте один общий:
-// "history/development_areas/education.json", // УДАЛИТЬ
-// "history/development_areas/medicine.json",  // УДАЛИТЬ
-// ... и так далее
-// ДОБАВИТЬ:
-// "history/development_areas.json", // ЕДИНЫЙ ФАЙЛ
-
-// В async function initializeGameData():
-// ...
-    else if (filePath.endsWith('development_areas.json') && data.areas) {
-        GAME_DATA.development_areas = {}; // Сохраняем как объект, ключ - ID области
-        data.areas.forEach(area => {
-            if (area.id) {
-                GAME_DATA.development_areas[area.id] = area;
-            } else {
-                console.warn("Найдена область развития без ID в файле:", filePath, area);
-            }
-        });
-    }
-// ...
-
-
-// В openSidePanelForCategory():
-// ...
-    else if (slotType.startsWith("development_area_")) {
-        const areaId = slotType.replace("development_area_", "");
-        const areaData = GAME_DATA.development_areas[areaId];
-        panelTitle = areaData?.name || "Область Развития";
-        optionsToShow = areaData?.options || []; // Массив опций для ВЫБОРА
-    }
-// ...
-
-// В selectOptionInSidePanel():
-// ...
-    else if (targetSlotType.startsWith("development_area_")) {
-        const areaId = targetSlotType.replace("development_area_", "");
-        const areaData = GAME_DATA.development_areas[areaId];
-        if (areaData && areaData.options) {
-            areaData.options.forEach(opt => opt.is_current = (opt.id === selectedOptionId));
-            chosenData = areaData.options.find(opt => opt.is_current);
-            // areaData.current_option_id = chosenData.id; // Если нужно хранить ID текущей опции в самом объекте area
+{
+    "title_overall": "Развитие Страны",
+    "areas": [
+        {
+            "id": "education",
+            "order": 1,
+            "name": "Образование",
+            "icon_path": "history/development_areas_icons/education.png",
+            "options": [
+                { "id": "edu_basic", "name_display": "Базовое Образование", "description": "Фокус на всеобщей грамотности и среднем образовании.", "effects_summary": "Скорость исследований: +2%\nРаспространение технологий: +5%", "is_current": false },
+                { "id": "edu_vocational", "name_display": "Проф. Тех. Образование", "description": "Упор на подготовку квалифицированных рабочих кадров для промышленности.", "effects_summary": "Эффективность производства: +5%\nСкорость исследований: -2%", "is_current": false },
+                { "id": "edu_advanced_research", "name_display": "Передовые Исследования", "description": "Инвестиции в науку и высшее образование для технологических прорывов.", "effects_summary": "Скорость исследований: +10%\nСтоимость технологий: -5%", "is_current": true }
+            ]
+        },
+        {
+            "id": "medicine",
+            "order": 2,
+            "name": "Медицина",
+            "icon_path": "history/development_areas_icons/medicine.png",
+            "options": [
+                { "id": "med_basic_care", "name_display": "Базовая Медпомощь", "description": "Обеспечение основного уровня медицинских услуг для населения.", "effects_summary": "Прирост населения: +0.02%\nПродолжительность жизни: +1 год", "is_current": true },
+                { "id": "med_preventive", "name_display": "Профилактическая Медицина", "description": "Акцент на предотвращении заболеваний и общественном здоровье.", "effects_summary": "Прирост населения: +0.01%\nЗаболеваемость: -10%\nПродолжительность жизни: +2 года", "is_current": false },
+                { "id": "med_high_tech", "name_display": "Высокотехнологичная Медицина", "description": "Развитие сложных медицинских технологий и специализированного лечения.", "effects_summary": "Продолжительность жизни: +3 года\nСтоимость здравоохранения: +20%", "is_current": false }
+            ]
+        },
+        {
+            "id": "security",
+            "order": 3,
+            "name": "Безопасность",
+            "icon_path": "history/development_areas_icons/security.png",
+            "options": [
+                { "id": "sec_internal_order", "name_display": "Внутренний Порядок", "description": "Усиление правоохранительных органов для поддержания стабильности.", "effects_summary": "Стабильность: +10%\nПодавление недовольства: +15%\nСтоимость содержания полиции: +10%", "is_current": true },
+                { "id": "sec_intelligence", "name_display": "Разведка и Контрразведка", "description": "Развитие спецслужб для защиты национальных интересов.", "effects_summary": "Эффективность разведки: +20%\nШанс обнаружения шпионов: +25%", "is_current": false }
+            ]
+        },
+        {
+            "id": "welfare",
+            "order": 4,
+            "name": "Достаток",
+            "icon_path": "history/development_areas_icons/welfare.png",
+            "options": [
+                { "id": "wel_minimum_support", "name_display": "Минимальная Поддержка", "description": "Государство обеспечивает лишь базовые социальные гарантии.", "effects_summary": "Стоимость соц. программ: Низкая\nУровень бедности: +10%", "is_current": true },
+                { "id": "wel_social_net", "name_display": "Развитая Соц. Сеть", "description": "Широкий спектр социальных программ для поддержки граждан.", "effects_summary": "Стабильность: +5%\nУровень бедности: -15%\nНалоговая нагрузка: +5%", "is_current": false }
+            ]
+        },
+        {
+            "id": "agriculture",
+            "order": 5,
+            "name": "Сельское хозяйство",
+            "icon_path": "history/development_areas_icons/agriculture.png",
+            "options": [
+                { "id": "agr_subsistence", "name_display": "Натуральное Хозяйство", "description": "Преимущественно мелкие хозяйства, обеспечивающие собственные нужды.", "effects_summary": "Продовольственная безопасность: Умеренная\nЭкспорт с/х продукции: Низкий", "is_current": false },
+                { "id": "agr_industrialized", "name_display": "Промышленное С/Х", "description": "Крупные агрохолдинги, механизация и фокус на экспорт.", "effects_summary": "Производство еды: +25%\nСтоимость инфраструктуры: +15%\nЭкологический ущерб: Средний", "is_current": true }
+            ]
+        },
+        {
+            "id": "industry",
+            "order": 6,
+            "name": "Промышленность",
+            "icon_path": "history/development_areas_icons/industry.png",
+            "options": [
+                { "id": "ind_light", "name_display": "Легкая Промышленность", "description": "Развитие производства потребительских товаров.", "effects_summary": "Товары народного потребления: +15%\nБезработица: -5%", "is_current": true },
+                { "id": "ind_heavy", "name_display": "Тяжелая Промышленность", "description": "Фокус на металлургии, машиностроении и оборонном производстве.", "effects_summary": "Производство (военное): +10%\nПотребление ресурсов: +20%", "is_current": false }
+            ]
+        },
+        {
+            "id": "military_power",
+            "order": 7,
+            "name": "Военная мощь",
+            "icon_path": "history/development_areas_icons/military_power.png",
+            "options": [
+                { "id": "mil_defensive_posture", "name_display": "Оборонительная Доктрина", "description": "Армия ориентирована на защиту территории.", "effects_summary": "Защита дивизий: +15%\nСкорость мобилизации: +10%", "is_current": true },
+                { "id": "mil_offensive_capability", "name_display": "Наступательный Потенциал", "description": "Развитие способности к проекции силы и наступательным операциям.", "effects_summary": "Атака дивизий: +10%\nСтоимость содержания армии: +15%", "is_current": false }
+            ]
         }
-    }
-// ...
-    // При обновлении UI слота в selectOptionInSidePanel:
-    if (clickedMainSlotElement && chosenData) {
-        // ... (обновление img) ...
-        const mainSlotLabel = clickedMainSlotElement.querySelector('.item-slot-label-small');
-        if (mainSlotLabel) mainSlotLabel.textContent = chosenData.name_display || chosenData.name; // имя ВАРИАНТА
-        addTooltipEventsToElement(clickedMainSlotElement, chosenData.name_display, chosenData.effects_summary, null);
-    }
-// ...
-
-
-// В initializeUI():
-// ... (Лидер, Идеология, Партия, Нац. духи, Партийная диаграмма, Конституционные принципы) ...
-
-    const developmentContainer = document.getElementById('development-areas-container');
-    if (developmentContainer && GAME_DATA.development_areas) {
-        developmentContainer.innerHTML = ''; // Очищаем перед заполнением
-        const sectionTitleData = GAME_DATA.development_areas?.title_overall; // Если бы было в JSON
-        // Или используем статический заголовок из HTML
-
-        // Сортируем области развития по полю 'order' для корректного отображения
-        const sortedDevelopmentAreas = Object.values(GAME_DATA.development_areas)
-            .sort((a, b) => (a.order || Infinity) - (b.order || Infinity));
-
-        sortedDevelopmentAreas.forEach(area => { // area - это объект целой "области развития"
-            const currentOption = area.options?.find(opt => opt.is_current); // Находим активный ВАРИАНТ
-            if (currentOption) {
-                const slotEl = document.createElement('div');
-                // Классы для стилизации и идентификации
-                slotEl.className = 'item-slot development-area';
-                slotEl.dataset.slotType = `development_area_${area.id}`;
-                slotEl.dataset.currentId = currentOption.id; // ID активного варианта
-
-                const imgEl = document.createElement('img');
-                imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=DevA'; // Иконка самой области
-                imgEl.alt = area.name?.substring(0,3) || "Dev";
-                slotEl.appendChild(imgEl);
-
-                const labelEl = document.createElement('span');
-                labelEl.className = 'item-slot-label-small';
-                labelEl.textContent = currentOption.name_display; // Показываем имя ТЕКУЩЕГО ВАРИАНТА
-                slotEl.appendChild(labelEl);
-
-                // Тултип для слота показывает инфо о ТЕКУЩЕМ ВАРИАНТЕ
-                addTooltipEventsToElement(slotEl, currentOption.name_display, currentOption.effects_summary, null);
-                slotEl.addEventListener('click', function() {
-                    openSidePanelForCategory(this.dataset.slotType, this);
-                });
-                developmentContainer.appendChild(slotEl);
-            } else {
-                console.warn(`Для области развития '${area.id}' не найдена активная опция (is_current: true).`);
-            }
-        });
-    }
-// ... (инициализация слотов советников, корпораций, прочих тултипов)
+    ]
+}
