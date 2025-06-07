@@ -68,7 +68,7 @@ body {
 .ideology-name { background-color: #4a3b2a; font-size: 0.9em; }
 .ideology-info { display: flex; align-items: center; width: 95%; margin-top: 8px; }
 .ideology-icon, .party-emblem {
-    min-width: 45px; height: 45px; background-color: #555; cursor:pointer;
+    width: 65px; height: 65px; background-color: #555; cursor:pointer;
     border: 1px solid #777; margin-right: 8px; margin-bottom: 8px;
     display: flex; justify-content: center; align-items: center;
 }
