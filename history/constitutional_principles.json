@@ -1,1 +1,152 @@
-
+// history/constitutional_principles.json
+{
+    "title_overall": "Конституционные Основы", // Общее название для секции
+    "principles": [
+        {
+            "id": "form_of_government",
+            "article_number": 1,
+            "name": "Форма правления",
+            "icon_path": "history/constitutional_principles_icons/form_of_government.png",
+            "options": [
+                { "id": "super_presidential_republic", "name_display": "Суперпрезидентская республика", "description": "Описание...", "effects_summary": "Стабильность: +10%...", "is_current": true },
+                { "id": "parliamentary_republic", "name_display": "Парламентская республика", "description": "Описание...", "effects_summary": "Стабильность: +5%...", "is_current": false }
+            ]
+        },
+        {
+            "id": "human_rights",
+            "article_number": 2,
+            "name": "Права человека",
+            "icon_path": "history/constitutional_principles_icons/human_rights.png",
+            "options": [
+                { "id": "formal_observance", "name_display": "Формальное соблюдение", "description": "Права декларируются, но механизмы защиты и реальное соблюдение ограничены.", "effects_summary": "Стабильность: -5% (долгосрочно)\nМеждународная репутация: -10", "is_current": true },
+                { "id": "guaranteed_protection", "name_display": "Гарантированная защита", "description": "Активные государственные и общественные институты по защите прав граждан.", "effects_summary": "Стабильность: +10%\nПоддержка населения: +5%", "is_current": false }
+            ]
+        },
+        {
+            "id": "voting_system",
+            "article_number": 3,
+            "name": "Голосование (Народовластие)",
+            "icon_path": "history/constitutional_principles_icons/voting_system.png",
+            "options": [
+                { "id": "universal_referendums_allowed", "name_display": "Всеобщее, Референдумы разрешены", "description": "Описание...", "effects_summary": "Влияние популизма: Умеренное", "is_current": true }
+            ]
+        },
+        {
+            "id": "state_sovereignty",
+            "article_number": 4,
+            "name": "Государственный суверенитет",
+            "icon_path": "history/constitutional_principles_icons/state_sovereignty.png",
+            "options": [
+                { "id": "integrity_no_secession", "name_display": "Целостность: Отделение запрещено", "description": "Описание...", "effects_summary": "Национальное единство: +15%", "is_current": true }
+            ]
+        },
+        {
+            "id": "administrative_structure",
+            "article_number": 5,
+            "name": "Административное устройство",
+            "icon_path": "history/constitutional_principles_icons/administrative_structure.png",
+            "options": [
+                { "id": "pseudo_federation", "name_display": "Псевдофедерация", "description": "Описание...", "effects_summary": "Эффективность управления: +5%\nРегиональная автономия: Низкая", "is_current": true }
+            ]
+        },
+        {
+            "id": "citizenship",
+            "article_number": 6,
+            "name": "Гражданство",
+            "icon_path": "history/constitutional_principles_icons/citizenship.png",
+            "options": [
+                { "id": "jus_soli_inalienable_native", "name_display": "\"Право почвы\", Неотъемлемость", "description": "Описание...", "effects_summary": "Прирост населения (иммиграция): +1%", "is_current": true }
+            ]
+        },
+        {
+            "id": "social_model",
+            "article_number": 7,
+            "name": "Социальная модель",
+            "icon_path": "history/constitutional_principles_icons/social_model.png",
+            "options": [
+                { "id": "social_state_declared", "name_display": "Социальное государство (декларируемое)", "description": "Описание...", "effects_summary": "Поддержка населения: +5%\nГос. расходы: +10%", "is_current": true }
+            ]
+        },
+        {
+            "id": "economic_freedoms",
+            "article_number": 8,
+            "name": "Экономические свободы",
+            "icon_path": "history/constitutional_principles_icons/economic_freedoms.png",
+            "options": [
+                { "id": "free_market_regulated", "name_display": "Свободный рынок (с госрегулированием)", "description": "Описание...", "effects_summary": "Рост экономики: +7%\nВлияние олигархов: Умеренное", "is_current": true }
+            ]
+        },
+        {
+            "id": "natural_resources_management",
+            "article_number": 9,
+            "name": "Управление природными ресурсами",
+            "icon_path": "history/constitutional_principles_icons/natural_resources.png",
+            "options": [
+                { "id": "mixed_ownership_resources", "name_display": "Смешанное владение", "description": "Описание...", "effects_summary": "Доходы от ресурсов: Умеренные\nКоррупция: Средняя", "is_current": true }
+            ]
+        },
+        {
+            "id": "separation_of_powers",
+            "article_number": 10,
+            "name": "Разделение властей",
+            "icon_path": "history/constitutional_principles_icons/separation_powers.png",
+            "options": [
+                { "id": "formal_separation_executive_dominance", "name_display": "Формальное (доминирование исполнительной)", "description": "Описание...", "effects_summary": "Скорость принятия решений: +15%\nПолитическая конкуренция: Низкая", "is_current": true }
+            ]
+        },
+        {
+            "id": "governing_bodies",
+            "article_number": 11,
+            "name": "Органы власти",
+            "icon_path": "history/constitutional_principles_icons/governing_bodies.png",
+            "options": [
+                { "id": "president_bicameral_gov_courts", "name_display": "Президент, Двухпалатный парламент, Правительство, Суды", "description": "Описание...", "effects_summary": "Стабильность структуры: Высокая", "is_current": true }
+            ]
+        },
+        {
+            "id": "local_self_government",
+            "article_number": 12,
+            "name": "Местное самоуправление",
+            "icon_path": "history/constitutional_principles_icons/local_government.png",
+            "options": [
+                { "id": "allowed_limited_autonomy", "name_display": "Разрешено, но ограничено", "description": "Описание...", "effects_summary": "Эффективность на местах: -5%\nЦентрализация: Высокая", "is_current": true }
+            ]
+        },
+        {
+            "id": "political_system",
+            "article_number": 13,
+            "name": "Политическая система",
+            "icon_path": "history/constitutional_principles_icons/political_system.png",
+            "options": [
+                { "id": "multi_party_dominant", "name_display": "Многопартийность (с доминирующей)", "description": "Описание...", "effects_summary": "Стабильность политическая: +5% (краткосрочно)", "is_current": true }
+            ]
+        },
+        {
+            "id": "status_of_religion",
+            "article_number": 14,
+            "name": "Статус религии",
+            "icon_path": "history/constitutional_principles_icons/status_religion.png",
+            "options": [
+                { "id": "secular_state", "name_display": "Светское государство", "description": "Описание...", "effects_summary": "Религиозное влияние: Умеренное", "is_current": true }
+            ]
+        },
+        {
+            "id": "international_law_priority",
+            "article_number": 15,
+            "name": "Международное право",
+            "icon_path": "history/constitutional_principles_icons/international_law.png",
+            "options": [
+                { "id": "constitution_priority", "name_display": "Приоритет Конституции", "description": "Описание...", "effects_summary": "Дипломатическое влияние: -5\nНациональный суверенитет: +10%", "is_current": true }
+            ]
+        },
+        {
+            "id": "constitution_amendment_core",
+            "article_number": 16,
+            "name": "Изменение Конституции (основ)",
+            "icon_path": "history/constitutional_principles_icons/constitution_amendment.png",
+            "options": [
+                { "id": "high_complexity_core_amendment", "name_display": "Высокая сложность", "description": "Описание...", "effects_summary": "Политическая стабильность (основы): Очень высокая", "is_current": true }
+            ]
+        }
+    ]
+}
