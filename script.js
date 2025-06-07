@@ -1,46 +1,7 @@
-Skip to content
-Navigation Menu
-HerrRihter
-Roman_Republic
+// script.js
 
-Type / to search
-Code
-Issues
-Pull requests
-Actions
-Projects
-Security
-Insights
-Settings
-Commit 07b92a5
-HerrRihter
-HerrRihter
-authored
-46 minutes ago
-·
-·
-Verified
-Update script.js
-main
-1 parent 
-a1022f8
- commit 
-07b92a5
-File tree
-Filter files…
-script.js
-1 file changed
-+100
--220
-lines changed
-Search within code
- 
-‎script.js
-+100
--220
-Lines changed: 100 additions & 220 deletions
-Original file line number	Diff line number	Diff line change
-@@ -5,7 +5,7 @@ const tooltipElement = document.querySelector('.tooltip');
+// Global tooltip element
+const tooltipElement = document.querySelector('.tooltip');
 
 // --- Tooltip Functions ---
 function positionTooltip(event) {
