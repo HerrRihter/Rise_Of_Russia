@@ -1,6 +1,5 @@
-// history/constitutional_principles.json
 {
-    "title_overall": "Конституционные Основы", // Общее название для секции
+    "title_overall": "Конституционные Основы",
     "principles": [
         {
             "id": "form_of_government",
