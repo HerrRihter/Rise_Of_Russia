@@ -18,7 +18,7 @@ body {
 
 .hoi4-politics-screen {
     width: 1200px;
-    min-height: 1000px; /* Adjusted for example */
+    min-height: 1000px;
     background-color: #3c3c3c;
     border: 2px solid #555;
     box-shadow: 0 0 15px rgba(0,0,0,0.5);
@@ -151,35 +151,93 @@ body {
     width: 20px; height: 20px; margin-right: 10px;
     filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(189deg) brightness(109%) contrast(101%);
 }
+
+/* --- ИЗМЕНЕНИЯ НАЧИНАЮТСЯ ЗДЕСЬ для .category-items и дочерних слотов --- */
 .category-items {
-    display: flex; flex-wrap: wrap; justify-content: center;
-    padding: 10px 5px; background-color: #333; border-radius: 0 0 4px 4px; gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* Начинаем слева, gap сделает отступы */
+    padding: 10px; /* Общие отступы для контейнера иконок */
+    background-color: #333;
+    border-radius: 0 0 4px 4px;
+    gap: 10px; /* Основной отступ между всеми элементами */
 }
+
+/* Общие стили для всех слотов в категориях */
 .item-slot, .advisor-portrait-slot {
-    width: 80px; min-height: 80px;
+    /* НЕ ЗАДАЕМ ЗДЕСЬ ШИРИНУ ЯВНО, если хотим управлять ей для конкретных категорий ниже */
+    min-height: 80px; /* Общая минимальная высота */
     background-color: #4a4a4a; border: 1px solid #666;
-    border-radius: 5px; display: flex; flex-direction: column; justify-content: space-between; /* Changed to space-between for label */
+    border-radius: 5px; display: flex; flex-direction: column;
+    justify-content: space-between;
     align-items: center; cursor: pointer; position: relative; box-sizing: border-box;
     padding: 5px;
 }
+
+/* Стили для иконок внутри слотов */
 .item-slot img, .advisor-portrait-slot img {
-    width: 50px;
+    width: 50px; /* Фиксированный размер для большинства иконок */
     height: 50px;
-    object-fit: contain; margin-bottom: 4px;
+    object-fit: contain; margin-bottom: 4px; /* Отступ для подписи */
 }
-.advisor-portrait-slot img { height: 65px; }
+
+/* Специфично для портретов советников - они могут быть шире/выше */
+.advisor-portrait-slot {
+    width: 80px; /* Как было, подходит для правительства */
+    height: 95px; /* Портреты выше */
+}
+.advisor-portrait-slot img {
+    width: 55px; /* Чуть больше для портрета */
+    height: 65px;
+}
+
+/* Стили для слотов "Конституционные Основы" и "Развитие Страны" (8 в ряд) */
+.constitutional-principle,
+.development-area {
+    flex-grow: 0; /* Не растягивать, если в ряду меньше 8 */
+    flex-shrink: 0; /* Не сжимать */
+    /* Рассчитываем ширину для 8 элементов в ряду с учетом gap: 10px.
+       (100% ширины контейнера - (7 промежутков * 10px)) / 8 элементов
+       Это для #constitutional-principles-container и #development-areas-container */
+    flex-basis: calc((100% - (7 * 10px)) / 8);
+    max-width: calc((100% - (7 * 10px)) / 8);
+    min-height: 90px; /* Достаточная высота для иконки и 2 строк текста */
+    padding: 8px 5px; /* Внутренние отступы */
+}
+.constitutional-principle img,
+.development-area img {
+    width: 45px; /* Иконки могут быть чуть меньше, если много текста */
+    height: 45px;
+}
+
+/* Стили для слотов Госкорпораций (например, если их меньше и они могут быть шире) */
+#corporations-container .item-slot { /* Специфично для слотов внутри corporations-container */
+    flex-grow: 1; /* Позволяем растягиваться, если их мало */
+    flex-basis: calc((100% - (4 * 10px)) / 5); /* Пример: 5 в ряд, если хочется */
+    max-width: calc((100% - (4 * 10px)) / 5); /* Ограничиваем, чтобы не более 5 в ряд */
+    /* Или оставить как общие item-slot, если они должны быть такими же узкими, как принципы */
+}
+
 
 .item-slot.selected, .advisor-portrait-slot.selected {
     border-color: #bbb; box-shadow: 0 0 6px #ddd;
 }
+
 .item-slot-label-small {
-    font-size: 0.7em; color: #ccc; text-align: center;
-    margin-top: 2px; /* Adjusted from auto */
-    width: 100%;
-    line-height: 1.2;
-    overflow: hidden; word-break: break-word;
-    max-height: 2.4em; /* Approx 2 lines */
+    font-size: 0.65em; /* Уменьшил для лучшего вмещения */
+    color: #ccc;
+    text-align: center;
+    width: 100%; /* Занять всю ширину родителя (слота) */
+    line-height: 1.15; /* Чуть плотнее */
+    overflow: hidden;
+    /* white-space: normal; */ /* Позволяет перенос по словам */
+    word-break: break-word; /* Для переноса очень длинных слов без пробелов */
+    max-height: 2.3em; /* Ограничение примерно в 2 строки */
+    /* text-overflow: ellipsis; /* Добавить троеточие, если текст не помещается (работает с white-space: nowrap или для блочных элементов) */
+                            /* Для многострочного троеточия нужны более сложные CSS или JS решения */
 }
+/* --- КОНЕЦ ИЗМЕНЕНИЙ для .category-items --- */
+
 
 .tooltip {
     position: fixed; background-color: rgba(10,10,10,0.92); color: #fff;
@@ -191,7 +249,8 @@ body {
 .tooltip strong { display: block; margin-bottom: 4px; font-size: 1.05em; color: #fff; }
 .tooltip small { display: block; color: #b0b0b0; font-size: 0.9em; line-height: 1.4; }
 
-.modal {
+
+.modal { /* Balance Modal */
     display: none; position: fixed; z-index: 1001; left: 0; top: 0;
     width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6);
     justify-content: center; align-items: center;
