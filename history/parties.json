@@ -1,0 +1,68 @@
+{
+    "options": [
+        {
+            "id": "united_russia",
+            "name": "Единая Россия",
+            "ideology_tags": ["centrism", "conservatism", "statism", "ruling_party"],
+            "color": "#0D47A1",
+            "popularity": 45,
+            "icon_path": "history/parties_emblems/united_russia.png"
+        },
+        {
+            "id": "ldpr",
+            "name": "ЛДПР",
+            "ideology_tags": ["nationalism", "populism", "right_wing"],
+            "color": "#a98307",
+            "popularity": 14,
+            "icon_path": "history/parties_emblems/ldpr.png"
+        },
+        {
+            "id": "rodina",
+            "name": "Родина",
+            "ideology_tags": ["national_conservatism", "patriotism", "left_nationalism"],
+            "color": "#B71C1C",
+            "popularity": 12,
+            "icon_path": "history/parties_emblems/rodina.png"
+        },
+        {
+            "id": "kprf",
+            "name": "КПРФ",
+            "ideology_tags": ["communism", "socialism", "left_wing"],
+            "color": "#CC0000",
+            "popularity": 10,
+            "icon_path": "history/parties_emblems/kprf.png"
+        },
+        {
+            "id": "rpzh_new_socdem",
+            "name": "РПЖ/Новые Соц-Демы",
+            "ideology_tags": ["social_democracy", "centrism", "progressivism"],
+            "color": "#fc6c85",
+            "popularity": 7,
+            "icon_path": "history/parties_emblems/rpzh_new_socdem.png"
+        },
+        {
+            "id": "yabloko_sps",
+            "name": "Яблоко/СПС",
+            "ideology_tags": ["liberalism", "social_liberalism", "pro_europeanism"],
+            "color": "#008000",
+            "popularity": 4,
+            "icon_path": "history/parties_emblems/yabloko_sps.png"
+        },
+        {
+            "id": "new_people",
+            "name": "Новые люди",
+            "ideology_tags": ["liberal_conservatism", "centrism", "business_oriented"],
+            "color": "#1faee9",
+            "popularity": 3,
+            "icon_path": "history/parties_emblems/new_people.png"
+        },
+        {
+            "id": "others",
+            "name": "Остальные партии",
+            "ideology_tags": ["various", "minor_parties"],
+            "color": "#808080",
+            "popularity": 5,
+            "icon_path": "history/parties_emblems/others.png"
+        }
+    ]
+}
