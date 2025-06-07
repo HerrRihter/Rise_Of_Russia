@@ -1,0 +1,104 @@
+// script.js
+
+// ... (GAME_DATA определение должно включать development_areas: {}) ...
+// const GAME_DATA = { ... development_areas: {}, ... };
+
+// В ALL_DATA_FILES_TO_LOAD:
+// Удалите индивидуальные файлы для development_areas, если были, и добавьте один общий:
+// "history/development_areas/education.json", // УДАЛИТЬ
+// "history/development_areas/medicine.json",  // УДАЛИТЬ
+// ... и так далее
+// ДОБАВИТЬ:
+// "history/development_areas.json", // ЕДИНЫЙ ФАЙЛ
+
+// В async function initializeGameData():
+// ...
+    else if (filePath.endsWith('development_areas.json') && data.areas) {
+        GAME_DATA.development_areas = {}; // Сохраняем как объект, ключ - ID области
+        data.areas.forEach(area => {
+            if (area.id) {
+                GAME_DATA.development_areas[area.id] = area;
+            } else {
+                console.warn("Найдена область развития без ID в файле:", filePath, area);
+            }
+        });
+    }
+// ...
+
+
+// В openSidePanelForCategory():
+// ...
+    else if (slotType.startsWith("development_area_")) {
+        const areaId = slotType.replace("development_area_", "");
+        const areaData = GAME_DATA.development_areas[areaId];
+        panelTitle = areaData?.name || "Область Развития";
+        optionsToShow = areaData?.options || []; // Массив опций для ВЫБОРА
+    }
+// ...
+
+// В selectOptionInSidePanel():
+// ...
+    else if (targetSlotType.startsWith("development_area_")) {
+        const areaId = targetSlotType.replace("development_area_", "");
+        const areaData = GAME_DATA.development_areas[areaId];
+        if (areaData && areaData.options) {
+            areaData.options.forEach(opt => opt.is_current = (opt.id === selectedOptionId));
+            chosenData = areaData.options.find(opt => opt.is_current);
+            // areaData.current_option_id = chosenData.id; // Если нужно хранить ID текущей опции в самом объекте area
+        }
+    }
+// ...
+    // При обновлении UI слота в selectOptionInSidePanel:
+    if (clickedMainSlotElement && chosenData) {
+        // ... (обновление img) ...
+        const mainSlotLabel = clickedMainSlotElement.querySelector('.item-slot-label-small');
+        if (mainSlotLabel) mainSlotLabel.textContent = chosenData.name_display || chosenData.name; // имя ВАРИАНТА
+        addTooltipEventsToElement(clickedMainSlotElement, chosenData.name_display, chosenData.effects_summary, null);
+    }
+// ...
+
+
+// В initializeUI():
+// ... (Лидер, Идеология, Партия, Нац. духи, Партийная диаграмма, Конституционные принципы) ...
+
+    const developmentContainer = document.getElementById('development-areas-container');
+    if (developmentContainer && GAME_DATA.development_areas) {
+        developmentContainer.innerHTML = ''; // Очищаем перед заполнением
+        const sectionTitleData = GAME_DATA.development_areas?.title_overall; // Если бы было в JSON
+        // Или используем статический заголовок из HTML
+
+        // Сортируем области развития по полю 'order' для корректного отображения
+        const sortedDevelopmentAreas = Object.values(GAME_DATA.development_areas)
+            .sort((a, b) => (a.order || Infinity) - (b.order || Infinity));
+
+        sortedDevelopmentAreas.forEach(area => { // area - это объект целой "области развития"
+            const currentOption = area.options?.find(opt => opt.is_current); // Находим активный ВАРИАНТ
+            if (currentOption) {
+                const slotEl = document.createElement('div');
+                // Классы для стилизации и идентификации
+                slotEl.className = 'item-slot development-area';
+                slotEl.dataset.slotType = `development_area_${area.id}`;
+                slotEl.dataset.currentId = currentOption.id; // ID активного варианта
+
+                const imgEl = document.createElement('img');
+                imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=DevA'; // Иконка самой области
+                imgEl.alt = area.name?.substring(0,3) || "Dev";
+                slotEl.appendChild(imgEl);
+
+                const labelEl = document.createElement('span');
+                labelEl.className = 'item-slot-label-small';
+                labelEl.textContent = currentOption.name_display; // Показываем имя ТЕКУЩЕГО ВАРИАНТА
+                slotEl.appendChild(labelEl);
+
+                // Тултип для слота показывает инфо о ТЕКУЩЕМ ВАРИАНТЕ
+                addTooltipEventsToElement(slotEl, currentOption.name_display, currentOption.effects_summary, null);
+                slotEl.addEventListener('click', function() {
+                    openSidePanelForCategory(this.dataset.slotType, this);
+                });
+                developmentContainer.appendChild(slotEl);
+            } else {
+                console.warn(`Для области развития '${area.id}' не найдена активная опция (is_current: true).`);
+            }
+        });
+    }
+// ... (инициализация слотов советников, корпораций, прочих тултипов)
