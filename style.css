@@ -112,14 +112,61 @@ body {
 }
 .ruling-party-info { flex-basis: 38%; }
 .ruling-party-info strong { display: block; margin-bottom: 5px; color: #fff; }
-.political-system-info-container { flex-basis: 28%; text-align: center; }
-.political-system-info-container img.flag { width: 35px; height: 23px; margin-bottom: 8px; border: 1px solid #777; }
-.balance-btn {
-    background-color: #5a5a5a; color: #e0e0e0; border: 1px solid #777;
-    padding: 6px 12px; font-size: 0.9em; border-radius: 3px; cursor: pointer;
-    margin-top: 10px; display: block; width: 100%;
+.political-system-info-container {
+    /* flex-basis: 28%; /* Возможно, потребуется немного скорректировать, если контент изменит высоту */
+    text-align: center; /* Оставляем, если кнопка должна быть по центру */
+    display: flex; /* Добавляем, чтобы кнопка баланса была под .pol-sys-upper */
+    flex-direction: column;
+    justify-content: space-between; /* Чтобы кнопка была внизу, если есть свободное место */
 }
-.balance-btn:hover { background-color: #6a6a6a; }
+
+/* Новый контейнер для иконки и текста */
+.pol-sys-upper {
+    display: flex;
+    align-items: center; /* Выровнять иконку и текст по центру вертикально */
+    margin-bottom: 10px; /* Отступ до кнопки "Баланс" */
+    width: 100%; /* Занимать всю ширину родителя */
+}
+
+.pol-sys-icon-wrapper {
+    flex-basis: 40%; /* Иконка занимает 40% ширины .pol-sys-upper */
+    flex-shrink: 0;  /* Не сжиматься */
+    padding-right: 8px; /* Небольшой отступ справа от иконки */
+    box-sizing: border-box;
+    display: flex; /* Для центрирования самой иконки внутри этого блока, если она меньше */
+    justify-content: center;
+    align-items: center;
+}
+
+.pol-sys-icon-wrapper img.flag { /* Стили для SVG флага */
+    width: 100%; /* Флаг занимает всю ширину обертки */
+    max-width: 45px; /* Но не больше определенного размера, чтобы не был огромным */
+    height: auto;   /* Сохраняем пропорции */
+    border: 1px solid #777;
+    display: block;
+}
+
+/* Если у вас другая иконка, не SVG флаг */
+.pol-sys-icon-wrapper img.pol-sys-icon {
+    max-width: 100%; /* Иконка не будет шире обертки */
+    max-height: 50px; /* Примерная максимальная высота иконки */
+    height: auto;
+    object-fit: contain;
+}
+
+
+.pol-sys-text-wrapper {
+    flex-basis: 60%; /* Текст занимает оставшиеся 60% */
+    text-align: left;  /* Выравниваем текст по левому краю относительно этого блока */
+    font-size: 0.95em; /* Можно немного подкорректировать размер шрифта */
+    line-height: 1.3;
+    color: #e0e0e0;
+}
+
+.balance-btn {
+    /* Стили для кнопки остаются прежними, она будет под блоком .pol-sys-upper */
+    margin-top: auto; /* Если хотите, чтобы кнопка была всегда внизу, даже если контента мало */
+}
 .party-popularity {
     flex-grow: 1; display: flex; align-items: center; background-color: #2a2a2a;
     padding: 10px; border: 1px solid #444; border-radius: 3px;
