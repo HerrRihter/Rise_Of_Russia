@@ -141,7 +141,7 @@ body {
 .party-list li.highlighted .party-color-box { border-color: #1e1e1e; }
 .party-color-box { width: 10px; height: 10px; margin-right: 6px; border: 1px solid #888; flex-shrink: 0;}
 
-.lower-section { max-height: 1000px; overflow-y: auto; padding-right: 10px; }
+.lower-section { max-height: 2400px; overflow-y: auto; padding-right: 10px; }
 .category-block { margin-bottom: 15px; }
 .category-header {
     background-color: #2a2a2a; color: white; padding: 8px 12px;
