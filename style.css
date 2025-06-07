@@ -170,48 +170,48 @@ body {
 .constitutional-principle,
 .development-area,
 .corporation-slot {
-    flex-grow: 0;
-    flex-shrink: 0;
-    /* 100% (ширина .category-items) - 7 промежутков по 10px. Делим на 8 элементов. */
-    flex-basis: calc((100% - 7 * 10px) / 8);
-    /* max-width: calc((100% - 7 * 10px) / 8); /* Можно также добавить для страховки */
-
-    /* ... остальные стили для слота (min-height, padding и т.д.) ... */
-    width: calc((100% - 7 * 10px) / 8); /* Добавьте это, чтобы переопределить любую другую ширину */
+    width: 132px; /* Оставляем эту ширину для раскладки 8 в ряд */
     min-height: 95px;
     background-color: #4a4a4a;
     border: 1px solid #666;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center; /* ИЗМЕНЕНО: Центрируем контент по вертикали */
     align-items: center;
     cursor: pointer;
     position: relative;
-    box-sizing: border-box; /* Тоже важно для слотов */
-    padding: 8px 5px;
+    box-sizing: border-box;
+    padding: 5px; /* Уменьшим вертикальный padding, чтобы дать больше места портрету */
     overflow: hidden;
 }
 
-/* Иконки внутри этих слотов */
+/* Иконки внутри ОБЫЧНЫХ слотов (не советников) */
 .item-slot img,
-.advisor-portrait-slot img,
 .constitutional-principle img,
 .development-area img,
 .corporation-slot img {
     width: 48px;
     height: 48px;
     object-fit: contain;
-    margin-bottom: 5px; /* Отступ для подписи */
+    margin-bottom: 5px;
 }
 
-/* Если для советников нужны немного другие размеры портрета внутри той же ячейки */
+/* Специфичные стили для портретов советников */
 .advisor-portrait-slot {
-     height: 105px; /* Может быть чуть выше за счет портрета, но ширина останется 132px */
+    height: 105px; /* Фиксированная высота, чтобы все слоты советников были одинаковыми */
+    padding: 2px; /* Очень маленький padding, чтобы портрет был максимально большим */
+    justify-content: center; /* Убедимся, что портрет центрирован, если он не занимает всю высоту */
 }
+
 .advisor-portrait-slot img {
-    width: 50px;
-    height: 65px; /* Делаем портрет советника повыше */
+    width: 100%;  /* Портрет занимает ВСЮ доступную ширину слота (с учетом padding слота) */
+    height: 100%; /* Портрет занимает ВСЮ доступную высоту слота */
+    object-fit: cover; /* ИЛИ 'contain', в зависимости от того, как вы хотите масштабировать */
+                       /* 'cover' - заполнит весь слот, возможно обрезав часть изображения */
+                       /* 'contain' - покажет все изображение, вписав его в слот, могут остаться поля */
+    margin-bottom: 0; /* Убираем нижний отступ, так как подписи у портретов нет */
+    border-radius: 3px; /* Небольшое скругление для самого портрета, если хотите */
 }
 
 
