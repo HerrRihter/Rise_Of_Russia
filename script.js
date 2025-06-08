@@ -30,7 +30,6 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
 
     element.addEventListener('mouseenter', function(event) {
         let tooltipContent = "";
-        // explicitSlotTitle берется из JS, this.dataset.slotTitle - из HTML, если он там есть.
         const slotTitle = explicitSlotTitle || this.dataset.slotTitle;
 
         if (slotTitle) {
@@ -38,29 +37,30 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
         }
 
         if (name) {
-            // Добавляем <hr> только если был slotTitle И есть name
-            tooltipContent += (slotTitle ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + `<strong>${name}</strong>`;
+            tooltipContent += (tooltipContent && slotTitle && !tooltipContent.endsWith("</small>") ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + `<strong>${name}</strong>`;
         }
-
+        
+        // Для constitutional_principles и development_areas effectsSummary будет null, так как мы его убрали из JSON (используем description)
+        // Для других элементов (нацдухи, советники, партии) effectsSummary может быть
         if (effectsSummary) {
-             // Добавляем <hr> если было что-то до этого (slotTitle или name)
-            tooltipContent += (slotTitle || name ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + effectsSummary.replace(/\n/g, '<br>');
+            tooltipContent += (tooltipContent && (name || slotTitle) && !tooltipContent.endsWith("</strong>") ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + effectsSummary.replace(/\n/g, '<br>');
         }
 
-        if (fullDescription) {
-            tooltipContent += (slotTitle || name || effectsSummary ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
+        if (fullDescription) { // Это будет основное описание для constitutional_principles и development_areas
+             const separatorNeeded = (name || slotTitle || effectsSummary) && tooltipContent;
+             tooltipContent += (separatorNeeded ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
         }
-
-        // Если слот пустой, но у него есть data-slot-title, показываем "Назначить / Выбрать"
-        if (!name && slotTitle && !effectsSummary && !fullDescription) {
+        
+        if (!name && slotTitle && !effectsSummary && !fullDescription && element.dataset.slotType && 
+            !element.dataset.slotType.startsWith("constitutional_principle_") && 
+            !element.dataset.slotType.startsWith("development_area_")) {
              tooltipContent += (slotTitle ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<strong>Назначить / Выбрать</strong>";
-        } else if (!name && !slotTitle && !effectsSummary && !fullDescription) { // Фолбэк на статический data-tooltip
+        } else if (!name && !slotTitle && !effectsSummary && !fullDescription) {
             const staticTooltipText = this.dataset.tooltip;
             if (staticTooltipText) {
                 tooltipContent = staticTooltipText.replace(/\n/g, '<br>');
             }
         }
-
 
         if (tooltipContent && tooltipElement) {
             tooltipElement.innerHTML = tooltipContent;
@@ -168,9 +168,9 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
         panelTitle = areaData.name || "Область Развития";
         optionsToShow = areaData.options || [];
     } else if (slotType.startsWith("corporation_slot_")) {
-        const corpCategoryData = GAME_DATA.corporations; // Object of corporations
+        const corpCategoryData = GAME_DATA.corporations;
         panelTitle = corpCategoryData?.title_overall || "Выбор Корпорации";
-        optionsToShow = Object.values(corpCategoryData || {}).filter(c => typeof c === 'object' && c.id); // Filter out title_overall if present
+        optionsToShow = Object.values(corpCategoryData || {}).filter(c => typeof c === 'object' && c.id);
     }
 
     sidePanelTitleEl.textContent = panelTitle;
@@ -197,7 +197,7 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
             optionEl.appendChild(nameEl);
 
             optionEl.addEventListener('click', () => selectOptionInSidePanel(optionData.id, currentCategoryForSidePanel));
-            addTooltipEventsToElement(optionEl, optionData.name_display || optionData.name, optionData.effects_summary || optionData.tooltip_summary, optionData.description);
+            addTooltipEventsToElement(optionEl, optionData.name_display || optionData.name, optionData.effects_summary, optionData.description);
             sidePanelOptionsContainer.appendChild(optionEl);
         });
     }
@@ -223,15 +223,16 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
     clickedMainSlotElement.dataset.currentId = chosenData.id;
     const mainSlotImg = clickedMainSlotElement.querySelector('img');
     const mainSlotLabel = clickedMainSlotElement.querySelector('.item-slot-label-small');
-    const slotTitleFromHTML = clickedMainSlotElement.dataset.slotTitle; // Get the title of the category slot
+    const slotTitleFromHTML = clickedMainSlotElement.dataset.slotTitle;
 
     if (mainSlotImg) {
         mainSlotImg.src = chosenData.icon_path || chosenData.portrait_path || 'https://via.placeholder.com/80/ccc/000?text=N/A';
         mainSlotImg.alt = chosenData.name?.substring(0, 3) || "ICO";
     }
     if (mainSlotLabel) mainSlotLabel.textContent = chosenData.name_display || chosenData.name;
-
-    addTooltipEventsToElement(clickedMainSlotElement, chosenData.name_display || chosenData.name, chosenData.tooltip_summary || chosenData.effects_summary, null, slotTitleFromHTML);
+    // Для constitutional_principles и development_areas передаем null вместо effects_summary
+    const effectsForTooltip = (principleId || developmentAreaId) ? null : (chosenData.tooltip_summary || chosenData.effects_summary);
+    addTooltipEventsToElement(clickedMainSlotElement, chosenData.name_display || chosenData.name, effectsForTooltip, (principleId || developmentAreaId) ? chosenData.description : null, slotTitleFromHTML);
     clickedMainSlotElement.classList.add('selected');
 
     if(sidePanelOptionsContainer) {
@@ -247,125 +248,64 @@ if(closeSidePanelBtn_SP) closeSidePanelBtn_SP.onclick = () => { if(selectionSide
 function drawPoliticalPieChart() {
     const canvas = document.getElementById('partyPieChartCanvas');
     const pieChartContainer = document.getElementById('politicalPieChart');
-    if (!canvas) {
-        if(pieChartContainer) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Canvas не найден</p>";
-        console.error("Элемент canvas для диаграммы партий не найден!");
-        return;
-    }
-     if (!GAME_DATA.parties_array || GAME_DATA.parties_array.length === 0) { // Проверка после canvas
-        if(pieChartContainer && !pieChartContainer.querySelector('p')) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет данных о партиях</p>";
-        return;
-    }
-
+    if (!canvas) { if(pieChartContainer) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Canvas не найден</p>"; console.error("Canvas не найден!"); return; }
+    if (!GAME_DATA.parties_array || GAME_DATA.parties_array.length === 0) { if(pieChartContainer && !pieChartContainer.querySelector('p')) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет данных о партиях</p>"; return; }
     const ctx = canvas.getContext('2d');
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 1;
+    const centerX = canvas.width / 2; const centerY = canvas.height / 2; const radius = Math.min(centerX, centerY) - 1;
     const parties = GAME_DATA.parties_array.filter(p => p.popularity > 0);
     const totalPopularity = parties.reduce((sum, party) => sum + party.popularity, 0);
-
     if (totalPopularity === 0) { if(pieChartContainer && !pieChartContainer.querySelector('p')) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет популярности</p>"; return; }
-
     const existingMessage = pieChartContainer.querySelector('p');
     if (existingMessage) pieChartContainer.removeChild(existingMessage);
     if (!pieChartContainer.contains(canvas)) pieChartContainer.appendChild(canvas);
-
-    let currentAngle = -0.5 * Math.PI;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const sectors = [];
-
+    let currentAngle = -0.5 * Math.PI; ctx.clearRect(0, 0, canvas.width, canvas.height); const sectors = [];
     parties.forEach(party => {
-        const sliceAngle = (party.popularity / totalPopularity) * 2 * Math.PI;
-        const endAngle = currentAngle + sliceAngle;
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, radius, currentAngle, endAngle);
-        ctx.closePath();
-        ctx.fillStyle = party.color || '#cccccc';
-        ctx.fill();
-        ctx.strokeStyle = '#3c3c3c';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        const sliceAngle = (party.popularity / totalPopularity) * 2 * Math.PI; const endAngle = currentAngle + sliceAngle;
+        ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.arc(centerX, centerY, radius, currentAngle, endAngle); ctx.closePath();
+        ctx.fillStyle = party.color || '#cccccc'; ctx.fill();
+        ctx.strokeStyle = '#3c3c3c'; ctx.lineWidth = 1; ctx.stroke();
         sectors.push({ partyName: party.name, popularity: party.popularity, startAngle: currentAngle, endAngle: endAngle });
         currentAngle = endAngle;
     });
-
     canvas.removeEventListener('mousemove', handlePieChartMouseMove);
-    canvas.addEventListener('mousemove', function(event) { handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius); });
+    canvas.addEventListener('mousemove', (event) => handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius));
     canvas.removeEventListener('mouseleave', handlePieChartMouseLeave);
     canvas.addEventListener('mouseleave', handlePieChartMouseLeave);
 }
 
 function handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius) {
-    if(!tooltipElement) return;
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
-    const dx = mouseX - centerX;
-    const dy = mouseY - centerY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    let foundSector = false;
-
+    if(!tooltipElement) return; const rect = canvas.getBoundingClientRect(); const mouseX = event.clientX - rect.left; const mouseY = event.clientY - rect.top;
+    const dx = mouseX - centerX; const dy = mouseY - centerY; const distance = Math.sqrt(dx * dx + dy * dy); let foundSector = false;
     if (distance <= radius) {
-        let angle = Math.atan2(dy, dx);
-        if (angle < -Math.PI / 2) angle += 2 * Math.PI; // Normalize to 0 to 2PI range starting from -Y axis
-
+        let angle = Math.atan2(dy, dx); if (angle < -Math.PI / 2) angle += 2 * Math.PI;
         for (const sector of sectors) {
-            let inSector = false;
-            // Normalize sector angles for comparison (especially if startAngle > endAngle)
-            let sAngle = sector.startAngle;
-            let eAngle = sector.endAngle;
-
-            if (sAngle < -Math.PI/2) sAngle += 2 * Math.PI;
-            if (eAngle < -Math.PI/2) eAngle += 2 * Math.PI;
-             if (sAngle > eAngle) { // Sector crosses the starting line (e.g., -PI/2)
-                if (angle >= sAngle || angle < eAngle) {
-                    inSector = true;
-                }
-            } else {
-                if (angle >= sAngle && angle < eAngle) {
-                    inSector = true;
-                }
-            }
-
+            let inSector = false; let sAngle = sector.startAngle; let eAngle = sector.endAngle;
+            if (sAngle < -Math.PI/2) sAngle += 2 * Math.PI; if (eAngle < -Math.PI/2) eAngle += 2 * Math.PI;
+            if (sAngle > eAngle) { if (angle >= sAngle || angle < eAngle) inSector = true; }
+            else { if (angle >= sAngle && angle < eAngle) inSector = true; }
             if (inSector) {
                 tooltipElement.innerHTML = `<strong>${sector.partyName}</strong><hr>${sector.popularity}%`;
-                tooltipElement.style.display = 'block';
-                positionTooltip(event);
-                foundSector = true;
-                return;
+                tooltipElement.style.display = 'block'; positionTooltip(event); foundSector = true; return;
             }
         }
     }
     if (!foundSector) tooltipElement.style.display = 'none';
 }
 
-function handlePieChartMouseLeave() {
-    if (tooltipElement) tooltipElement.style.display = 'none';
-}
+function handlePieChartMouseLeave() { if (tooltipElement) tooltipElement.style.display = 'none'; }
 
 function updatePartyList() {
     const partyListContainer = document.getElementById('partyListContainer');
     if (!partyListContainer) { console.error("Контейнер списка партий не найден!"); return; }
     if (!GAME_DATA.parties_array || GAME_DATA.parties_array.length === 0) { partyListContainer.innerHTML = "<li>Нет данных о партиях</li>"; return; }
-
-    const rulingPartyId = "united_russia";
-    const sortedParties = [...GAME_DATA.parties_array]
-        .filter(p => p.popularity > 0 || p.id === rulingPartyId)
-        .sort((a, b) => b.popularity - a.popularity);
+    const rulingPartyId = "united_russia"; const sortedParties = [...GAME_DATA.parties_array].filter(p => p.popularity > 0 || p.id === rulingPartyId).sort((a, b) => b.popularity - a.popularity);
     partyListContainer.innerHTML = '';
     sortedParties.forEach(party => {
-        const listItem = document.createElement('li');
-        if (party.id === rulingPartyId) listItem.classList.add('highlighted');
-        const colorBox = document.createElement('div');
-        colorBox.className = 'party-color-box';
-        colorBox.style.backgroundColor = party.color || '#cccccc';
-        const partyNameSpan = document.createElement('span');
-        partyNameSpan.textContent = ` ${party.name} (${party.popularity}%)`;
-        listItem.appendChild(colorBox);
-        listItem.appendChild(partyNameSpan);
-        let effectsForTooltip = `Популярность: ${party.popularity}%`;
-        if (party.ideology_tags_rus && party.ideology_tags_rus.length > 0) effectsForTooltip += `\nИдеологии: ${party.ideology_tags_rus.join(', ')}`;
+        const listItem = document.createElement('li'); if (party.id === rulingPartyId) listItem.classList.add('highlighted');
+        const colorBox = document.createElement('div'); colorBox.className = 'party-color-box'; colorBox.style.backgroundColor = party.color || '#cccccc';
+        const partyNameSpan = document.createElement('span'); partyNameSpan.textContent = ` ${party.name} (${party.popularity}%)`;
+        listItem.appendChild(colorBox); listItem.appendChild(partyNameSpan);
+        let effectsForTooltip = `Популярность: ${party.popularity}%`; if (party.ideology_tags_rus?.length) effectsForTooltip += `\nИдеологии: ${party.ideology_tags_rus.join(', ')}`;
         addTooltipEventsToElement(listItem, party.name, effectsForTooltip, party.short_description);
         partyListContainer.appendChild(listItem);
     });
@@ -374,10 +314,8 @@ function updatePartyList() {
 // --- UI Initialization Function ---
 function initializeUI() {
     // Leader
-    const countryLeaderId = "putin_vladimir";
-    const leaderData = GAME_DATA.leaders?.[countryLeaderId];
-    const leaderPortraitEl = document.querySelector('.leader-pane .leader-portrait img');
-    const leaderNameEl = document.querySelector('.leader-pane .leader-name');
+    const countryLeaderId = "putin_vladimir"; const leaderData = GAME_DATA.leaders?.[countryLeaderId];
+    const leaderPortraitEl = document.querySelector('.leader-pane .leader-portrait img'); const leaderNameEl = document.querySelector('.leader-pane .leader-name');
     if (leaderData && leaderPortraitEl && leaderNameEl) {
         leaderPortraitEl.src = leaderData.portrait_path || 'https://via.placeholder.com/180x210/555/fff?text=Ldr';
         leaderNameEl.textContent = leaderData.name || "Неизвестный Лидер";
@@ -385,10 +323,8 @@ function initializeUI() {
     }
 
     // Ideology
-    const currentIdeologyId = "sovereign_democracy";
-    const ideologyData = GAME_DATA.ideologies?.[currentIdeologyId];
-    const ideologyIconContainer = document.querySelector('.ideology-info .ideology-icon');
-    const ideologyIconEl = ideologyIconContainer?.querySelector('img');
+    const currentIdeologyId = "sovereign_democracy"; const ideologyData = GAME_DATA.ideologies?.[currentIdeologyId];
+    const ideologyIconContainer = document.querySelector('.ideology-info .ideology-icon'); const ideologyIconEl = ideologyIconContainer?.querySelector('img');
     const ideologyNameEl = document.querySelector('.ideology-info .ideology-name');
     if (ideologyData && ideologyIconEl && ideologyNameEl && ideologyIconContainer) {
         ideologyIconEl.src = ideologyData.icon_path || 'https://via.placeholder.com/45/666/fff?text=Idlgy';
@@ -397,15 +333,12 @@ function initializeUI() {
         if(ideologyIconContainer.dataset.tooltip) ideologyIconContainer.removeAttribute('data-tooltip');
     }
 
-    // Party Emblem (Ruling Party)
-    const rulingPartyId = "united_russia";
-    const partyData = GAME_DATA.parties?.[rulingPartyId];
-    const partyEmblemContainer = document.querySelector('.party-emblem');
-    const partyEmblemEl = partyEmblemContainer?.querySelector('img');
-     if (partyData && partyEmblemEl && partyEmblemContainer) {
+    // Party Emblem
+    const rulingPartyId = "united_russia"; const partyData = GAME_DATA.parties?.[rulingPartyId];
+    const partyEmblemContainer = document.querySelector('.party-emblem'); const partyEmblemEl = partyEmblemContainer?.querySelector('img');
+    if (partyData && partyEmblemEl && partyEmblemContainer) {
         partyEmblemEl.src = partyData.icon_path || 'https://via.placeholder.com/45/666/fff?text=Pty';
-        let partyEffectsSummary = `Популярность: ${partyData.popularity}%\n`;
-        if (partyData.ideology_tags_rus) partyEffectsSummary += `Идеологии: ${partyData.ideology_tags_rus.join(', ')}`;
+        let partyEffectsSummary = `Популярность: ${partyData.popularity}%\n`; if (partyData.ideology_tags_rus) partyEffectsSummary += `Идеологии: ${partyData.ideology_tags_rus.join(', ')}`;
         addTooltipEventsToElement(partyEmblemContainer, partyData.name, partyEffectsSummary, partyData.short_description);
         if(partyEmblemContainer.dataset.tooltip) partyEmblemContainer.removeAttribute('data-tooltip');
     }
@@ -414,56 +347,41 @@ function initializeUI() {
     const nationalSpiritsContainer = document.querySelector('.national-spirits');
     if (nationalSpiritsContainer && GAME_DATA.national_spirits) {
         nationalSpiritsContainer.innerHTML = '';
-        const activeSpiritIds = ["fortress_state", "near_abroad_policy", "national_projects_infrastructure", "reindustrialization_opk_tech_sovereignty", "divided_society", "systemic_corruption", "oil_gas_rent_stabilization_fund", "sovereign_economy", "social_initiatives_family_support", "russian_dream_culture_identity", "soft_power_russia_abroad"]; // Example, make this dynamic
+        const activeSpiritIds = ["fortress_state", "near_abroad_policy", "national_projects_infrastructure"]; // Example
         activeSpiritIds.forEach(spiritId => {
             const spiritData = GAME_DATA.national_spirits[spiritId];
             if (spiritData) {
                 const spiritEl = document.createElement('div'); spiritEl.className = 'spirit-icon';
-                const imgEl = document.createElement('img');
-                imgEl.src = spiritData.icon_path || 'https://via.placeholder.com/40/777/000?text=Sp';
-                imgEl.alt = spiritData.name?.substring(0,2) || "SP";
-                spiritEl.appendChild(imgEl);
+                const imgEl = document.createElement('img'); imgEl.src = spiritData.icon_path || 'https://via.placeholder.com/40/777/000?text=Sp';
+                imgEl.alt = spiritData.name?.substring(0,2) || "SP"; spiritEl.appendChild(imgEl);
                 addTooltipEventsToElement(spiritEl, spiritData.name, spiritData.effects_summary, spiritData.description);
                 nationalSpiritsContainer.appendChild(spiritEl);
             }
         });
     }
 
-    // Political Parties Chart and List
-    drawPoliticalPieChart();
-    updatePartyList();
+    // Political Parties
+    drawPoliticalPieChart(); updatePartyList();
     const rulingPartyInfoStrongEl = document.querySelector('.ruling-party-info strong');
-    if (rulingPartyInfoStrongEl && GAME_DATA.parties?.[rulingPartyId]) {
-        rulingPartyInfoStrongEl.textContent = GAME_DATA.parties[rulingPartyId].name;
-    }
+    if (rulingPartyInfoStrongEl && GAME_DATA.parties?.[rulingPartyId]) rulingPartyInfoStrongEl.textContent = GAME_DATA.parties[rulingPartyId].name;
 
     // Constitutional Principles
     const principlesContainer = document.getElementById('constitutional-principles-container');
     if (principlesContainer && GAME_DATA.constitutional_principles) {
         principlesContainer.innerHTML = '';
-        Object.values(GAME_DATA.constitutional_principles)
-            .sort((a, b) => (a.article_number || Infinity) - (b.article_number || Infinity))
+        Object.values(GAME_DATA.constitutional_principles).sort((a, b) => (a.article_number || Infinity) - (b.article_number || Infinity))
             .forEach(principle => {
                 const currentOption = principle.options?.find(opt => opt.is_current);
                 if (currentOption) {
-                    const slotEl = document.createElement('div');
-                    slotEl.className = 'item-slot constitutional-principle';
-                    slotEl.dataset.slotType = `constitutional_principle_${principle.id}`;
-                    slotEl.dataset.currentId = currentOption.id;
-                    // slotEl.dataset.slotTitle = principle.name; // Название категории для тултипа пустого слота
-
-                    const imgEl = document.createElement('img');
-                    imgEl.src = principle.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=C';
-                    slotEl.appendChild(imgEl);
-                    const labelEl = document.createElement('span');
-                    labelEl.className = 'item-slot-label-small';
-                    labelEl.textContent = currentOption.name_display;
-                    slotEl.appendChild(labelEl);
-                    // Для основного слота показываем имя текущей опции, ее эффекты, и название категории/принципа
-                    addTooltipEventsToElement(slotEl, currentOption.name_display, currentOption.effects_summary, null, principle.name);
+                    const slotEl = document.createElement('div'); slotEl.className = 'item-slot constitutional-principle';
+                    slotEl.dataset.slotType = `constitutional_principle_${principle.id}`; slotEl.dataset.currentId = currentOption.id;
+                    const imgEl = document.createElement('img'); imgEl.src = principle.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=C'; slotEl.appendChild(imgEl);
+                    const labelEl = document.createElement('span'); labelEl.className = 'item-slot-label-small'; labelEl.textContent = currentOption.name_display; slotEl.appendChild(labelEl);
+                    addTooltipEventsToElement(slotEl, currentOption.name_display, null, currentOption.description, principle.name); // effects_summary is null
+                    // Оставляем возможность клика, панель покажет детали одной опции
                     slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
                     principlesContainer.appendChild(slotEl);
-                } else { console.warn(`Для конституционного принципа '${principle.id}' не найдена активная опция.`); }
+                } else { console.warn(`Для принципа '${principle.id}' нет активной опции.`); }
         });
     }
 
@@ -471,85 +389,59 @@ function initializeUI() {
     const developmentContainer = document.getElementById('development-areas-container');
     if (developmentContainer && GAME_DATA.development_areas) {
         developmentContainer.innerHTML = '';
-        Object.values(GAME_DATA.development_areas)
-            .sort((a,b) => (a.order || Infinity) - (b.order || Infinity))
+        Object.values(GAME_DATA.development_areas).sort((a,b) => (a.order || Infinity) - (b.order || Infinity))
             .forEach(area => {
                 const currentOption = area.options?.find(opt => opt.is_current);
                 if (currentOption) {
-                    const slotEl = document.createElement('div');
-                    slotEl.className = 'item-slot development-area';
-                    slotEl.dataset.slotType = `development_area_${area.id}`;
-                    slotEl.dataset.currentId = currentOption.id;
-                    // slotEl.dataset.slotTitle = area.name;
-
-                    const imgEl = document.createElement('img');
-                    imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=D';
-                    slotEl.appendChild(imgEl);
-                    const labelEl = document.createElement('span');
-                    labelEl.className = 'item-slot-label-small';
-                    labelEl.textContent = currentOption.name_display;
-                    slotEl.appendChild(labelEl);
-                    addTooltipEventsToElement(slotEl, currentOption.name_display, currentOption.effects_summary, null, area.name);
+                    const slotEl = document.createElement('div'); slotEl.className = 'item-slot development-area';
+                    slotEl.dataset.slotType = `development_area_${area.id}`; slotEl.dataset.currentId = currentOption.id;
+                    const imgEl = document.createElement('img'); imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=D'; slotEl.appendChild(imgEl);
+                    const labelEl = document.createElement('span'); labelEl.className = 'item-slot-label-small'; labelEl.textContent = currentOption.name_display; slotEl.appendChild(labelEl);
+                     // Для Development Areas передаем effects_summary, если они есть в JSON, иначе null
+                    addTooltipEventsToElement(slotEl, currentOption.name_display, currentOption.effects_summary, currentOption.description, area.name);
                     slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
                     developmentContainer.appendChild(slotEl);
-                } else { console.warn(`Для области развития '${area.id}' не найдена активная опция.`); }
+                } else { console.warn(`Для области развития '${area.id}' нет активной опции.`); }
         });
     }
 
-    // Initialize pre-defined HTML slots (Advisors, Corporations)
+    // Pre-defined HTML slots (Advisors, Corporations)
     document.querySelectorAll('[data-slot-type]').forEach(slotEl => {
         const slotIdAttr = slotEl.id || "";
-        // Пропускаем контейнеры и элементы, уже обработанные динамической генерацией или специальной логикой
         if (slotIdAttr === 'constitutional-principles-container' || slotIdAttr === 'development-areas-container' ||
             slotEl.dataset.slotType === 'ideology_display' || slotEl.dataset.slotType === 'party_display' ||
             slotEl.classList.contains('constitutional-principle') || slotEl.classList.contains('development-area')) {
             return;
         }
-
-        const slotType = slotEl.dataset.slotType;
-        const currentItemId = slotEl.dataset.currentId;
-        let currentItemData = null;
-        // slotTitleFromHTML используется, если для слота задан data-slot-title в HTML
+        const slotType = slotEl.dataset.slotType; const currentItemId = slotEl.dataset.currentId; let currentItemData = null;
         const slotTitleFromHTML = slotEl.dataset.slotTitle || null;
-
-
         if (currentItemId) {
             if (slotType.startsWith("advisor_")) currentItemData = GAME_DATA.leaders?.[currentItemId];
             else if (slotType.startsWith("corporation_slot_")) currentItemData = GAME_DATA.corporations?.[currentItemId];
         }
-
-        const imgEl = slotEl.querySelector('img');
-        const labelEl = slotEl.querySelector('.item-slot-label-small');
-
+        const imgEl = slotEl.querySelector('img'); const labelEl = slotEl.querySelector('.item-slot-label-small');
         if (currentItemData && imgEl) {
             imgEl.src = currentItemData.icon_path || currentItemData.portrait_path || 'https://via.placeholder.com/80/ccc/000?text=N/A';
             imgEl.alt = currentItemData.name?.substring(0, 3) || "ICO";
-            if(labelEl && slotEl.classList.contains('item-slot') && !slotEl.classList.contains('advisor-portrait-slot')) {
-                 labelEl.textContent = currentItemData.name_display || currentItemData.name;
-            }
+            if(labelEl && slotEl.classList.contains('item-slot') && !slotEl.classList.contains('advisor-portrait-slot')) labelEl.textContent = currentItemData.name_display || currentItemData.name;
             slotEl.classList.add('selected');
-            addTooltipEventsToElement(slotEl, currentItemData.name, currentItemData.tooltip_summary || currentItemData.effects_summary, null, slotTitleFromHTML);
+            addTooltipEventsToElement(slotEl, currentItemData.name, currentItemData.tooltip_summary || currentItemData.effects_summary, currentItemData.description, slotTitleFromHTML);
         } else if (imgEl) {
             let emptyIconSrc = 'https://via.placeholder.com/50x50/333/666?text=+';
             if (slotEl.classList.contains('advisor-portrait-slot')) emptyIconSrc = 'https://via.placeholder.com/65x65/333/666?text=+';
-            imgEl.src = emptyIconSrc;
-            imgEl.alt = "+";
-            if(labelEl) labelEl.textContent = "";
+            imgEl.src = emptyIconSrc; imgEl.alt = "+"; if(labelEl) labelEl.textContent = "";
             slotEl.classList.remove('selected');
-            addTooltipEventsToElement(slotEl, null, null, null, slotTitleFromHTML); // Передаем slotTitle для пустых слотов
+            addTooltipEventsToElement(slotEl, null, null, null, slotTitleFromHTML);
         }
-
-        // Добавляем слушатель клика, если он еще не был добавлен
         if(!slotType.includes("_display") && !slotEl.getAttribute('listenerAttached')) {
            slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
-           slotEl.setAttribute('listenerAttached', 'true'); // Помечаем, что слушатель добавлен
+           slotEl.setAttribute('listenerAttached', 'true');
         }
     });
 
-    // Tooltips for static elements (focus banner, pie chart etc.)
     document.querySelectorAll('.national-focus-banner, .pie-chart').forEach(el => {
-        if(el.dataset.tooltip && !el.getAttribute('listenerAttached')) { // Проверяем, что еще не обработан
-             addTooltipEventsToElement(el, el.dataset.tooltip, null, null);
+        if(el.dataset.tooltip && !el.getAttribute('listenerAttached')) {
+             addTooltipEventsToElement(el, el.dataset.tooltip, null, null); // Для статичных элементов data-tooltip - это "name"
              el.setAttribute('listenerAttached', 'true');
         }
     });
