@@ -17,16 +17,16 @@ body {
 }
 
 .hoi4-politics-screen {
-    width: 100%; /* Адаптивная ширина */
-    max-width: 1200px; /* Ограничение максимальной ширины */
+    width: 100%;
+    max-width: 1200px;
     min-height: 1000px;
     background-color: #3c3c3c;
     border: 2px solid #555;
     box-shadow: 0 0 15px rgba(0,0,0,0.5);
     display: flex;
     flex-direction: column;
-    margin-left: auto; /* Центрирование при max-width */
-    margin-right: auto;/* Центрирование при max-width */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .window-title-bar {
@@ -80,7 +80,7 @@ body {
 
 .national-info-pane { flex-grow: 1; display: flex; flex-direction: column; }
 .national-focus-banner {
-    height: 100px; background-color: #555; border: 1px solid #777; margin-bottom: 8px;
+    height: 100px; background-color: #555; border: 1px solid #777; margin-bottom: 10px; /* Слегка уменьшил отступ */
     display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
     position: relative; padding: 8px; cursor: help;
 }
@@ -96,19 +96,36 @@ body {
 }
 .focus-progress { height: 100%; background-color: #aa00aa; }
 
+/* --- СТИЛИ ДЛЯ НАЦИОНАЛЬНЫХ ДУХОВ --- */
 .national-spirits {
-    display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 5px;
-    margin-bottom: 10px; background-color: #2a2a2a; padding: 8px; border-radius: 3px;
-    min-height: 40px;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 10px; /* Отступ между иконками духов */
+    margin-bottom: 15px;
+    background-color: transparent; /* Убрали фон контейнера */
+    padding: 0; /* Убрали паддинг контейнера */
+    min-height: 60px; /* Поддерживаем высоту, если духов нет */
 }
 .spirit-icon {
-    width: 40px; height: 40px; background-color: #666;
-    border: 1px solid #888; cursor: help; border-radius: 3px;
-    display: flex; justify-content: center; align-items: center;
+    width: 56px;
+    height: 56px;
+    /* background-color убран */
+    /* border убран */
+    cursor: help;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.spirit-icon img { width: 100%; height: 100%; object-fit: contain; }
+.spirit-icon img {
+    width: 100%; /* Изображение духа занимает всю область .spirit-icon */
+    height: 100%;
+    object-fit: contain; /* Для PNG с прозрачностью это лучший вариант */
+}
+/* --- КОНЕЦ СТИЛЕЙ ДЛЯ НАЦИОНАЛЬНЫХ ДУХОВ --- */
 
-.political-details { display: flex; justify-content: space-between; gap: 10px; }
+
+.political-details { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px;}
 .ruling-party-info, .political-system-info-container {
     background-color: #2a2a2a; padding: 10px; font-size: 0.85em;
     border: 1px solid #444; border-radius: 3px;
@@ -121,7 +138,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
-    flex-basis: 28%; /* Примерное значение, можно будет подстроить */
+    flex-basis: 28%;
 }
 .pol-sys-upper {
     display: flex;
@@ -231,16 +248,16 @@ body {
 
 .advisor-portrait-slot {
     height: 180px;
-    padding: 2px; /* Уменьшаем padding, чтобы портрет занял больше места */
+    padding: 2px;
     justify-content: center;
 }
 .advisor-portrait-slot img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Чтобы заполнить слот, сохранив пропорции */
+    object-fit: cover;
     display: block;
-    border-radius: 3px; /* Небольшое скругление для самого портрета */
-    margin-bottom: 0; /* Убираем, т.к. нет подписи */
+    border-radius: 3px;
+    margin-bottom: 0;
 }
 
 .item-slot.selected,
@@ -259,8 +276,8 @@ body {
     width: 100%;
     line-height: 1.2;
     word-break: break-word;
-    max-height: 3.6em; /* Примерно 3 строки */
-    margin-top: auto; /* Прижать текст к низу слота, если есть место */
+    max-height: 3.6em;
+    margin-top: auto;
 }
 
 .tooltip {
@@ -350,8 +367,8 @@ body {
     .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
         width: 40px; height: 40px;
     }
-    .advisor-portrait-slot { height: 150px; /* Адаптируем высоту портретов тоже */ }
-    .advisor-portrait-slot img { width: 100%; height: 100%; /* Заполняет новый размер слота */ }
+    .advisor-portrait-slot { height: 150px; }
+    .advisor-portrait-slot img { width: 100%; height: 100%; }
     .item-slot-label-small { font-size: 0.65em; max-height: 3.3em; }
 
     .political-details { gap: 8px; }
@@ -367,12 +384,16 @@ body {
 
     .upper-section { padding-bottom: 15px; margin-bottom: 10px; }
     .leader-pane { max-width: 300px; }
-    .leader-portrait { width: 150px; height: 180px; } /* Меньше для телефона */
-    .ideology-icon, .party-emblem { width: 50px; height: 50px; min-width: 50px;} /* Чуть увеличим иконки идеологии/партии */
+    .leader-portrait { width: 150px; height: 180px; }
+    .ideology-icon, .party-emblem { width: 50px; height: 50px; min-width: 50px;}
 
 
     .national-focus-banner { height: 80px; }
     .focus-title-bar { font-size: 0.9em; width: 150px; }
+    /* Для .national-spirits на мобильных - иконки могут стать меньше */
+    .national-spirits { gap: 4px; padding: 5px; min-height: 30px; }
+    .spirit-icon { width: 30px; height: 30px; }
+
 
     .political-details { flex-direction: column; gap: 10px; }
     .ruling-party-info, .political-system-info-container, .party-popularity { flex-basis: auto; width: 100%; }
@@ -390,9 +411,9 @@ body {
     .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
         width: 32px; height: 32px; margin-bottom: 3px;
     }
-    .advisor-portrait-slot { height: 120px; /* Высота портрета советника на мобильном */ }
+    .advisor-portrait-slot { height: 120px; }
     .advisor-portrait-slot img { width: 100%; height: 100%; }
-    .item-slot-label-small { font-size: 0.6em; max-height: 2.4em; /* 2 строки */ }
+    .item-slot-label-small { font-size: 0.6em; max-height: 2.4em; }
 
     .side-panel { width: 96%; left: 2%; right: 2%; top: 5px; max-height: calc(100vh - 10px); font-size: 0.9em;}
     .side-panel-header { padding: 8px 10px; }
