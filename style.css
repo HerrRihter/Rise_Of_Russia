@@ -54,29 +54,90 @@ body {
 }
 
 .leader-pane {
-    flex-basis: 230px; display: flex; flex-direction: column;
-    align-items: center; margin-right: 20px;
+    flex-basis: 250px; /* Возможно, немного увеличить, чтобы вместить новые размеры */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
 }
-.leader-portrait {
-    width: 156px; height: 210px; background-color: #555;
-    border: 1px solid #777; margin-bottom: 8px; display: flex;
-    justify-content: center; align-items: center; text-align: center;
+
+/* Контейнер для иконки идеологии и ее названия */
+.ideology-info {
+    display: flex;
+    align-items: stretch; /* ИЗМЕНЕНИЕ: Выравниваем элементы по высоте, растягивая их */
+    width: 100%;         /* Занимает всю ширину .leader-pane (или 95%, если вы хотите отступы) */
+    max-width: 230px;   /* Ограничиваем максимальную ширину, чтобы не было слишком широко */
+    margin-top: 10px;
+    margin-bottom: 10px; /* Добавим отступ снизу */
+    gap: 8px; /* Отступ между иконкой и блоком названия */
 }
-.leader-portrait img { width: 100%; height: 100%; object-fit: cover; }
-.leader-name, .ideology-name {
-    background-color: #223e22; color: #ffd700; padding: 6px 12px;
-    text-align: center; font-size: 1em; border: 1px solid #335e33;
-    border-radius: 3px; width: 95%; margin-bottom: 8px;
+
+.ideology-icon {
+    width: 75px;  /* НОВЫЙ РАЗМЕР - подберите по вкусу */
+    height: 75px; /* Делаем квадратным */
+    min-width: 75px; /* Чтобы не сжимался */
+    background-color: #333; /* Темнее фон для лучшего контраста, если картинка не загрузится */
+    cursor: pointer;
+    border: 1px solid #555; /* Темнее граница */
+    /* margin-right убран, используем gap у родителя */
+    /* margin-bottom убран, отступы через родителя или другие элементы */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 4px; /* Небольшое скругление */
+    box-sizing: border-box; /* Чтобы padding/border не влияли на общий размер */
 }
-.ideology-name { background-color: #4a3b2a; font-size: 0.9em; }
-.ideology-info { display: flex; align-items: center; width: 95%; margin-top: 8px; }
-.ideology-icon, .party-emblem {
-    width: 90px; height: 90px; background-color: #555; cursor:pointer;
-    border: 1px solid #777; margin-right: 8px; margin-bottom: 8px;
-    display: flex; justify-content: center; align-items: center;
+
+.ideology-icon img {
+    width: 90%;   /* Изображение чуть меньше контейнера для рамки */
+    height: 90%;
+    object-fit: contain;
+    display: block;
 }
-.ideology-icon img, .party-emblem img { width: 100%; height: 100%; object-fit: contain; }
-.party-emblem { margin-right: 0; }
+
+.ideology-name {
+    background-color: #4a3b2a;
+    color: #ffd700;
+    padding: 8px; /* Внутренние отступы */
+    font-size: 0.9em;
+    border: 1px solid #5a4b3a;
+    border-radius: 4px; /* Скругление как у иконки */
+    text-align: center;
+    
+    display: flex; /* Для вертикального центрирования текста */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    flex-grow: 1;
+    min-height: 75px; /* Гарантируем минимальную высоту, равную иконке */
+    box-sizing: border-box;
+}
+
+.party-emblem {
+    width: 75px;
+    height: 75px;
+    min-width: 75px;
+    background-color: #333;
+    cursor:pointer;
+    border: 1px solid #555;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.party-emblem img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    display: block;
+}
+
 
 .national-info-pane { flex-grow: 1; display: flex; flex-direction: column; }
 .national-focus-banner {
