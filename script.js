@@ -518,9 +518,9 @@ const focusModalDescription = document.getElementById('focusModalDescription');
 // Загрузка данных для текущего нац. фокуса (лучше делать это в initializeGameData, если данные в JSON)
 // Пока что оставим заглушку, которую вы можете заполнять по ходу игры
 let currentNationalFocusData = {
-    title: "Осень 2004 - Ход X", // Это будет браться с баннера
-    full_image_path: "history/focus_art/autumn_2004_full.png", // ПУТЬ К ПОЛНОМУ ИЗОБРАЖЕНИЮ
-    custom_description: "Здесь должно быть подробное, уникальное описание для этого национального фокуса, которое вы будете обновлять.\nНапример, какие события он затрагивает, какие долгосрочные цели преследует и т.д."
+    title: "Осень 2003 - Ход 23", // Это будет браться с баннера
+    full_image_path: "history/turn_images/Autumn2003.png", // ПУТЬ К ПОЛНОМУ ИЗОБРАЖЕНИЮ
+    custom_description: "Краткая сводка для любопытных"
 };
 
 if (nationalFocusBannerClickable) {
