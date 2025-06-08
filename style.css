@@ -17,13 +17,16 @@ body {
 }
 
 .hoi4-politics-screen {
-    width: 1200px;
+    width: 100%; /* Адаптивная ширина */
+    max-width: 1200px; /* Ограничение максимальной ширины */
     min-height: 1000px;
     background-color: #3c3c3c;
     border: 2px solid #555;
     box-shadow: 0 0 15px rgba(0,0,0,0.5);
     display: flex;
     flex-direction: column;
+    margin-left: auto; /* Центрирование при max-width */
+    margin-right: auto;/* Центрирование при max-width */
 }
 
 .window-title-bar {
@@ -112,61 +115,46 @@ body {
 }
 .ruling-party-info { flex-basis: 38%; }
 .ruling-party-info strong { display: block; margin-bottom: 5px; color: #fff; }
-.political-system-info-container {
-    /* flex-basis: 28%; /* Возможно, потребуется немного скорректировать, если контент изменит высоту */
-    text-align: center; /* Оставляем, если кнопка должна быть по центру */
-    display: flex; /* Добавляем, чтобы кнопка баланса была под .pol-sys-upper */
-    flex-direction: column;
-    justify-content: space-between; /* Чтобы кнопка была внизу, если есть свободное место */
-}
 
-/* Новый контейнер для иконки и текста */
+.political-system-info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    flex-basis: 28%; /* Примерное значение, можно будет подстроить */
+}
 .pol-sys-upper {
     display: flex;
-    align-items: center; /* Выровнять иконку и текст по центру вертикально */
-    margin-bottom: 10px; /* Отступ до кнопки "Баланс" */
-    width: 100%; /* Занимать всю ширину родителя */
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
 }
-
 .pol-sys-icon-wrapper {
-    flex-basis: 40%; /* Иконка занимает 40% ширины .pol-sys-upper */
-    flex-shrink: 0;  /* Не сжиматься */
-    padding-right: 8px; /* Небольшой отступ справа от иконки */
+    flex-basis: 40%;
+    flex-shrink: 0;
+    padding-right: 8px;
     box-sizing: border-box;
-    display: flex; /* Для центрирования самой иконки внутри этого блока, если она меньше */
+    display: flex;
     justify-content: center;
     align-items: center;
 }
-
-.pol-sys-icon-wrapper img.flag { /* Стили для SVG флага */
-    width: 100%; /* Флаг занимает всю ширину обертки */
-    max-width: 45px; /* Но не больше определенного размера, чтобы не был огромным */
-    height: auto;   /* Сохраняем пропорции */
-    border: 1px solid #777;
-    display: block;
+.pol-sys-icon-wrapper img.flag {
+    width: 100%; max-width: 45px; height: auto;
+    border: 1px solid #777; display: block;
 }
-
-/* Если у вас другая иконка, не SVG флаг */
-.pol-sys-icon-wrapper img.pol-sys-icon {
-    max-width: 100%; /* Иконка не будет шире обертки */
-    max-height: 50px; /* Примерная максимальная высота иконки */
-    height: auto;
-    object-fit: contain;
-}
-
-
 .pol-sys-text-wrapper {
-    flex-basis: 60%; /* Текст занимает оставшиеся 60% */
-    text-align: left;  /* Выравниваем текст по левому краю относительно этого блока */
-    font-size: 0.95em; /* Можно немного подкорректировать размер шрифта */
-    line-height: 1.3;
-    color: #e0e0e0;
+    flex-basis: 60%; text-align: left;
+    font-size: 0.95em; line-height: 1.3; color: #e0e0e0;
 }
-
 .balance-btn {
-    /* Стили для кнопки остаются прежними, она будет под блоком .pol-sys-upper */
-    margin-top: auto; /* Если хотите, чтобы кнопка была всегда внизу, даже если контента мало */
+    background-color: #5a5a5a; color: #e0e0e0; border: 1px solid #777;
+    padding: 6px 12px; font-size: 0.9em; border-radius: 3px; cursor: pointer;
+    margin-top: auto;
+    display: block; width: 100%;
 }
+.balance-btn:hover { background-color: #6a6a6a; }
+
+
 .party-popularity {
     flex-grow: 1; display: flex; align-items: center; background-color: #2a2a2a;
     padding: 10px; border: 1px solid #444; border-radius: 3px;
@@ -188,7 +176,7 @@ body {
 .party-list li.highlighted .party-color-box { border-color: #1e1e1e; }
 .party-color-box { width: 10px; height: 10px; margin-right: 6px; border: 1px solid #888; flex-shrink: 0;}
 
-.lower-section { max-height: 2400px; overflow-y: auto; padding-right: 10px; }
+.lower-section { max-height: none; overflow-y: visible; padding-right: 10px; }
 .category-block { margin-bottom: 15px; }
 .category-header {
     background-color: #2a2a2a; color: white; padding: 8px 12px;
@@ -199,41 +187,38 @@ body {
     filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(189deg) brightness(109%) contrast(101%);
 }
 
-/* --- ИЗМЕНЕННЫЕ СТИЛИ ДЛЯ РАСКЛАДКИ ЭЛЕМЕНТОВ В КАТЕГОРИЯХ --- */
 .category-items {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Центрируем содержимое рядов, включая неполные ряды */
+    justify-content: center;
     padding: 10px;
     background-color: #333;
     border-radius: 0 0 4px 4px;
-    gap: 10px; /* Отступы между всеми элементами */
+    gap: 10px;
     box-sizing: border-box;
 }
 
-/* Единые стили для ВСЕХ слотов: советники, принципы, развитие, корпорации */
 .item-slot,
 .advisor-portrait-slot,
 .constitutional-principle,
 .development-area,
 .corporation-slot {
-    width: 132px; /* Оставляем эту ширину для раскладки 8 в ряд */
+    width: 132px;
     min-height: 95px;
     background-color: #4a4a4a;
     border: 1px solid #666;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* ИЗМЕНЕНО: Центрируем контент по вертикали */
+    justify-content: flex-start;
     align-items: center;
     cursor: pointer;
     position: relative;
     box-sizing: border-box;
-    padding: 5px; /* Уменьшим вертикальный padding, чтобы дать больше места портрету */
+    padding: 8px 5px;
     overflow: hidden;
 }
 
-/* Иконки внутри ОБЫЧНЫХ слотов (не советников) */
 .item-slot img,
 .constitutional-principle img,
 .development-area img,
@@ -244,31 +229,25 @@ body {
     margin-bottom: 5px;
 }
 
-/* Специфично для портретов советников */
 .advisor-portrait-slot {
-    width: 132px;
-    height: 180px; /* ЗАДАЙТЕ ЖЕЛАЕМУЮ ФИКСИРОВАННУЮ ВЫСОТУ СЛОТА */
-                   /* Например, чтобы средний портрет хорошо смотрелся */
-    padding: 2px;
-    display: flex; /* Добавим для выравнивания img, если он будет меньше */
-    align-items: center;
+    height: 180px;
+    padding: 2px; /* Уменьшаем padding, чтобы портрет занял больше места */
     justify-content: center;
 }
-
 .advisor-portrait-slot img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Заполнит слот, обрезая лишнее, сохраняя пропорции */
+    object-fit: cover; /* Чтобы заполнить слот, сохранив пропорции */
     display: block;
-    border-radius: 3px;
+    border-radius: 3px; /* Небольшое скругление для самого портрета */
+    margin-bottom: 0; /* Убираем, т.к. нет подписи */
 }
-
 
 .item-slot.selected,
 .advisor-portrait-slot.selected,
 .constitutional-principle.selected,
 .development-area.selected,
-.corporation-slot.selected { /* Если нужно выделение для выбранных */
+.corporation-slot.selected {
     border-color: #bbb;
     box-shadow: 0 0 6px #ddd;
 }
@@ -279,11 +258,10 @@ body {
     text-align: center;
     width: 100%;
     line-height: 1.2;
-    word-break: break-word; /* Для переноса длинных слов */
-    max-height: 3.6em; /* Примерно на 3 строки */
-    margin-top: auto; /* Прижмет текст к низу, если justify-content: flex-start у родителя и есть свободное место */
+    word-break: break-word;
+    max-height: 3.6em; /* Примерно 3 строки */
+    margin-top: auto; /* Прижать текст к низу слота, если есть место */
 }
-/* --- КОНЕЦ СТИЛЕЙ ДЛЯ СЛОТОВ --- */
 
 .tooltip {
     position: fixed; background-color: rgba(10,10,10,0.92); color: #fff;
@@ -354,134 +332,69 @@ body {
     width: 40px; height: 40px; min-width: 40px; margin-right: 12px;
     object-fit: contain; border-radius: 3px; background-color: #555;
 }
+.side-panel-option-name { flex-grow: 1; font-size: 0.95em; line-height: 1.3; }
+
 
 /* --- Адаптивные стили --- */
-
-/* Сначала общие изменения для лучшей гибкости */
-.hoi4-politics-screen {
-    width: 100%; /* Занимать доступную ширину */
-    max-width: 1200px; /* Но не шире этого значения */
-    margin-left: auto;  /* Центрирование, если max-width сработает */
-    margin-right: auto; /* Центрирование */
-}
-
-/* Планшеты и большие телефоны (портрет и ландшафт) */
 @media (max-width: 992px) {
-    body {
-        padding: 10px; /* Уменьшаем отступы страницы */
-    }
-    .main-content {
-        padding: 10px;
-    }
-    .upper-section {
-        flex-direction: column; /* Лидер и инфо-панель друг под другом */
-        align-items: center; /* Центрируем leader-pane */
-    }
-    .leader-pane {
-        margin-right: 0;
-        margin-bottom: 20px;
-        flex-basis: auto; /* Сбросить ширину */
-        width: 90%; /* Занять большую часть ширины */
-        max-width: 400px; /* Но не слишком широко */
-    }
-    .national-info-pane {
-        width: 100%; /* Инфо-панель занимает всю доступную ширину */
-    }
+    body { padding: 10px; }
+    .main-content { padding: 10px; }
+    .upper-section { flex-direction: column; align-items: center; }
+    .leader-pane { margin-right: 0; margin-bottom: 20px; flex-basis: auto; width: 90%; max-width: 400px; }
+    .national-info-pane { width: 100%; }
 
-    /* Уменьшаем количество слотов в ряду для нижних секций */
-    .item-slot,
-    .advisor-portrait-slot,
-    .constitutional-principle,
-    .development-area,
-    .corporation-slot {
-        /* 5 в ряд, если gap=10px. Контейнер .category-items ~90%-100% */
-        /* Ширина .category-items примерно (100vw - 20px_body_pad - 20px_main_content_pad - 20px_cat_items_pad)
-           Примерно: (100% - 4*10px)/5 */
-        width: calc((100% - 4 * 10px) / 5);
+    .item-slot, .advisor-portrait-slot, .constitutional-principle, .development-area, .corporation-slot {
+        width: calc((100% - 4 * 10px) / 5); /* 5 в ряд */
         min-height: 85px;
     }
-    .item-slot img, .advisor-portrait-slot img,
-    .constitutional-principle img, .development-area img,
-    .corporation-slot img {
-        width: 40px;
-        height: 40px;
+    .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
+        width: 40px; height: 40px;
     }
-    .advisor-portrait-slot img { height: 55px; }
-    .item-slot-label-small { font-size: 0.65em; max-height: 3.3em; } /* 3 строки */
+    .advisor-portrait-slot { height: 150px; /* Адаптируем высоту портретов тоже */ }
+    .advisor-portrait-slot img { width: 100%; height: 100%; /* Заполняет новый размер слота */ }
+    .item-slot-label-small { font-size: 0.65em; max-height: 3.3em; }
 
-    .political-details {
-        /* Можно оставить в ряд, если влезает, или сделать column */
-        gap: 8px;
-    }
+    .political-details { gap: 8px; }
     .pie-chart { width: 100px; height: 100px;}
     #partyPieChartCanvas { width: 100px; height: 100px; }
     .party-list { font-size: 0.78em; }
 }
 
-/* Маленькие телефоны (портрет) */
 @media (max-width: 576px) {
     body { padding: 5px; }
     .main-content { padding: 5px; }
     .window-title-bar { padding: 8px 10px; font-size: 1.1em; }
 
     .upper-section { padding-bottom: 15px; margin-bottom: 10px; }
-    .leader-pane { max-width: 300px; } /* Еще уже */
-    .leader-portrait { width: 150px; height: 180px; }
-    .ideology-icon, .party-emblem { min-width: 40px; height: 40px; }
+    .leader-pane { max-width: 300px; }
+    .leader-portrait { width: 150px; height: 180px; } /* Меньше для телефона */
+    .ideology-icon, .party-emblem { width: 50px; height: 50px; min-width: 50px;} /* Чуть увеличим иконки идеологии/партии */
+
 
     .national-focus-banner { height: 80px; }
     .focus-title-bar { font-size: 0.9em; width: 150px; }
 
-    .political-details {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .ruling-party-info, .political-system-info-container, .party-popularity {
-        flex-basis: auto;
-        width: 100%; /* Каждый блок на всю ширину */
-    }
+    .political-details { flex-direction: column; gap: 10px; }
+    .ruling-party-info, .political-system-info-container, .party-popularity { flex-basis: auto; width: 100%; }
     .party-popularity { flex-direction: column; align-items: stretch; }
     .pie-chart { width: 90px; height: 90px; margin-right: 0; margin-bottom: 10px; align-self: center;}
     #partyPieChartCanvas { width: 90px; height: 90px; }
     .party-list { max-height: 90px; }
 
-
-    .lower-section { padding-right: 0; max-height: none; /* Убираем скролл для нижней секции, если все помещается */}
-    .category-items {
-        padding: 8px;
-        gap: 8px;
-         /* Элементы могут идти по 2-3 в ряд */
+    .lower-section { padding-right: 0; max-height: none; overflow-y:visible;}
+    .category-items { padding: 8px; gap: 8px; }
+    .item-slot, .advisor-portrait-slot, .constitutional-principle, .development-area, .corporation-slot {
+        width: calc((100% - 2 * 8px) / 3); /* 3 в ряд */
+        min-height: 75px; padding: 5px;
     }
-    .item-slot,
-    .advisor-portrait-slot,
-    .constitutional-principle,
-    .development-area,
-    .corporation-slot {
-        /* 3 в ряд, если gap=8px. */
-        width: calc((100% - 2 * 8px) / 3);
-        min-height: 75px;
-        padding: 5px;
+    .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
+        width: 32px; height: 32px; margin-bottom: 3px;
     }
-    .item-slot img, .advisor-portrait-slot img,
-    .constitutional-principle img, .development-area img,
-    .corporation-slot img {
-        width: 32px;
-        height: 32px;
-        margin-bottom: 3px;
-    }
-    .advisor-portrait-slot { height: 90px; } /* Переопределяем, если нужно выше для портрета */
-    .advisor-portrait-slot img { width: 38px; height: 50px; }
+    .advisor-portrait-slot { height: 120px; /* Высота портрета советника на мобильном */ }
+    .advisor-portrait-slot img { width: 100%; height: 100%; }
     .item-slot-label-small { font-size: 0.6em; max-height: 2.4em; /* 2 строки */ }
 
-    /* Боковая панель */
-    .side-panel {
-        width: 96%;
-        left: 2%;
-        right: 2%;
-        top: 5px;
-        max-height: calc(100vh - 10px);
-        font-size: 0.9em; /* Уменьшаем общий шрифт панели */
-    }
+    .side-panel { width: 96%; left: 2%; right: 2%; top: 5px; max-height: calc(100vh - 10px); font-size: 0.9em;}
     .side-panel-header { padding: 8px 10px; }
     .side-panel-header h4 { font-size: 1em; }
     .side-panel-option { padding: 8px; margin-bottom: 4px; }
@@ -490,4 +403,3 @@ body {
 
     .tooltip { font-size: 0.8em; max-width: 90vw; padding: 8px 10px; }
 }
-.side-panel-option-name { flex-grow: 1; font-size: 0.95em; line-height: 1.3; }
