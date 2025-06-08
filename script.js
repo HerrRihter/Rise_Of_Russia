@@ -37,26 +37,29 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
         }
 
         if (name) {
-            // Add <hr> only if there was a slotTitle AND there's a name to display
             tooltipContent += (slotTitle && tooltipContent ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + `<strong>${name}</strong>`;
         }
         
         if (effectsSummary) {
-            // Add <hr> if there was any content before (slotTitle or name) AND current content doesn't end with a strong tag (meaning name was just added)
              tooltipContent += ((slotTitle || name) && tooltipContent ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + effectsSummary.replace(/\n/g, '<br>');
         }
 
         if (fullDescription) {
-             const separatorNeeded = (name || slotTitle || effectsSummary) && tooltipContent;
-             tooltipContent += (separatorNeeded ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
+             const separatorNeededAfterTitle = slotTitle && !name && !effectsSummary;
+             const separatorNeededAfterName = name && !effectsSummary;
+             const separatorNeededAfterEffects = effectsSummary;
+             if (separatorNeededAfterTitle || separatorNeededAfterName || separatorNeededAfterEffects) {
+                 tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+             }
+             tooltipContent += "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
         }
         
-        // For empty slots (like advisors, corporations) that have a title
         if (!name && slotTitle && !effectsSummary && !fullDescription && element.dataset.slotType && 
             !element.dataset.slotType.startsWith("constitutional_principle_") && 
-            !element.dataset.slotType.startsWith("development_area_")) { // Exclude principles/dev areas which always have a "name" (of the current option)
+            !element.dataset.slotType.startsWith("development_area_") &&
+            !element.dataset.slotType.includes("_display")) { 
              tooltipContent += (slotTitle && !tooltipContent.includes("<hr>") ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<strong>Назначить / Выбрать</strong>";
-        } else if (!name && !slotTitle && !effectsSummary && !fullDescription) { // Fallback to static data-tooltip if nothing else is provided
+        } else if (!name && !slotTitle && !effectsSummary && !fullDescription) {
             const staticTooltipText = this.dataset.tooltip;
             if (staticTooltipText) {
                 tooltipContent = staticTooltipText.replace(/\n/g, '<br>');
@@ -167,7 +170,7 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
     } else if (developmentAreaId && GAME_DATA.development_areas[developmentAreaId]) {
         const areaData = GAME_DATA.development_areas[developmentAreaId];
         panelTitle = areaData.name || "Область Развития";
-        optionsToShow = areaData.levels || []; // Используем .levels для development_areas
+        optionsToShow = areaData.levels || [];
     } else if (slotType.startsWith("corporation_slot_")) {
         const corpCategoryData = GAME_DATA.corporations;
         panelTitle = corpCategoryData?.title_overall || "Выбор Корпорации";
@@ -198,7 +201,6 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
             optionEl.appendChild(nameEl);
 
             optionEl.addEventListener('click', () => selectOptionInSidePanel(optionData.id, currentCategoryForSidePanel));
-            // Для опций в боковой панели, передаем полное описание и эффекты (если есть)
             addTooltipEventsToElement(optionEl, optionData.name_display || optionData.name, optionData.effects_summary, optionData.description);
             sidePanelOptionsContainer.appendChild(optionEl);
         });
@@ -207,8 +209,8 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
 }
 
 function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
-    let chosenData = null; // Это будет выбранный ВАРИАНТ/УРОВЕНЬ/ОБЪЕКТ
-    let parentCategoryData = null; // Это будет объект самой категории (принцип, область развития)
+    let chosenData = null;
+    let parentCategoryData = null;
 
     const principleId = targetSlotType.startsWith("constitutional_principle_") ? targetSlotType.replace("constitutional_principle_", "") : null;
     const developmentAreaId = targetSlotType.startsWith("development_area_") ? targetSlotType.replace("development_area_", "") : null;
@@ -221,8 +223,7 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
         chosenData = parentCategoryData.options?.find(opt => opt.is_current);
     } else if (developmentAreaId && GAME_DATA.development_areas[developmentAreaId]) {
         parentCategoryData = GAME_DATA.development_areas[developmentAreaId];
-        parentCategoryData.current_level_id = selectedOptionId; // Обновляем ID текущего уровня
-        // parentCategoryData.current_progress = 0; // Раскомментируйте, если прогресс сбрасывается при смене уровня
+        parentCategoryData.current_level_id = selectedOptionId;
         chosenData = parentCategoryData.levels?.find(lvl => lvl.id === selectedOptionId);
     } else if (targetSlotType.startsWith("corporation_slot_") && GAME_DATA.corporations) {
         chosenData = GAME_DATA.corporations[selectedOptionId];
@@ -233,30 +234,26 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
     clickedMainSlotElement.dataset.currentId = chosenData.id;
     const mainSlotImg = clickedMainSlotElement.querySelector('img');
     const mainSlotLabel = clickedMainSlotElement.querySelector('.item-slot-label-small');
-    // Название категории для тултипа (Название самого принципа или области развития)
     const categoryTitleForTooltip = parentCategoryData?.name || clickedMainSlotElement.dataset.slotTitle;
 
     if (mainSlotImg) {
-        // Для принципов и развития - иконка категории. Для остального - иконка самого элемента.
         mainSlotImg.src = parentCategoryData?.icon_path || chosenData.icon_path || chosenData.portrait_path || 'https://via.placeholder.com/80/ccc/000?text=N/A';
         mainSlotImg.alt = parentCategoryData?.name?.substring(0, 3) || chosenData.name?.substring(0, 3) || "ICO";
     }
 
     let labelTextContent = chosenData.name_display || chosenData.name;
     let tooltipNameForSlot = chosenData.name_display || chosenData.name;
-    let tooltipEffectsForSlot = null; // Для принципов - нет, для развития - прогресс
+    let tooltipEffectsForSlot = null;
     let tooltipDescriptionForSlot = chosenData.description;
 
     if (developmentAreaId && parentCategoryData) {
         labelTextContent = `${chosenData.name_display}<br><span class="progress-text">${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}</span>`;
         tooltipEffectsForSlot = `Прогресс: ${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}`;
     } else if (principleId && parentCategoryData) {
-        // effectsForTooltip останется null, description будет показан
-    } else { // Для советников, корпораций и т.д.
+        // effects_summary не используется, description показывается
+    } else {
         tooltipEffectsForSlot = chosenData.tooltip_summary || chosenData.effects_summary;
-        // Для них полное описание в основном слоте обычно не показываем, оно в боковой панели.
-        // Если все же нужно, можно передать chosenData.description в addTooltipEventsToElement
-        tooltipDescriptionForSlot = null;
+        tooltipDescriptionForSlot = chosenData.description; // Для советников/корпораций может быть и полное описание
     }
 
     if (mainSlotLabel) mainSlotLabel.innerHTML = labelTextContent;
@@ -309,15 +306,10 @@ function handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radiu
         let angle = Math.atan2(dy, dx); if (angle < -Math.PI / 2) angle += 2 * Math.PI;
         for (const sector of sectors) {
             let inSector = false; let sAngle = sector.startAngle; let eAngle = sector.endAngle;
-            // Normalize angles to be in the same range as 'angle' for comparison
             while (sAngle < -Math.PI/2) sAngle += 2*Math.PI; while (sAngle > 3*Math.PI/2) sAngle -= 2*Math.PI;
             while (eAngle < -Math.PI/2) eAngle += 2*Math.PI; while (eAngle > 3*Math.PI/2) eAngle -= 2*Math.PI;
-
-            if (sAngle > eAngle) { // Sector crosses the -PI/2 boundary
-                if (angle >= sAngle || angle < eAngle) inSector = true;
-            } else {
-                if (angle >= sAngle && angle < eAngle) inSector = true;
-            }
+            if (sAngle > eAngle) { if (angle >= sAngle || angle < eAngle) inSector = true; }
+            else { if (angle >= sAngle && angle < eAngle) inSector = true; }
             if (inSector) {
                 tooltipElement.innerHTML = `<strong>${sector.partyName}</strong><hr>${sector.popularity}%`;
                 tooltipElement.style.display = 'block'; positionTooltip(event); foundSector = true; return;
@@ -383,16 +375,38 @@ function initializeUI() {
     if (nationalSpiritsContainer && GAME_DATA.national_spirits) {
         nationalSpiritsContainer.innerHTML = '';
         const activeSpiritIds = ["fortress_state", "near_abroad_policy","national_projects_infrastructure","reindustrialization_opk_tech_sovereignty","divided_society","systemic_corruption","oil_gas_rent_stabilization_fund","sovereign_economy","social_initiatives_family_support","russian_dream_culture_identity","soft_power_russia_abroad"];
+        const totalDevelopmentImpulses = { education: 0, healthcare: 0, welfare: 0, agriculture: 0, industry: 0, internal_security: 0, military_might: 0, social_development: 0 };
+
         activeSpiritIds.forEach(spiritId => {
             const spiritData = GAME_DATA.national_spirits[spiritId];
-            if (spiritData) {
+            if (spiritData && !spiritData.is_aggregator) {
                 const spiritEl = document.createElement('div'); spiritEl.className = 'spirit-icon';
-                const imgEl = document.createElement('img'); imgEl.src = spiritData.icon_path || 'https://via.placeholder.com/40/777/000?text=Sp';
-                imgEl.alt = spiritData.name?.substring(0,2) || "SP"; spiritEl.appendChild(imgEl);
-                addTooltipEventsToElement(spiritEl, spiritData.name, spiritData.effects_summary, spiritData.description);
+                const imgEl = document.createElement('img'); imgEl.src = spiritData.icon_path || 'https://via.placeholder.com/56x56/777/000?text=NS';
+                imgEl.alt = spiritData.name?.substring(0,2) || "NS"; spiritEl.appendChild(imgEl);
+                addTooltipEventsToElement(spiritEl, spiritData.name, spiritData.effects_summary, spiritData.description); // effects_summary для обычных духов, description - полное описание
                 nationalSpiritsContainer.appendChild(spiritEl);
-            }
+                if (spiritData.development_impulses) {
+                    for (const areaKey in spiritData.development_impulses) {
+                        if (totalDevelopmentImpulses.hasOwnProperty(areaKey)) totalDevelopmentImpulses[areaKey] += spiritData.development_impulses[areaKey];
+                    }
+                }
+            } else if(!spiritData && spiritId !== "development_pace_aggregator") console.warn(`Нац. дух с ID '${spiritId}' не найден.`);
         });
+
+        const aggregatorSpiritData = GAME_DATA.national_spirits["development_pace_aggregator"];
+        if (aggregatorSpiritData) {
+            let effectsForAggregator = "Суммарные импульсы к развитию:";
+            Object.keys(totalDevelopmentImpulses).forEach(areaKey => {
+                const areaName = GAME_DATA.development_areas[areaKey]?.name || areaKey.charAt(0).toUpperCase() + areaKey.slice(1).replace(/_/g, ' ');
+                const impulseValue = totalDevelopmentImpulses[areaKey];
+                effectsForAggregator += `\n  ${areaName}: ${impulseValue >= 0 ? '+' : ''}${impulseValue}`;
+            });
+            const spiritEl = document.createElement('div'); spiritEl.className = 'spirit-icon';
+            const imgEl = document.createElement('img'); imgEl.src = aggregatorSpiritData.icon_path || 'https://via.placeholder.com/56x56/777/000?text=TP';
+            imgEl.alt = aggregatorSpiritData.name?.substring(0,2) || "TP"; spiritEl.appendChild(imgEl);
+            addTooltipEventsToElement(spiritEl, aggregatorSpiritData.name, effectsForAggregator, aggregatorSpiritData.description);
+            nationalSpiritsContainer.appendChild(spiritEl);
+        }
     }
 
     // Political Parties
@@ -406,7 +420,7 @@ function initializeUI() {
         principlesContainer.innerHTML = '';
         Object.values(GAME_DATA.constitutional_principles).sort((a, b) => (a.article_number || Infinity) - (b.article_number || Infinity))
             .forEach(principle => {
-                const currentOption = principle.options?.find(opt => opt.is_current);
+                const currentOption = principle.options?.find(opt => opt.is_current) || (principle.options?.[0]); // Fallback to first if no is_current
                 if (currentOption) {
                     const slotEl = document.createElement('div'); slotEl.className = 'item-slot constitutional-principle';
                     slotEl.dataset.slotType = `constitutional_principle_${principle.id}`; slotEl.dataset.currentId = currentOption.id;
@@ -415,7 +429,7 @@ function initializeUI() {
                     addTooltipEventsToElement(slotEl, currentOption.name_display, null, currentOption.description, principle.name);
                     slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
                     principlesContainer.appendChild(slotEl);
-                } else { console.warn(`Для принципа '${principle.id}' нет активной опции.`); }
+                } else { console.warn(`Для принципа '${principle.id}' нет активной/единственной опции.`); }
         });
     }
 
@@ -424,18 +438,13 @@ function initializeUI() {
     if (developmentContainer && GAME_DATA.development_areas) {
         developmentContainer.innerHTML = '';
         Object.values(GAME_DATA.development_areas).sort((a,b) => (a.order || Infinity) - (b.order || Infinity))
-            .forEach(area => { // area - объект самой области развития
-                const currentLevelData = area.levels?.find(lvl => lvl.id === area.current_level_id); // Ищем текущий уровень
+            .forEach(area => {
+                const currentLevelData = area.levels?.find(lvl => lvl.id === area.current_level_id);
                 if (currentLevelData) {
                     const slotEl = document.createElement('div'); slotEl.className = 'item-slot development-area';
-                    slotEl.dataset.slotType = `development_area_${area.id}`;
-                    slotEl.dataset.currentId = area.current_level_id; // Сохраняем ID текущего уровня
-
-                    const imgEl = document.createElement('img');
-                    imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=D';
-                    slotEl.appendChild(imgEl);
-                    const labelEl = document.createElement('span');
-                    labelEl.className = 'item-slot-label-small';
+                    slotEl.dataset.slotType = `development_area_${area.id}`; slotEl.dataset.currentId = area.current_level_id;
+                    const imgEl = document.createElement('img'); imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=D'; slotEl.appendChild(imgEl);
+                    const labelEl = document.createElement('span'); labelEl.className = 'item-slot-label-small';
                     labelEl.innerHTML = `${currentLevelData.name_display}<br><span class="progress-text">${area.current_progress}/${area.progress_per_level}</span>`;
                     slotEl.appendChild(labelEl);
                     const effectsForTooltip = `Прогресс: ${area.current_progress}/${area.progress_per_level}`;
