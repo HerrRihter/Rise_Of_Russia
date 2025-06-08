@@ -40,13 +40,9 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
             if (tooltipContent) tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
             tooltipContent += `<strong>${name}</strong>`;
         }
-
+        
         if (effectsSummary) {
-            if (tooltipContent && !(tooltipContent.endsWith("</small>") && !name)) { // Add hr if there was content and it wasn't just a slot title without a name
-                 tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
-            } else if (!tooltipContent && effectsSummary) { // If effects is the first thing after no title/name
-                // No hr needed
-            } else if (tooltipContent && !name && slotTitle){ // Only slot title and then effects
+            if (tooltipContent && !(tooltipContent.endsWith("</strong>") || (tooltipContent.endsWith("</small>") && !name) ) ) {
                  tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
             }
             tooltipContent += effectsSummary.replace(/\n/g, '<br>');
@@ -56,15 +52,13 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
             if (tooltipContent) tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
             tooltipContent += "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
         }
-
-        if (!name && slotTitle && !effectsSummary && !fullDescription && element.dataset.slotType &&
-            !element.dataset.slotType.startsWith("constitutional_principle_") &&
+        
+        if (!name && slotTitle && !effectsSummary && !fullDescription && element.dataset.slotType && 
+            !element.dataset.slotType.startsWith("constitutional_principle_") && 
             !element.dataset.slotType.startsWith("development_area_") &&
-            !element.dataset.slotType.includes("_display")) {
-            if (tooltipContent && !tooltipContent.endsWith("</small>")) { // If there was only slotTitle
+            !element.dataset.slotType.includes("_display")) { 
+            if (tooltipContent && !tooltipContent.endsWith("</small>")) {
                  tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
-            } else if (!tooltipContent && slotTitle){ // Only slotTitle and then "Appoint"
-                 // No, hr should be handled by slotTitle check already. Redundant or error-prone.
             }
             tooltipContent += "<strong>Назначить / Выбрать</strong>";
         } else if (!name && !slotTitle && !effectsSummary && !fullDescription) {
@@ -91,7 +85,7 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
 // --- Balance Modal Logic ---
 const balanceModal = document.getElementById('balanceModal');
 const balanceButton = document.getElementById('balanceButton');
-const closeBalanceModalBtn = document.getElementById('closeBalanceModalBtn');
+const closeBalanceModalBtn = document.getElementById('closeBalanceModalBtn_Balance'); // Используем уникальный ID
 const balanceMarker = document.getElementById('balanceMarker');
 const balanceValueDisplay = document.getElementById('balanceValueDisplay');
 
@@ -105,8 +99,7 @@ function updateBalanceScale(value) {
 }
 if (balanceButton) balanceButton.onclick = () => { if(balanceModal) balanceModal.style.display = 'flex'; updateBalanceScale(parseInt(balanceValueDisplay?.textContent || '0')); };
 if (closeBalanceModalBtn) closeBalanceModalBtn.onclick = () => { if(balanceModal) balanceModal.style.display = 'none'; };
-window.onclick = (event) => { if (event.target == balanceModal && balanceModal) balanceModal.style.display = 'none'; };
-updateBalanceScale(0);
+// window.onclick для balanceModal уже был, не дублируем.
 
 // --- Game Data Loading and Management ---
 const GAME_DATA = { leaders: {}, constitutional_principles: {}, development_areas: {}, corporations: {}, ideologies: {}, parties: {}, national_spirits: {} };
@@ -185,7 +178,7 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
         optionsToShow = Object.values(corpCategoryData || {}).filter(c => typeof c === 'object' && c.id);
     }
 
-    sidePanelTitleEl.textContent = panelTitle;
+    if(sidePanelTitleEl) sidePanelTitleEl.textContent = panelTitle;
     const activeOptionIdInMainSlot = clickedSlotEl.dataset.currentId;
 
     if (optionsToShow.length === 0) {sidePanelOptionsContainer.innerHTML = '<p style="text-align:center;color:#888;">Нет доступных опций.</p>';}
@@ -258,10 +251,9 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
         labelTextContent = `${chosenData.name_display}<br><span class="progress-text">${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}</span>`;
         tooltipEffectsForSlot = `Прогресс: ${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}`;
     } else if (principleId && parentCategoryData) {
-        // Для принципов effects_summary не используется в тултипе основного слота
+        // Для принципов effects_summary не используется в тултипе основного слота, только description
     } else {
         tooltipEffectsForSlot = chosenData.tooltip_summary || chosenData.effects_summary;
-        // Для этих категорий полное описание обычно не показывается в основном слоте, а в панели
         tooltipDescriptionForSlot = (targetSlotType.startsWith("advisor_") || targetSlotType.startsWith("corporation_slot_")) ? null : chosenData.description;
     }
 
@@ -276,8 +268,12 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
           if (optEl.dataset.optionId === selectedOptionId) optEl.classList.add('active');
       });
     }
+    // if(selectionSidePanel) selectionSidePanel.style.display = 'none';
 }
-if(closeSidePanelBtn_SP) closeSidePanelBtn_SP.onclick = () => { if(selectionSidePanel) selectionSidePanel.style.display = 'none'; };
+if(closeSidePanelBtn_SP) { // Проверяем что кнопка существует перед добавлением слушателя
+    closeSidePanelBtn_SP.onclick = () => { if(selectionSidePanel) selectionSidePanel.style.display = 'none'; };
+}
+
 
 // --- Party Politics UI ---
 function drawPoliticalPieChart() {
@@ -292,7 +288,7 @@ function drawPoliticalPieChart() {
     if (totalPopularity === 0) { if(pieChartContainer && !pieChartContainer.querySelector('p')) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет популярности</p>"; return; }
     const existingMessage = pieChartContainer.querySelector('p');
     if (existingMessage) pieChartContainer.removeChild(existingMessage);
-    if (!pieChartContainer.contains(canvas) && canvas) pieChartContainer.appendChild(canvas); // Проверка, что canvas не null
+    if (!pieChartContainer.contains(canvas) && canvas) pieChartContainer.appendChild(canvas);
     let currentAngle = -0.5 * Math.PI; ctx.clearRect(0, 0, canvas.width, canvas.height); const sectors = [];
     parties.forEach(party => {
         const sliceAngle = (party.popularity / totalPopularity) * 2 * Math.PI; const endAngle = currentAngle + sliceAngle;
@@ -302,9 +298,9 @@ function drawPoliticalPieChart() {
         sectors.push({ partyName: party.name, popularity: party.popularity, startAngle: currentAngle, endAngle: endAngle });
         currentAngle = endAngle;
     });
-    canvas.removeEventListener('mousemove', handlePieChartMouseMove); // Ensure we use a named function or a stored anonymous one if removing is key
+    if(canvas._handleMouseMove) canvas.removeEventListener('mousemove', canvas._handleMouseMove);
     const boundHandleMouseMove = (event) => handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius);
-    canvas._handleMouseMove = boundHandleMouseMove; // Store for potential removal if canvas is destroyed/recreated
+    canvas._handleMouseMove = boundHandleMouseMove;
     canvas.addEventListener('mousemove', boundHandleMouseMove);
 
     canvas.removeEventListener('mouseleave', handlePieChartMouseLeave);
@@ -315,24 +311,14 @@ function handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radiu
     if(!tooltipElement) return; const rect = canvas.getBoundingClientRect(); const mouseX = event.clientX - rect.left; const mouseY = event.clientY - rect.top;
     const dx = mouseX - centerX; const dy = mouseY - centerY; const distance = Math.sqrt(dx * dx + dy * dy); let foundSector = false;
     if (distance <= radius) {
-        let angle = Math.atan2(dy, dx);
-        // Normalize angle to the range [0, 2*PI) where 0 is to the right, PI/2 is down, PI is left, 3*PI/2 is up
-        // Canvas arc starts from right (0) and goes clockwise. atan2 result: -PI to PI.
-        // We started drawing from -PI/2 (top). So let's adjust atan2 output to match that.
-        if (angle < -Math.PI / 2) angle += 2 * Math.PI; // atan2 gives results in (-PI, PI], adjust to [0, 2PI) relative to positive X, then shift for -PI/2 start
-
+        let angle = Math.atan2(dy, dx); if (angle < -Math.PI / 2) angle += 2 * Math.PI;
         for (const sector of sectors) {
-            let inSector = false;
-            let sAngle = sector.startAngle;
-            let eAngle = sector.endAngle;
+            let inSector = false; let sAngle = sector.startAngle; let eAngle = sector.endAngle;
+            while (sAngle < -Math.PI/2) sAngle += 2*Math.PI; while (sAngle >= 3*Math.PI/2) sAngle -= 2*Math.PI; // Normalize sAngle to be in [-PI/2, 3PI/2)
+            while (eAngle < -Math.PI/2) eAngle += 2*Math.PI; while (eAngle >= 3*Math.PI/2) eAngle -= 2*Math.PI; // Normalize eAngle
 
-            // Check if angle is between start and end of sector
-            if (sAngle < eAngle) { // Normal case, sector doesn't cross the 0 or 2PI line from -PI/2
-                if (angle >= sAngle && angle < eAngle) inSector = true;
-            } else { // Sector crosses the starting point (e.g. -PI/2)
-                if (angle >= sAngle || angle < eAngle) inSector = true;
-            }
-
+            if (sAngle > eAngle) { if (angle >= sAngle || angle < eAngle) inSector = true; }
+            else { if (angle >= sAngle && angle < eAngle) inSector = true; }
             if (inSector) {
                 tooltipElement.innerHTML = `<strong>${sector.partyName}</strong><hr>${sector.popularity}%`;
                 tooltipElement.style.display = 'block'; positionTooltip(event); foundSector = true; return;
@@ -489,7 +475,7 @@ function initializeUI() {
         }
         const slotType = slotEl.dataset.slotType; const currentItemId = slotEl.dataset.currentId; let currentItemData = null;
         const slotTitleFromHTML = slotEl.dataset.slotTitle || null;
-        if (currentItemId && currentItemId.length > 0) { // Добавил проверку, что currentItemId не пустой
+        if (currentItemId && currentItemId.length > 0) {
             if (slotType.startsWith("advisor_")) currentItemData = GAME_DATA.leaders?.[currentItemId];
             else if (slotType.startsWith("corporation_slot_")) currentItemData = GAME_DATA.corporations?.[currentItemId];
         }
@@ -520,6 +506,53 @@ function initializeUI() {
         }
     });
 }
+
+// --- National Focus Modal Logic ---
+const nationalFocusModal = document.getElementById('nationalFocusModal');
+const closeFocusModalBtn_NF = document.getElementById('closeFocusModalBtn'); // Используем ID из вашего HTML
+const nationalFocusBannerClickable = document.getElementById('nationalFocusBannerClickable');
+const focusModalTitle = document.getElementById('focusModalTitle');
+const focusModalImage = document.getElementById('focusModalImage');
+const focusModalDescription = document.getElementById('focusModalDescription');
+
+// Загрузка данных для текущего нац. фокуса (лучше делать это в initializeGameData, если данные в JSON)
+// Пока что оставим заглушку, которую вы можете заполнять по ходу игры
+let currentNationalFocusData = {
+    title: "Осень 2004 - Ход X", // Это будет браться с баннера
+    full_image_path: "history/focus_art/autumn_2004_full.png", // ПУТЬ К ПОЛНОМУ ИЗОБРАЖЕНИЮ
+    custom_description: "Здесь должно быть подробное, уникальное описание для этого национального фокуса, которое вы будете обновлять.\nНапример, какие события он затрагивает, какие долгосрочные цели преследует и т.д."
+};
+
+if (nationalFocusBannerClickable) {
+    nationalFocusBannerClickable.style.cursor = 'pointer';
+    nationalFocusBannerClickable.addEventListener('click', () => {
+        if (nationalFocusModal && focusModalTitle && focusModalImage && focusModalDescription) {
+            const mainFocusTitleEl = document.getElementById('mainFocusTitle');
+            const currentTitleOnBanner = mainFocusTitleEl ? mainFocusTitleEl.textContent : "Национальный Фокус";
+
+            // Здесь вы можете иметь логику, чтобы currentNationalFocusData обновлялся на основе currentTitleOnBanner
+            // или другого идентификатора текущего фокуса, если у вас несколько фокусов
+            // Пока просто используем то, что есть в currentNationalFocusData
+            focusModalTitle.textContent = currentNationalFocusData.title || currentTitleOnBanner;
+            focusModalImage.src = currentNationalFocusData.full_image_path || "https://via.placeholder.com/700x400/222/fff?text=Full+Focus+Art";
+            focusModalImage.alt = focusModalTitle.textContent;
+            focusModalDescription.textContent = currentNationalFocusData.custom_description || "Описание для этого фокуса не предоставлено.";
+            nationalFocusModal.style.display = 'flex';
+        } else { console.error("Элементы модального окна нац. фокуса не найдены!"); }
+    });
+}
+if (closeFocusModalBtn_NF) { // Убедимся что кнопка существует
+    closeFocusModalBtn_NF.onclick = function() {
+        if (nationalFocusModal) nationalFocusModal.style.display = 'none';
+    }
+}
+// Закрытие модального окна фокуса по клику вне контента
+window.addEventListener('click', function(event) {
+    if (event.target == nationalFocusModal && nationalFocusModal) {
+        nationalFocusModal.style.display = 'none';
+    }
+});
+
 
 // --- Start Application ---
 document.addEventListener('DOMContentLoaded', initializeGameData);
