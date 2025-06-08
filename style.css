@@ -105,11 +105,11 @@ body {
     margin-bottom: 15px;
     background-color: transparent; /* Убрали фон контейнера */
     padding: 0; /* Убрали паддинг контейнера */
-    min-height: 60px; /* Поддерживаем высоту, если духов нет */
+    min-height: 100px; /* Поддерживаем высоту, если духов нет */
 }
 .spirit-icon {
-    width: 56px;
-    height: 56px;
+    width: 90px;
+    height: 90px;
     /* background-color убран */
     /* border убран */
     cursor: help;
