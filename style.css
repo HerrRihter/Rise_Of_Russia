@@ -304,31 +304,85 @@ body {
 }
 .modal-content {
     background-color: #3a3a3a; color: #e0e0e0; margin: auto; padding: 25px;
-    border: 1px solid #888; width: 90%; border-radius: 5px;
+    border: 1px solid #888; width: 90%; /* Сделал чуть шире для мобильных, max-width контролирует для десктопа */
+    max-width: 450px; /* Оставляем для десктопа */
+    border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.4); text-align: center; position:relative;
 }
-.modal-close-button {
+.modal-close-button { /* Этот класс используется и для модалки баланса, и для модалки фокуса в вашем HTML */
     color: #aaa; position:absolute; top:10px; right:15px;
     font-size: 28px; font-weight: bold;
+    cursor: pointer; /* Добавил для ясности */
 }
-.modal-close-button:hover, .modal-close-button:focus { color: #fff; text-decoration: none; cursor: pointer; }
+.modal-close-button:hover, .modal-close-button:focus { color: #fff; text-decoration: none; }
 
-/* Модальное окно Баланса */
-.balance-scale-container { display: flex; align-items: center; justify-content: space-between; margin: 20px 0; }
-.scale-icon { font-size: 2em; }
-.balance-scale { flex-grow: 1; margin: 0 15px; }
+/* Модальное окно Баланса - УТОЧНЕННЫЕ СТИЛИ */
+.balance-scale-container {
+    display: flex;
+    align-items: center; /* Вертикальное выравнивание иконок и шкалы */
+    justify-content: space-between; /* Иконки по краям, шкала между ними */
+    margin: 20px 0;
+}
+
+.scale-icon { /* Стили для <img> луны и солнца */
+    width: 32px;  /* ЗАДАЙТЕ ЖЕЛАЕМЫЙ РАЗМЕР (ширина) */
+    height: 32px; /* ЗАДАЙТЕ ЖЕЛАЕМЫЙ РАЗМЕР (высота) */
+    object-fit: contain; /* Изображение впишется, сохранив пропорции */
+    flex-shrink: 0; /* Чтобы иконки не сжимались, если шкала станет очень широкой */
+}
+/* Если нужны специфичные отступы для иконок луны/солнца:
+.moon-icon { margin-right: 5px; }
+.sun-icon { margin-left: 5px; }
+Но обычно justify-content: space-between; и margin у .balance-scale достаточно.
+*/
+
+.balance-scale { /* Контейнер для трека и меток */
+    flex-grow: 1; /* Займет все доступное пространство между иконками */
+    margin: 0 10px; /* Отступы от иконок до самой шкалы (было 15px) */
+}
+
 .scale-track {
-    width: 100%; height: 10px; background-color: #555;
-    border-radius: 5px; position: relative; border: 1px solid #777;
+    width: 100%;
+    height: 10px;
+    background-color: #555;
+    border-radius: 5px;
+    position: relative; /* Для позиционирования маркера */
+    border: 1px solid #777;
 }
+
 .scale-marker {
-    width: 16px; height: 16px; background-color: #ffd700; border-radius: 50%;
-    position: absolute; top: 50%; transform: translate(-50%, -50%);
-    border: 2px solid #333; box-shadow: 0 0 5px #ffd700;
+    width: 16px;
+    height: 16px;
+    background-color: #ffd700; /* Золотой маркер */
+    border-radius: 50%;     /* Круглый */
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%); /* Центрирование маркера относительно его left-позиции */
+    border: 2px solid #333; /* Темная обводка для маркера */
+    box-shadow: 0 0 5px #ffd700; /* Легкое свечение */
 }
-.scale-labels { display: flex; justify-content: space-between; font-size: 0.9em; margin-top: 8px; color: #ccc; }
-#balanceValueDisplay { font-weight: bold; color: #ffd700; }
-#balanceValueInput { width: 60px; margin-left:5px; background-color: #555; color: white; border: 1px solid #777; padding: 5px; }
+
+.scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    margin-top: 8px;
+    color: #ccc;
+}
+
+#balanceValueDisplay {
+    font-weight: bold;
+    color: #ffd700; /* Золотой цвет для значения */
+}
+
+#balanceValueInput { /* Оставляем без изменений, если его вид вас устраивает */
+    width: 60px;
+    margin-left:5px;
+    background-color: #555;
+    color: white;
+    border: 1px solid #777;
+    padding: 5px;
+}
 
 /* Модальное окно Национального Фокуса */
 .focus-modal-content {
