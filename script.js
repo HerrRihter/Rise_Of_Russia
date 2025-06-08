@@ -1,6 +1,6 @@
 // script.js
 
-// Global tooltip element
+// --- Global tooltip element ---
 const tooltipElement = document.querySelector('.tooltip');
 
 // --- Tooltip Functions ---
@@ -37,28 +37,36 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
         }
 
         if (name) {
-            tooltipContent += (slotTitle && tooltipContent ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + `<strong>${name}</strong>`;
+            if (tooltipContent) tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+            tooltipContent += `<strong>${name}</strong>`;
         }
-        
+
         if (effectsSummary) {
-             tooltipContent += ((slotTitle || name) && tooltipContent ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + effectsSummary.replace(/\n/g, '<br>');
+            if (tooltipContent && !(tooltipContent.endsWith("</small>") && !name)) { // Add hr if there was content and it wasn't just a slot title without a name
+                 tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+            } else if (!tooltipContent && effectsSummary) { // If effects is the first thing after no title/name
+                // No hr needed
+            } else if (tooltipContent && !name && slotTitle){ // Only slot title and then effects
+                 tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+            }
+            tooltipContent += effectsSummary.replace(/\n/g, '<br>');
         }
 
         if (fullDescription) {
-             const separatorNeededAfterTitle = slotTitle && !name && !effectsSummary;
-             const separatorNeededAfterName = name && !effectsSummary;
-             const separatorNeededAfterEffects = effectsSummary;
-             if (separatorNeededAfterTitle || separatorNeededAfterName || separatorNeededAfterEffects) {
-                 tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
-             }
-             tooltipContent += "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
+            if (tooltipContent) tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+            tooltipContent += "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
         }
-        
-        if (!name && slotTitle && !effectsSummary && !fullDescription && element.dataset.slotType && 
-            !element.dataset.slotType.startsWith("constitutional_principle_") && 
+
+        if (!name && slotTitle && !effectsSummary && !fullDescription && element.dataset.slotType &&
+            !element.dataset.slotType.startsWith("constitutional_principle_") &&
             !element.dataset.slotType.startsWith("development_area_") &&
-            !element.dataset.slotType.includes("_display")) { 
-             tooltipContent += (slotTitle && !tooltipContent.includes("<hr>") ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<strong>Назначить / Выбрать</strong>";
+            !element.dataset.slotType.includes("_display")) {
+            if (tooltipContent && !tooltipContent.endsWith("</small>")) { // If there was only slotTitle
+                 tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+            } else if (!tooltipContent && slotTitle){ // Only slotTitle and then "Appoint"
+                 // No, hr should be handled by slotTitle check already. Redundant or error-prone.
+            }
+            tooltipContent += "<strong>Назначить / Выбрать</strong>";
         } else if (!name && !slotTitle && !effectsSummary && !fullDescription) {
             const staticTooltipText = this.dataset.tooltip;
             if (staticTooltipText) {
@@ -246,14 +254,15 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
     let tooltipEffectsForSlot = null;
     let tooltipDescriptionForSlot = chosenData.description;
 
-    if (developmentAreaId && parentCategoryData) {
+    if (developmentAreaId && parentCategoryData && typeof parentCategoryData.current_progress !== 'undefined') {
         labelTextContent = `${chosenData.name_display}<br><span class="progress-text">${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}</span>`;
         tooltipEffectsForSlot = `Прогресс: ${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}`;
     } else if (principleId && parentCategoryData) {
-        // effects_summary не используется, description показывается
+        // Для принципов effects_summary не используется в тултипе основного слота
     } else {
         tooltipEffectsForSlot = chosenData.tooltip_summary || chosenData.effects_summary;
-        tooltipDescriptionForSlot = chosenData.description; // Для советников/корпораций может быть и полное описание
+        // Для этих категорий полное описание обычно не показывается в основном слоте, а в панели
+        tooltipDescriptionForSlot = (targetSlotType.startsWith("advisor_") || targetSlotType.startsWith("corporation_slot_")) ? null : chosenData.description;
     }
 
     if (mainSlotLabel) mainSlotLabel.innerHTML = labelTextContent;
@@ -283,7 +292,7 @@ function drawPoliticalPieChart() {
     if (totalPopularity === 0) { if(pieChartContainer && !pieChartContainer.querySelector('p')) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет популярности</p>"; return; }
     const existingMessage = pieChartContainer.querySelector('p');
     if (existingMessage) pieChartContainer.removeChild(existingMessage);
-    if (!pieChartContainer.contains(canvas)) pieChartContainer.appendChild(canvas);
+    if (!pieChartContainer.contains(canvas) && canvas) pieChartContainer.appendChild(canvas); // Проверка, что canvas не null
     let currentAngle = -0.5 * Math.PI; ctx.clearRect(0, 0, canvas.width, canvas.height); const sectors = [];
     parties.forEach(party => {
         const sliceAngle = (party.popularity / totalPopularity) * 2 * Math.PI; const endAngle = currentAngle + sliceAngle;
@@ -293,8 +302,11 @@ function drawPoliticalPieChart() {
         sectors.push({ partyName: party.name, popularity: party.popularity, startAngle: currentAngle, endAngle: endAngle });
         currentAngle = endAngle;
     });
-    canvas.removeEventListener('mousemove', handlePieChartMouseMove);
-    canvas.addEventListener('mousemove', (event) => handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius));
+    canvas.removeEventListener('mousemove', handlePieChartMouseMove); // Ensure we use a named function or a stored anonymous one if removing is key
+    const boundHandleMouseMove = (event) => handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius);
+    canvas._handleMouseMove = boundHandleMouseMove; // Store for potential removal if canvas is destroyed/recreated
+    canvas.addEventListener('mousemove', boundHandleMouseMove);
+
     canvas.removeEventListener('mouseleave', handlePieChartMouseLeave);
     canvas.addEventListener('mouseleave', handlePieChartMouseLeave);
 }
@@ -303,13 +315,24 @@ function handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radiu
     if(!tooltipElement) return; const rect = canvas.getBoundingClientRect(); const mouseX = event.clientX - rect.left; const mouseY = event.clientY - rect.top;
     const dx = mouseX - centerX; const dy = mouseY - centerY; const distance = Math.sqrt(dx * dx + dy * dy); let foundSector = false;
     if (distance <= radius) {
-        let angle = Math.atan2(dy, dx); if (angle < -Math.PI / 2) angle += 2 * Math.PI;
+        let angle = Math.atan2(dy, dx);
+        // Normalize angle to the range [0, 2*PI) where 0 is to the right, PI/2 is down, PI is left, 3*PI/2 is up
+        // Canvas arc starts from right (0) and goes clockwise. atan2 result: -PI to PI.
+        // We started drawing from -PI/2 (top). So let's adjust atan2 output to match that.
+        if (angle < -Math.PI / 2) angle += 2 * Math.PI; // atan2 gives results in (-PI, PI], adjust to [0, 2PI) relative to positive X, then shift for -PI/2 start
+
         for (const sector of sectors) {
-            let inSector = false; let sAngle = sector.startAngle; let eAngle = sector.endAngle;
-            while (sAngle < -Math.PI/2) sAngle += 2*Math.PI; while (sAngle > 3*Math.PI/2) sAngle -= 2*Math.PI;
-            while (eAngle < -Math.PI/2) eAngle += 2*Math.PI; while (eAngle > 3*Math.PI/2) eAngle -= 2*Math.PI;
-            if (sAngle > eAngle) { if (angle >= sAngle || angle < eAngle) inSector = true; }
-            else { if (angle >= sAngle && angle < eAngle) inSector = true; }
+            let inSector = false;
+            let sAngle = sector.startAngle;
+            let eAngle = sector.endAngle;
+
+            // Check if angle is between start and end of sector
+            if (sAngle < eAngle) { // Normal case, sector doesn't cross the 0 or 2PI line from -PI/2
+                if (angle >= sAngle && angle < eAngle) inSector = true;
+            } else { // Sector crosses the starting point (e.g. -PI/2)
+                if (angle >= sAngle || angle < eAngle) inSector = true;
+            }
+
             if (inSector) {
                 tooltipElement.innerHTML = `<strong>${sector.partyName}</strong><hr>${sector.popularity}%`;
                 tooltipElement.style.display = 'block'; positionTooltip(event); foundSector = true; return;
@@ -383,7 +406,7 @@ function initializeUI() {
                 const spiritEl = document.createElement('div'); spiritEl.className = 'spirit-icon';
                 const imgEl = document.createElement('img'); imgEl.src = spiritData.icon_path || 'https://via.placeholder.com/56x56/777/000?text=NS';
                 imgEl.alt = spiritData.name?.substring(0,2) || "NS"; spiritEl.appendChild(imgEl);
-                addTooltipEventsToElement(spiritEl, spiritData.name, spiritData.effects_summary, spiritData.description); // effects_summary для обычных духов, description - полное описание
+                addTooltipEventsToElement(spiritEl, spiritData.name, spiritData.effects_summary, spiritData.description);
                 nationalSpiritsContainer.appendChild(spiritEl);
                 if (spiritData.development_impulses) {
                     for (const areaKey in spiritData.development_impulses) {
@@ -420,7 +443,7 @@ function initializeUI() {
         principlesContainer.innerHTML = '';
         Object.values(GAME_DATA.constitutional_principles).sort((a, b) => (a.article_number || Infinity) - (b.article_number || Infinity))
             .forEach(principle => {
-                const currentOption = principle.options?.find(opt => opt.is_current) || (principle.options?.[0]); // Fallback to first if no is_current
+                const currentOption = principle.options?.find(opt => opt.is_current) || (principle.options?.[0]);
                 if (currentOption) {
                     const slotEl = document.createElement('div'); slotEl.className = 'item-slot constitutional-principle';
                     slotEl.dataset.slotType = `constitutional_principle_${principle.id}`; slotEl.dataset.currentId = currentOption.id;
@@ -442,7 +465,8 @@ function initializeUI() {
                 const currentLevelData = area.levels?.find(lvl => lvl.id === area.current_level_id);
                 if (currentLevelData) {
                     const slotEl = document.createElement('div'); slotEl.className = 'item-slot development-area';
-                    slotEl.dataset.slotType = `development_area_${area.id}`; slotEl.dataset.currentId = area.current_level_id;
+                    slotEl.dataset.slotType = `development_area_${area.id}`;
+                    slotEl.dataset.currentId = area.current_level_id;
                     const imgEl = document.createElement('img'); imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=D'; slotEl.appendChild(imgEl);
                     const labelEl = document.createElement('span'); labelEl.className = 'item-slot-label-small';
                     labelEl.innerHTML = `${currentLevelData.name_display}<br><span class="progress-text">${area.current_progress}/${area.progress_per_level}</span>`;
@@ -465,7 +489,7 @@ function initializeUI() {
         }
         const slotType = slotEl.dataset.slotType; const currentItemId = slotEl.dataset.currentId; let currentItemData = null;
         const slotTitleFromHTML = slotEl.dataset.slotTitle || null;
-        if (currentItemId) {
+        if (currentItemId && currentItemId.length > 0) { // Добавил проверку, что currentItemId не пустой
             if (slotType.startsWith("advisor_")) currentItemData = GAME_DATA.leaders?.[currentItemId];
             else if (slotType.startsWith("corporation_slot_")) currentItemData = GAME_DATA.corporations?.[currentItemId];
         }
@@ -475,7 +499,7 @@ function initializeUI() {
             imgEl.alt = currentItemData.name?.substring(0, 3) || "ICO";
             if(labelEl && slotEl.classList.contains('item-slot') && !slotEl.classList.contains('advisor-portrait-slot')) labelEl.textContent = currentItemData.name_display || currentItemData.name;
             slotEl.classList.add('selected');
-            addTooltipEventsToElement(slotEl, currentItemData.name, currentItemData.tooltip_summary || currentItemData.effects_summary, currentItemData.description, slotTitleFromHTML);
+            addTooltipEventsToElement(slotEl, currentItemData.name_display || currentItemData.name, currentItemData.tooltip_summary || currentItemData.effects_summary, currentItemData.description, slotTitleFromHTML);
         } else if (imgEl) {
             let emptyIconSrc = 'https://via.placeholder.com/50x50/333/666?text=+';
             if (slotEl.classList.contains('advisor-portrait-slot')) emptyIconSrc = 'https://via.placeholder.com/65x65/333/666?text=+';
