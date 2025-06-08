@@ -37,25 +37,26 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
         }
 
         if (name) {
-            tooltipContent += (tooltipContent && slotTitle && !tooltipContent.endsWith("</small>") ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + `<strong>${name}</strong>`;
+            // Add <hr> only if there was a slotTitle AND there's a name to display
+            tooltipContent += (slotTitle && tooltipContent ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + `<strong>${name}</strong>`;
         }
         
-        // Для constitutional_principles и development_areas effectsSummary будет null, так как мы его убрали из JSON (используем description)
-        // Для других элементов (нацдухи, советники, партии) effectsSummary может быть
         if (effectsSummary) {
-            tooltipContent += (tooltipContent && (name || slotTitle) && !tooltipContent.endsWith("</strong>") ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + effectsSummary.replace(/\n/g, '<br>');
+            // Add <hr> if there was any content before (slotTitle or name) AND current content doesn't end with a strong tag (meaning name was just added)
+             tooltipContent += ((slotTitle || name) && tooltipContent ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + effectsSummary.replace(/\n/g, '<br>');
         }
 
-        if (fullDescription) { // Это будет основное описание для constitutional_principles и development_areas
+        if (fullDescription) {
              const separatorNeeded = (name || slotTitle || effectsSummary) && tooltipContent;
              tooltipContent += (separatorNeeded ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
         }
         
+        // For empty slots (like advisors, corporations) that have a title
         if (!name && slotTitle && !effectsSummary && !fullDescription && element.dataset.slotType && 
             !element.dataset.slotType.startsWith("constitutional_principle_") && 
-            !element.dataset.slotType.startsWith("development_area_")) {
-             tooltipContent += (slotTitle ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<strong>Назначить / Выбрать</strong>";
-        } else if (!name && !slotTitle && !effectsSummary && !fullDescription) {
+            !element.dataset.slotType.startsWith("development_area_")) { // Exclude principles/dev areas which always have a "name" (of the current option)
+             tooltipContent += (slotTitle && !tooltipContent.includes("<hr>") ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<strong>Назначить / Выбрать</strong>";
+        } else if (!name && !slotTitle && !effectsSummary && !fullDescription) { // Fallback to static data-tooltip if nothing else is provided
             const staticTooltipText = this.dataset.tooltip;
             if (staticTooltipText) {
                 tooltipContent = staticTooltipText.replace(/\n/g, '<br>');
@@ -166,7 +167,7 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
     } else if (developmentAreaId && GAME_DATA.development_areas[developmentAreaId]) {
         const areaData = GAME_DATA.development_areas[developmentAreaId];
         panelTitle = areaData.name || "Область Развития";
-        optionsToShow = areaData.options || [];
+        optionsToShow = areaData.levels || []; // Используем .levels для development_areas
     } else if (slotType.startsWith("corporation_slot_")) {
         const corpCategoryData = GAME_DATA.corporations;
         panelTitle = corpCategoryData?.title_overall || "Выбор Корпорации";
@@ -197,6 +198,7 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
             optionEl.appendChild(nameEl);
 
             optionEl.addEventListener('click', () => selectOptionInSidePanel(optionData.id, currentCategoryForSidePanel));
+            // Для опций в боковой панели, передаем полное описание и эффекты (если есть)
             addTooltipEventsToElement(optionEl, optionData.name_display || optionData.name, optionData.effects_summary, optionData.description);
             sidePanelOptionsContainer.appendChild(optionEl);
         });
@@ -205,34 +207,61 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
 }
 
 function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
-    let chosenData = null;
+    let chosenData = null; // Это будет выбранный ВАРИАНТ/УРОВЕНЬ/ОБЪЕКТ
+    let parentCategoryData = null; // Это будет объект самой категории (принцип, область развития)
+
     const principleId = targetSlotType.startsWith("constitutional_principle_") ? targetSlotType.replace("constitutional_principle_", "") : null;
     const developmentAreaId = targetSlotType.startsWith("development_area_") ? targetSlotType.replace("development_area_", "") : null;
 
-    if (targetSlotType.startsWith("advisor_") && GAME_DATA.leaders) chosenData = GAME_DATA.leaders[selectedOptionId];
-    else if (principleId && GAME_DATA.constitutional_principles[principleId]) {
-        GAME_DATA.constitutional_principles[principleId].options?.forEach(opt => opt.is_current = (opt.id === selectedOptionId));
-        chosenData = GAME_DATA.constitutional_principles[principleId].options?.find(opt => opt.is_current);
+    if (targetSlotType.startsWith("advisor_") && GAME_DATA.leaders) {
+        chosenData = GAME_DATA.leaders[selectedOptionId];
+    } else if (principleId && GAME_DATA.constitutional_principles[principleId]) {
+        parentCategoryData = GAME_DATA.constitutional_principles[principleId];
+        parentCategoryData.options?.forEach(opt => opt.is_current = (opt.id === selectedOptionId));
+        chosenData = parentCategoryData.options?.find(opt => opt.is_current);
     } else if (developmentAreaId && GAME_DATA.development_areas[developmentAreaId]) {
-        GAME_DATA.development_areas[developmentAreaId].options?.forEach(opt => opt.is_current = (opt.id === selectedOptionId));
-        chosenData = GAME_DATA.development_areas[developmentAreaId].options?.find(opt => opt.is_current);
-    } else if (targetSlotType.startsWith("corporation_slot_") && GAME_DATA.corporations) chosenData = GAME_DATA.corporations[selectedOptionId];
+        parentCategoryData = GAME_DATA.development_areas[developmentAreaId];
+        parentCategoryData.current_level_id = selectedOptionId; // Обновляем ID текущего уровня
+        // parentCategoryData.current_progress = 0; // Раскомментируйте, если прогресс сбрасывается при смене уровня
+        chosenData = parentCategoryData.levels?.find(lvl => lvl.id === selectedOptionId);
+    } else if (targetSlotType.startsWith("corporation_slot_") && GAME_DATA.corporations) {
+        chosenData = GAME_DATA.corporations[selectedOptionId];
+    }
 
     if (!chosenData || !clickedMainSlotElement) { console.error("Data or slot missing for selection", selectedOptionId, targetSlotType); return; }
 
     clickedMainSlotElement.dataset.currentId = chosenData.id;
     const mainSlotImg = clickedMainSlotElement.querySelector('img');
     const mainSlotLabel = clickedMainSlotElement.querySelector('.item-slot-label-small');
-    const slotTitleFromHTML = clickedMainSlotElement.dataset.slotTitle;
+    // Название категории для тултипа (Название самого принципа или области развития)
+    const categoryTitleForTooltip = parentCategoryData?.name || clickedMainSlotElement.dataset.slotTitle;
 
     if (mainSlotImg) {
-        mainSlotImg.src = chosenData.icon_path || chosenData.portrait_path || 'https://via.placeholder.com/80/ccc/000?text=N/A';
-        mainSlotImg.alt = chosenData.name?.substring(0, 3) || "ICO";
+        // Для принципов и развития - иконка категории. Для остального - иконка самого элемента.
+        mainSlotImg.src = parentCategoryData?.icon_path || chosenData.icon_path || chosenData.portrait_path || 'https://via.placeholder.com/80/ccc/000?text=N/A';
+        mainSlotImg.alt = parentCategoryData?.name?.substring(0, 3) || chosenData.name?.substring(0, 3) || "ICO";
     }
-    if (mainSlotLabel) mainSlotLabel.textContent = chosenData.name_display || chosenData.name;
-    // Для constitutional_principles и development_areas передаем null вместо effects_summary
-    const effectsForTooltip = (principleId || developmentAreaId) ? null : (chosenData.tooltip_summary || chosenData.effects_summary);
-    addTooltipEventsToElement(clickedMainSlotElement, chosenData.name_display || chosenData.name, effectsForTooltip, (principleId || developmentAreaId) ? chosenData.description : null, slotTitleFromHTML);
+
+    let labelTextContent = chosenData.name_display || chosenData.name;
+    let tooltipNameForSlot = chosenData.name_display || chosenData.name;
+    let tooltipEffectsForSlot = null; // Для принципов - нет, для развития - прогресс
+    let tooltipDescriptionForSlot = chosenData.description;
+
+    if (developmentAreaId && parentCategoryData) {
+        labelTextContent = `${chosenData.name_display}<br><span class="progress-text">${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}</span>`;
+        tooltipEffectsForSlot = `Прогресс: ${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}`;
+    } else if (principleId && parentCategoryData) {
+        // effectsForTooltip останется null, description будет показан
+    } else { // Для советников, корпораций и т.д.
+        tooltipEffectsForSlot = chosenData.tooltip_summary || chosenData.effects_summary;
+        // Для них полное описание в основном слоте обычно не показываем, оно в боковой панели.
+        // Если все же нужно, можно передать chosenData.description в addTooltipEventsToElement
+        tooltipDescriptionForSlot = null;
+    }
+
+    if (mainSlotLabel) mainSlotLabel.innerHTML = labelTextContent;
+
+    addTooltipEventsToElement(clickedMainSlotElement, tooltipNameForSlot, tooltipEffectsForSlot, tooltipDescriptionForSlot, categoryTitleForTooltip);
     clickedMainSlotElement.classList.add('selected');
 
     if(sidePanelOptionsContainer) {
@@ -280,9 +309,15 @@ function handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radiu
         let angle = Math.atan2(dy, dx); if (angle < -Math.PI / 2) angle += 2 * Math.PI;
         for (const sector of sectors) {
             let inSector = false; let sAngle = sector.startAngle; let eAngle = sector.endAngle;
-            if (sAngle < -Math.PI/2) sAngle += 2 * Math.PI; if (eAngle < -Math.PI/2) eAngle += 2 * Math.PI;
-            if (sAngle > eAngle) { if (angle >= sAngle || angle < eAngle) inSector = true; }
-            else { if (angle >= sAngle && angle < eAngle) inSector = true; }
+            // Normalize angles to be in the same range as 'angle' for comparison
+            while (sAngle < -Math.PI/2) sAngle += 2*Math.PI; while (sAngle > 3*Math.PI/2) sAngle -= 2*Math.PI;
+            while (eAngle < -Math.PI/2) eAngle += 2*Math.PI; while (eAngle > 3*Math.PI/2) eAngle -= 2*Math.PI;
+
+            if (sAngle > eAngle) { // Sector crosses the -PI/2 boundary
+                if (angle >= sAngle || angle < eAngle) inSector = true;
+            } else {
+                if (angle >= sAngle && angle < eAngle) inSector = true;
+            }
             if (inSector) {
                 tooltipElement.innerHTML = `<strong>${sector.partyName}</strong><hr>${sector.popularity}%`;
                 tooltipElement.style.display = 'block'; positionTooltip(event); foundSector = true; return;
@@ -377,8 +412,7 @@ function initializeUI() {
                     slotEl.dataset.slotType = `constitutional_principle_${principle.id}`; slotEl.dataset.currentId = currentOption.id;
                     const imgEl = document.createElement('img'); imgEl.src = principle.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=C'; slotEl.appendChild(imgEl);
                     const labelEl = document.createElement('span'); labelEl.className = 'item-slot-label-small'; labelEl.textContent = currentOption.name_display; slotEl.appendChild(labelEl);
-                    addTooltipEventsToElement(slotEl, currentOption.name_display, null, currentOption.description, principle.name); // effects_summary is null
-                    // Оставляем возможность клика, панель покажет детали одной опции
+                    addTooltipEventsToElement(slotEl, currentOption.name_display, null, currentOption.description, principle.name);
                     slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
                     principlesContainer.appendChild(slotEl);
                 } else { console.warn(`Для принципа '${principle.id}' нет активной опции.`); }
@@ -390,18 +424,25 @@ function initializeUI() {
     if (developmentContainer && GAME_DATA.development_areas) {
         developmentContainer.innerHTML = '';
         Object.values(GAME_DATA.development_areas).sort((a,b) => (a.order || Infinity) - (b.order || Infinity))
-            .forEach(area => {
-                const currentOption = area.options?.find(opt => opt.is_current);
-                if (currentOption) {
+            .forEach(area => { // area - объект самой области развития
+                const currentLevelData = area.levels?.find(lvl => lvl.id === area.current_level_id); // Ищем текущий уровень
+                if (currentLevelData) {
                     const slotEl = document.createElement('div'); slotEl.className = 'item-slot development-area';
-                    slotEl.dataset.slotType = `development_area_${area.id}`; slotEl.dataset.currentId = currentOption.id;
-                    const imgEl = document.createElement('img'); imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=D'; slotEl.appendChild(imgEl);
-                    const labelEl = document.createElement('span'); labelEl.className = 'item-slot-label-small'; labelEl.textContent = currentOption.name_display; slotEl.appendChild(labelEl);
-                     // Для Development Areas передаем effects_summary, если они есть в JSON, иначе null
-                    addTooltipEventsToElement(slotEl, currentOption.name_display, currentOption.effects_summary, currentOption.description, area.name);
+                    slotEl.dataset.slotType = `development_area_${area.id}`;
+                    slotEl.dataset.currentId = area.current_level_id; // Сохраняем ID текущего уровня
+
+                    const imgEl = document.createElement('img');
+                    imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=D';
+                    slotEl.appendChild(imgEl);
+                    const labelEl = document.createElement('span');
+                    labelEl.className = 'item-slot-label-small';
+                    labelEl.innerHTML = `${currentLevelData.name_display}<br><span class="progress-text">${area.current_progress}/${area.progress_per_level}</span>`;
+                    slotEl.appendChild(labelEl);
+                    const effectsForTooltip = `Прогресс: ${area.current_progress}/${area.progress_per_level}`;
+                    addTooltipEventsToElement(slotEl, currentLevelData.name_display, effectsForTooltip, currentLevelData.description, area.name);
                     slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
                     developmentContainer.appendChild(slotEl);
-                } else { console.warn(`Для области развития '${area.id}' нет активной опции.`); }
+                } else { console.warn(`Для области развития '${area.id}' не найден активный уровень по ID: '${area.current_level_id}'.`); }
         });
     }
 
@@ -441,7 +482,7 @@ function initializeUI() {
 
     document.querySelectorAll('.national-focus-banner, .pie-chart').forEach(el => {
         if(el.dataset.tooltip && !el.getAttribute('listenerAttached')) {
-             addTooltipEventsToElement(el, el.dataset.tooltip, null, null); // Для статичных элементов data-tooltip - это "name"
+             addTooltipEventsToElement(el, el.dataset.tooltip, null, null);
              el.setAttribute('listenerAttached', 'true');
         }
     });
