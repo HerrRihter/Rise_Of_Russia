@@ -1,10 +1,4 @@
-/* body, .hoi4-politics-screen, .window-title-bar, .main-content, etc. */
-/* .upper-section, .leader-pane, .national-info-pane, etc. */
-/* .lower-section, .category-block, .category-header, .category-items, .item-slot, .advisor-portrait-slot */
-/* .tooltip */
-/* .modal, .modal-content, .balance-scale-container */
-/* .side-panel, .side-panel-header, .side-panel-content, .side-panel-option */
-
+/* --- ОСНОВНЫЕ СТИЛИ --- */
 body {
     background-color: #2e2e2e;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -48,102 +42,73 @@ body {
 .close-button:hover { background-color: #6a6a6a; }
 
 .main-content { display: flex; flex-direction: column; padding: 15px; }
+
+/* --- Верхняя секция --- */
 .upper-section {
     display: flex; border-bottom: 1px solid #555;
     padding-bottom: 25px; margin-bottom: 15px; padding-top: 15px;
 }
 
 .leader-pane {
-    flex-basis: 250px; /* Возможно, немного увеличить, чтобы вместить новые размеры */
+    flex-basis: 250px; /* Слегка увеличено для новых размеров иконок идеологии/партии */
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-right: 20px;
 }
+.leader-portrait {
+    width: 156px; height: 210px; background-color: #555;
+    border: 1px solid #777; margin-bottom: 8px; display: flex;
+    justify-content: center; align-items: center; text-align: center;
+}
+.leader-portrait img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Контейнер для иконки идеологии и ее названия */
+.leader-name {
+    background-color: #223e22; color: #ffd700; padding: 6px 12px;
+    text-align: center; font-size: 1em; border: 1px solid #335e33;
+    border-radius: 3px; width: 95%; margin-bottom: 8px;
+}
+
 .ideology-info {
     display: flex;
-    align-items: stretch; /* ИЗМЕНЕНИЕ: Выравниваем элементы по высоте, растягивая их */
-    width: 100%;         /* Занимает всю ширину .leader-pane (или 95%, если вы хотите отступы) */
-    max-width: 230px;   /* Ограничиваем максимальную ширину, чтобы не было слишком широко */
+    align-items: stretch; /* Выравнивает иконку и текст по высоте */
+    width: 100%;
+    max-width: 230px;
     margin-top: 10px;
-    margin-bottom: 10px; /* Добавим отступ снизу */
-    gap: 8px; /* Отступ между иконкой и блоком названия */
+    margin-bottom: 10px;
+    gap: 8px;
 }
-
 .ideology-icon {
-    width: 75px;  /* НОВЫЙ РАЗМЕР - подберите по вкусу */
-    height: 75px; /* Делаем квадратным */
-    min-width: 75px; /* Чтобы не сжимался */
-    background-color: #333; /* Темнее фон для лучшего контраста, если картинка не загрузится */
-    cursor: pointer;
-    border: 1px solid #555; /* Темнее граница */
-    /* margin-right убран, используем gap у родителя */
-    /* margin-bottom убран, отступы через родителя или другие элементы */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    border-radius: 4px; /* Небольшое скругление */
-    box-sizing: border-box; /* Чтобы padding/border не влияли на общий размер */
+    width: 75px; height: 75px; min-width: 75px;
+    background-color: #333; cursor:pointer;
+    border: 1px solid #555;
+    display: flex; justify-content: center; align-items: center;
+    overflow: hidden; border-radius: 4px; box-sizing: border-box;
 }
-
-.ideology-icon img {
-    width: 90%;   /* Изображение чуть меньше контейнера для рамки */
-    height: 90%;
-    object-fit: contain;
-    display: block;
-}
+.ideology-icon img { width: 90%; height: 90%; object-fit: contain; display: block;}
 
 .ideology-name {
-    background-color: #4a3b2a;
-    color: #ffd700;
-    padding: 8px; /* Внутренние отступы */
-    font-size: 0.9em;
-    border: 1px solid #5a4b3a;
-    border-radius: 4px; /* Скругление как у иконки */
-    text-align: center;
-    
-    display: flex; /* Для вертикального центрирования текста */
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    flex-grow: 1;
-    min-height: 75px; /* Гарантируем минимальную высоту, равную иконке */
-    box-sizing: border-box;
+    background-color: #4a3b2a; color: #ffd700; padding: 8px;
+    font-size: 0.9em; border: 1px solid #5a4b3a;
+    border-radius: 4px; text-align: center;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    flex-grow: 1; min-height: 75px; box-sizing: border-box;
 }
 
 .party-emblem {
-    width: 75px;
-    height: 75px;
-    min-width: 75px;
-    background-color: #333;
-    cursor:pointer;
-    border: 1px solid #555;
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    border-radius: 4px;
-    box-sizing: border-box;
+    width: 75px; height: 75px; min-width: 75px;
+    background-color: #333; cursor:pointer;
+    border: 1px solid #555; margin-top: 10px;
+    display: flex; justify-content: center; align-items: center;
+    overflow: hidden; border-radius: 4px; box-sizing: border-box;
 }
-
-.party-emblem img {
-    width: 90%;
-    height: 90%;
-    object-fit: contain;
-    display: block;
-}
-
+.party-emblem img { width: 90%; height: 90%; object-fit: contain; display: block;}
 
 .national-info-pane { flex-grow: 1; display: flex; flex-direction: column; }
 .national-focus-banner {
-    height: 100px; background-color: #555; border: 1px solid #777; margin-bottom: 10px; /* Слегка уменьшил отступ */
+    height: 100px; background-color: #555; border: 1px solid #777; margin-bottom: 10px;
     display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-    position: relative; padding: 8px; cursor: help;
+    position: relative; padding: 8px; cursor: pointer; /* Сделали кликабельным */
 }
 .national-focus-banner img.focus-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
 .focus-title-bar {
@@ -157,34 +122,29 @@ body {
 }
 .focus-progress { height: 100%; background-color: #aa00aa; }
 
-/* --- СТИЛИ ДЛЯ НАЦИОНАЛЬНЫХ ДУХОВ --- */
 .national-spirits {
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 10px; /* Отступ между иконками духов */
+    gap: 10px;
     margin-bottom: 15px;
-    background-color: transparent; /* Убрали фон контейнера */
-    padding: 0; /* Убрали паддинг контейнера */
-    min-height: 100px; /* Поддерживаем высоту, если духов нет */
+    background-color: transparent; /* Убрали фон */
+    padding: 0;                   /* Убрали паддинг */
+    min-height: 60px; /* Оставляем для выравнивания, если духов нет */
 }
 .spirit-icon {
-    width: 90px;
-    height: 90px;
-    /* background-color убран */
-    /* border убран */
+    width: 56px;  /* Увеличенный размер иконки духа */
+    height: 56px;
     cursor: help;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 .spirit-icon img {
-    width: 100%; /* Изображение духа занимает всю область .spirit-icon */
+    width: 100%;
     height: 100%;
-    object-fit: contain; /* Для PNG с прозрачностью это лучший вариант */
+    object-fit: contain; /* Идеально для PNG с прозрачностью */
 }
-/* --- КОНЕЦ СТИЛЕЙ ДЛЯ НАЦИОНАЛЬНЫХ ДУХОВ --- */
-
 
 .political-details { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px;}
 .ruling-party-info, .political-system-info-container {
@@ -195,43 +155,19 @@ body {
 .ruling-party-info strong { display: block; margin-bottom: 5px; color: #fff; }
 
 .political-system-info-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    text-align: center;
-    flex-basis: 28%;
+    display: flex; flex-direction: column; justify-content: space-between;
+    text-align: center; flex-basis: 28%;
 }
-.pol-sys-upper {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    width: 100%;
-}
-.pol-sys-icon-wrapper {
-    flex-basis: 40%;
-    flex-shrink: 0;
-    padding-right: 8px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.pol-sys-icon-wrapper img.flag {
-    width: 100%; width: 50px; height: 50px;
-    border: 1px solid #777; display: block;
-}
-.pol-sys-text-wrapper {
-    flex-basis: 60%; text-align: left;
-    font-size: 0.95em; line-height: 1.3; color: #e0e0e0;
-}
+.pol-sys-upper { display: flex; align-items: center; margin-bottom: 10px; width: 100%;}
+.pol-sys-icon-wrapper { flex-basis: 40%; flex-shrink: 0; padding-right: 8px; box-sizing: border-box; display: flex; justify-content: center; align-items: center;}
+.pol-sys-icon-wrapper img.flag { width: 100%; max-width: 45px; height: auto; border: 1px solid #777; display: block; }
+.pol-sys-text-wrapper { flex-basis: 60%; text-align: left; font-size: 0.95em; line-height: 1.3; color: #e0e0e0;}
 .balance-btn {
     background-color: #5a5a5a; color: #e0e0e0; border: 1px solid #777;
     padding: 6px 12px; font-size: 0.9em; border-radius: 3px; cursor: pointer;
-    margin-top: auto;
-    display: block; width: 100%;
+    margin-top: auto; display: block; width: 100%;
 }
 .balance-btn:hover { background-color: #6a6a6a; }
-
 
 .party-popularity {
     flex-grow: 1; display: flex; align-items: center; background-color: #2a2a2a;
@@ -254,6 +190,7 @@ body {
 .party-list li.highlighted .party-color-box { border-color: #1e1e1e; }
 .party-color-box { width: 10px; height: 10px; margin-right: 6px; border: 1px solid #888; flex-shrink: 0;}
 
+/* --- Нижняя секция и категории --- */
 .lower-section { max-height: none; overflow-y: visible; padding-right: 10px; }
 .category-block { margin-bottom: 15px; }
 .category-header {
@@ -340,7 +277,15 @@ body {
     max-height: 3.6em;
     margin-top: auto;
 }
+.item-slot-label-small .progress-text {
+    font-size: 0.9em;
+    color: #a0a0a0;
+    margin-top: 2px;
+    display: block;
+}
 
+
+/* --- Тултипы --- */
 .tooltip {
     position: fixed; background-color: rgba(10,10,10,0.92); color: #fff;
     padding: 10px 15px; border-radius: 4px; font-size: 0.9em;
@@ -351,6 +296,7 @@ body {
 .tooltip strong { display: block; margin-bottom: 4px; font-size: 1.05em; color: #fff; }
 .tooltip small { display: block; color: #b0b0b0; font-size: 0.9em; line-height: 1.4; }
 
+/* --- Модальные окна --- */
 .modal {
     display: none; position: fixed; z-index: 1001; left: 0; top: 0;
     width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6);
@@ -358,7 +304,7 @@ body {
 }
 .modal-content {
     background-color: #3a3a3a; color: #e0e0e0; margin: auto; padding: 25px;
-    border: 1px solid #888; width: 80%; max-width: 450px; border-radius: 5px;
+    border: 1px solid #888; width: 90%; border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.4); text-align: center; position:relative;
 }
 .modal-close-button {
@@ -366,6 +312,8 @@ body {
     font-size: 28px; font-weight: bold;
 }
 .modal-close-button:hover, .modal-close-button:focus { color: #fff; text-decoration: none; cursor: pointer; }
+
+/* Модальное окно Баланса */
 .balance-scale-container { display: flex; align-items: center; justify-content: space-between; margin: 20px 0; }
 .scale-icon { font-size: 2em; }
 .balance-scale { flex-grow: 1; margin: 0 15px; }
@@ -382,7 +330,32 @@ body {
 #balanceValueDisplay { font-weight: bold; color: #ffd700; }
 #balanceValueInput { width: 60px; margin-left:5px; background-color: #555; color: white; border: 1px solid #777; padding: 5px; }
 
+/* Модальное окно Национального Фокуса */
+.focus-modal-content {
+    max-width: 800px; /* Можно шире для картинки фокуса */
+    text-align: left;
+}
+.focus-modal-content h4 {
+    text-align: center; margin-top: 0; margin-bottom: 15px;
+    font-size: 1.3em; color: #ffd700;
+}
+.focus-modal-image-container {
+    width: 100%; max-height: 60vh; display: flex;
+    justify-content: center; align-items: center; margin-bottom: 15px;
+    background-color: #222; border-radius: 4px; overflow: hidden;
+}
+#focusModalImage {
+    max-width: 100%; max-height: 100%; object-fit: contain;
+    display: block; border-radius: 3px;
+}
+.focus-modal-description {
+    font-size: 0.95em; line-height: 1.6; color: #e0e0e0;
+    white-space: pre-line; max-height: 25vh; overflow-y: auto;
+    padding: 5px; border-top: 1px solid #444; margin-top: 15px;
+}
 
+
+/* --- Боковая Панель --- */
 .side-panel {
     display: none; position: fixed; top: 50px;
     right: 20px; width: 380px; max-height: calc(100vh - 70px);
@@ -436,6 +409,8 @@ body {
     .pie-chart { width: 100px; height: 100px;}
     #partyPieChartCanvas { width: 100px; height: 100px; }
     .party-list { font-size: 0.78em; }
+
+    .focus-modal-content { max-width: 90%; padding: 20px; }
 }
 
 @media (max-width: 576px) {
@@ -444,16 +419,15 @@ body {
     .window-title-bar { padding: 8px 10px; font-size: 1.1em; }
 
     .upper-section { padding-bottom: 15px; margin-bottom: 10px; }
-    .leader-pane { max-width: 300px; }
-    .leader-portrait { width: 150px; height: 180px; }
+    .leader-pane { max-width: 100%; flex-basis: auto; /* Занимает всю доступную ширину родителя на мобильном */ }
+    .leader-portrait { width: 120px; height: 160px; }
     .ideology-icon, .party-emblem { width: 50px; height: 50px; min-width: 50px;}
 
 
     .national-focus-banner { height: 80px; }
     .focus-title-bar { font-size: 0.9em; width: 150px; }
-    /* Для .national-spirits на мобильных - иконки могут стать меньше */
-    .national-spirits { gap: 4px; padding: 5px; min-height: 30px; }
-    .spirit-icon { width: 30px; height: 30px; }
+    .national-spirits { gap: 4px; padding: 5px; min-height: 30px; justify-content: center; } /* Центрируем духи */
+    .spirit-icon { width: 32px; height: 32px; } /* Иконки духов меньше */
 
 
     .political-details { flex-direction: column; gap: 10px; }
@@ -484,4 +458,9 @@ body {
     .side-panel-option-name { font-size: 0.9em; }
 
     .tooltip { font-size: 0.8em; max-width: 90vw; padding: 8px 10px; }
+
+    .focus-modal-content { max-width: 95%; padding: 15px; }
+    .focus-modal-content h4 { font-size: 1.1em; }
+    .focus-modal-image-container { max-height: 40vh; }
+    .focus-modal-description { font-size: 0.9em; max-height: 30vh; }
 }
