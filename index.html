@@ -39,7 +39,7 @@
                     <img src="history/turn_images/Autumn2003.png" alt="Национальный Фокус" class="focus-bg" id="mainFocusBannerImage">
                     <div class="focus-title-bar" id="mainFocusTitle">Осень 2003 - Ход 23</div>
                     <div class="focus-progress-bar">
-                        <div class="focus-progress" style="width: 60%;"></div>
+                        <div class="focus-progress" style="width: 75%;"></div>
                     </div>
                 </div>
                 <!-- КОНЕЦ ИЗМЕНЕННОГО БЛОКА НАЦИОНАЛЬНОГО ФОКУСА -->
@@ -181,14 +181,21 @@
     <div class="modal-content">
         <span class="modal-close-button" id="closeBalanceModalBtn_Balance">×</span> <!-- ID кнопки изменен во избежание конфликта -->
         <h4>Баланс Сил</h4>
-        <div class="balance-scale-container">
-            <span class="scale-icon moon-icon">🌙</span>
-            <div class="balance-scale"><div class="scale-track"><div class="scale-marker" id="balanceMarker"></div></div>
-                <div class="scale-labels"><span>-50</span><span>0</span><span>+50</span></div>
+<div class="balance-scale-container">
+                <img src="history/icons/Lunar.png" alt="Луна" class="scale-icon moon-icon">
+                <div class="balance-scale">
+                    <div class="scale-track">
+                        <div class="scale-marker" id="balanceMarker"></div>
+                    </div>
+                    <div class="scale-labels">
+                        <span>-50</span>
+                        <span>0</span>
+                        <span>+50</span>
+                    </div>
+                </div>
+                <img src="history/icons/Solar.png" alt="Солнце" class="scale-icon sun-icon">
             </div>
-            <span class="scale-icon sun-icon">☀️</span>
-        </div>
-        <p>Текущее значение: <span id="balanceValueDisplay">0</span></p>
+        <p>Текущее значение: <span id="balanceValueDisplay">6</span></p>
         <button onclick="updateBalanceScale(document.getElementById('balanceValueInput').valueAsNumber)" style="margin-top:10px; padding:5px;">Установить</button>
         <input type="number" id="balanceValueInput" value="0" min="-50" max="50" style="width: 60px; margin-left:5px;">
     </div>
