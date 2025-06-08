@@ -414,7 +414,7 @@ function initializeUI() {
     const nationalSpiritsContainer = document.querySelector('.national-spirits');
     if (nationalSpiritsContainer && GAME_DATA.national_spirits) {
         nationalSpiritsContainer.innerHTML = '';
-        const activeSpiritIds = ["great_power_ambitions", "strong_army", "fortress_state"]; // Example, make this dynamic
+        const activeSpiritIds = ["fortress_state", "near_abroad_policy", "national_projects_infrastructure", "reindustrialization_opk_tech_sovereignty", "divided_society", "systemic_corruption", "oil_gas_rent_stabilization_fund", "sovereign_economy", "social_initiatives_family_support", "russian_dream_culture_identity", "soft_power_russia_abroad"]; // Example, make this dynamic
         activeSpiritIds.forEach(spiritId => {
             const spiritData = GAME_DATA.national_spirits[spiritId];
             if (spiritData) {
