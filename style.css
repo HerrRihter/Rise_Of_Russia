@@ -133,8 +133,8 @@ body {
     min-height: 60px; /* Оставляем для выравнивания, если духов нет */
 }
 .spirit-icon {
-    width: 56px;  /* Увеличенный размер иконки духа */
-    height: 56px;
+    width: 100px;  /* Увеличенный размер иконки духа */
+    height: 100px;
     cursor: help;
     display: flex;
     justify-content: center;
