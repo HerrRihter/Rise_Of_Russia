@@ -214,7 +214,41 @@ body {
 }
 
 .item-slot,
-.advisor-portrait-slot,
+.advisor-portrait-slot {
+    width: 132px;
+    min-height: 95px;
+    background-color: #4a4a4a;
+    border: 1px solid #666;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    box-sizing: border-box;
+    padding: 8px 5px;
+    overflow: hidden;
+    background-color: #4a4a4a; /* Оставляем как fallback, если картинка не загрузится */
+    background-image: url('history/portraits_background/empty_advisor_bg.png'); /* ЗАМЕНИТЕ ПУТЬ! */
+    background-size: cover;       /* Растянуть или покрыть, чтобы заполнить слот */
+    background-position: center;  /* Центрировать фоновое изображение */
+    background-repeat: no-repeat; /* Не повторять фон */
+    position: relative; /* Нужно, чтобы портрет лег поверх фона */
+}
+
+.advisor-portrait-slot img { /* Портрет самого советника */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 3px;
+    position: relative; /* Чтобы был поверх фона слота */
+    z-index: 1;        /* Явно выше фона */
+    /* Если портрет советника имеет прозрачность, то фон будет виден сквозь него */
+    /* Если хотите, чтобы портрет полностью перекрывал фон, а фон был виден только в пустых слотах: */
+    /* background-color: #3c3c3c; /* Или цвет, совпадающий с фоном портрета, чтобы скрыть фон слота */
+}
 .constitutional-principle,
 .development-area,
 .corporation-slot {
