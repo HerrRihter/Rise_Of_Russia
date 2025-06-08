@@ -1,4 +1,3 @@
-// history/development_areas.json
 {
     "title_overall": "Развитие Страны",
     "areas": [
@@ -10,7 +9,7 @@
             "progress_per_level": 100,
             "current_level_id": "edu_level_3",
             "icon_path": "history/development_areas_icons/education.png",
-            "levels": [ // Переименовал options в levels для ясности, что это уровни
+            "levels": [
                 { "id": "edu_level_0", "name_display": "Эпоха безграмотности", "description": "Система формального образования практически отсутствует или недоступна для подавляющего большинства. Массовая неграмотность препятствует любому социальному и экономическому прогрессу." },
                 { "id": "edu_level_1", "name_display": "Ликвидация неграмотности", "description": "Государство реализует программы по обеспечению базовой грамотности (чтение, письмо, счет). Начальные школы становятся более доступными, но качество образования остается низким." },
                 { "id": "edu_level_2", "name_display": "Всеобщее базовое образование", "description": "Большинство населения обладает навыками, достаточными для повседневной жизни и неквалифицированного труда. Среднее (полное) школьное образование становится нормой, но доступ к качественному высшему образованию ограничен." },
@@ -93,7 +92,7 @@
             "name": "Внутренняя Безопасность",
             "current_progress": 52,
             "progress_per_level": 100,
-            "current_level_id": "isec_level_2", // Предположим "Эффективная полиция" как эквивалент начального
+            "current_level_id": "isec_level_2",
             "icon_path": "history/development_areas_icons/internal_security.png",
             "levels": [
                 { "id": "isec_level_0", "name_display": "Правовой коллапс", "description": "Правоохранительные органы не функционируют, повсеместный бандитизм и беззаконие. Граждане не защищены." },
@@ -128,7 +127,7 @@
             "current_progress": 25,
             "progress_per_level": 100,
             "current_level_id": "soc_cult_level_1",
-            "icon_path": "history/development_areas_icons/cultural_influence.png", // Предполагаем новый или подходящий путь к иконке
+            "icon_path": "history/development_areas_icons/cultural_influence.png",
             "levels": [
                 {
                     "id": "soc_cult_level_0",
