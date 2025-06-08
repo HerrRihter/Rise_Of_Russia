@@ -30,6 +30,7 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
 
     element.addEventListener('mouseenter', function(event) {
         let tooltipContent = "";
+        // explicitSlotTitle берется из JS, this.dataset.slotTitle - из HTML, если он там есть.
         const slotTitle = explicitSlotTitle || this.dataset.slotTitle;
 
         if (slotTitle) {
@@ -37,25 +38,29 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
         }
 
         if (name) {
-            tooltipContent += (tooltipContent && slotTitle ? "<hr>" : "") + `<strong>${name}</strong>`;
+            // Добавляем <hr> только если был slotTitle И есть name
+            tooltipContent += (slotTitle ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + `<strong>${name}</strong>`;
         }
 
         if (effectsSummary) {
-            tooltipContent += (tooltipContent && (name || slotTitle) ? "<hr>" : "") + effectsSummary.replace(/\n/g, '<br>');
+             // Добавляем <hr> если было что-то до этого (slotTitle или name)
+            tooltipContent += (slotTitle || name ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + effectsSummary.replace(/\n/g, '<br>');
         }
 
         if (fullDescription) {
-            tooltipContent += (tooltipContent && (name || slotTitle || effectsSummary) ? "<hr>" : "") + "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
+            tooltipContent += (slotTitle || name || effectsSummary ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
         }
 
+        // Если слот пустой, но у него есть data-slot-title, показываем "Назначить / Выбрать"
         if (!name && slotTitle && !effectsSummary && !fullDescription) {
-             tooltipContent += (tooltipContent.includes('<small>') ? "<hr>" : "") + "<strong>Назначить / Выбрать</strong>";
-        } else if (!name && !slotTitle && !effectsSummary && !fullDescription) {
+             tooltipContent += (slotTitle ? "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>" : "") + "<strong>Назначить / Выбрать</strong>";
+        } else if (!name && !slotTitle && !effectsSummary && !fullDescription) { // Фолбэк на статический data-tooltip
             const staticTooltipText = this.dataset.tooltip;
             if (staticTooltipText) {
                 tooltipContent = staticTooltipText.replace(/\n/g, '<br>');
             }
         }
+
 
         if (tooltipContent && tooltipElement) {
             tooltipElement.innerHTML = tooltipContent;
@@ -163,10 +168,10 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
         panelTitle = areaData.name || "Область Развития";
         optionsToShow = areaData.options || [];
     } else if (slotType.startsWith("corporation_slot_")) {
-        panelTitle = GAME_DATA.corporations?.title_overall || "Выбор Корпорации"; // Используем title_overall если есть
-        optionsToShow = Object.values(GAME_DATA.corporations || {}).filter(c => c.id); // Фильтруем системные поля
+        const corpCategoryData = GAME_DATA.corporations; // Object of corporations
+        panelTitle = corpCategoryData?.title_overall || "Выбор Корпорации";
+        optionsToShow = Object.values(corpCategoryData || {}).filter(c => typeof c === 'object' && c.id); // Filter out title_overall if present
     }
-    // Добавьте сюда логику для старых категорий законов, если они используются
 
     sidePanelTitleEl.textContent = panelTitle;
     const activeOptionIdInMainSlot = clickedSlotEl.dataset.currentId;
@@ -192,7 +197,6 @@ function openSidePanelForCategory(slotType, clickedSlotEl) {
             optionEl.appendChild(nameEl);
 
             optionEl.addEventListener('click', () => selectOptionInSidePanel(optionData.id, currentCategoryForSidePanel));
-            // Для опций в панели, slotTitle не нужен (он уже есть в заголовке панели).
             addTooltipEventsToElement(optionEl, optionData.name_display || optionData.name, optionData.effects_summary || optionData.tooltip_summary, optionData.description);
             sidePanelOptionsContainer.appendChild(optionEl);
         });
@@ -219,7 +223,7 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
     clickedMainSlotElement.dataset.currentId = chosenData.id;
     const mainSlotImg = clickedMainSlotElement.querySelector('img');
     const mainSlotLabel = clickedMainSlotElement.querySelector('.item-slot-label-small');
-    const slotTitleFromHTML = clickedMainSlotElement.dataset.slotTitle;
+    const slotTitleFromHTML = clickedMainSlotElement.dataset.slotTitle; // Get the title of the category slot
 
     if (mainSlotImg) {
         mainSlotImg.src = chosenData.icon_path || chosenData.portrait_path || 'https://via.placeholder.com/80/ccc/000?text=N/A';
@@ -236,7 +240,6 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
           if (optEl.dataset.optionId === selectedOptionId) optEl.classList.add('active');
       });
     }
-    // if(selectionSidePanel) selectionSidePanel.style.display = 'none';
 }
 if(closeSidePanelBtn_SP) closeSidePanelBtn_SP.onclick = () => { if(selectionSidePanel) selectionSidePanel.style.display = 'none'; };
 
@@ -249,8 +252,8 @@ function drawPoliticalPieChart() {
         console.error("Элемент canvas для диаграммы партий не найден!");
         return;
     }
-    if (!GAME_DATA.parties_array || GAME_DATA.parties_array.length === 0) {
-        if(pieChartContainer) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет данных о партиях</p>";
+     if (!GAME_DATA.parties_array || GAME_DATA.parties_array.length === 0) { // Проверка после canvas
+        if(pieChartContainer && !pieChartContainer.querySelector('p')) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет данных о партиях</p>";
         return;
     }
 
@@ -258,19 +261,14 @@ function drawPoliticalPieChart() {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const radius = Math.min(centerX, centerY) - 1;
-
     const parties = GAME_DATA.parties_array.filter(p => p.popularity > 0);
     const totalPopularity = parties.reduce((sum, party) => sum + party.popularity, 0);
 
-    if (totalPopularity === 0) {
-        if(pieChartContainer) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет популярности</p>";
-        return;
-    }
-    // Clear placeholder message if it exists and ensure canvas is present
+    if (totalPopularity === 0) { if(pieChartContainer && !pieChartContainer.querySelector('p')) pieChartContainer.innerHTML = "<p style='font-size:0.8em;text-align:center;color:#888;'>Нет популярности</p>"; return; }
+
     const existingMessage = pieChartContainer.querySelector('p');
     if (existingMessage) pieChartContainer.removeChild(existingMessage);
     if (!pieChartContainer.contains(canvas)) pieChartContainer.appendChild(canvas);
-
 
     let currentAngle = -0.5 * Math.PI;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -286,7 +284,7 @@ function drawPoliticalPieChart() {
         ctx.fillStyle = party.color || '#cccccc';
         ctx.fill();
         ctx.strokeStyle = '#3c3c3c';
-        ctx.lineWidth = 1; // Made border slightly thicker for better separation
+        ctx.lineWidth = 1;
         ctx.stroke();
         sectors.push({ partyName: party.name, popularity: party.popularity, startAngle: currentAngle, endAngle: endAngle });
         currentAngle = endAngle;
@@ -299,6 +297,7 @@ function drawPoliticalPieChart() {
 }
 
 function handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius) {
+    if(!tooltipElement) return;
     const rect = canvas.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
@@ -306,42 +305,39 @@ function handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radiu
     const dy = mouseY - centerY;
     const distance = Math.sqrt(dx * dx + dy * dy);
     let foundSector = false;
+
     if (distance <= radius) {
         let angle = Math.atan2(dy, dx);
-        if (angle < -Math.PI / 2) angle += 2 * Math.PI;
+        if (angle < -Math.PI / 2) angle += 2 * Math.PI; // Normalize to 0 to 2PI range starting from -Y axis
 
         for (const sector of sectors) {
             let inSector = false;
-            if (sector.startAngle <= sector.endAngle) { // Normal case or sector is full circle
-                if (angle >= sector.startAngle && angle < sector.endAngle) {
-                    inSector = true;
-                }
-            } else { // Sector crosses the -PI/2 boundary (e.g., startAngle = 1.8PI, endAngle = 0.2PI)
-                if (angle >= sector.startAngle || angle < sector.endAngle) {
-                    inSector = true;
-                }
-            }
-            // Add a small tolerance for floating point comparisons if needed
-            const epsilon = 0.0001;
-            if (angle >= sector.startAngle - epsilon && angle < sector.endAngle - epsilon) {
-                 inSector = true;
-            } else if (sector.startAngle > sector.endAngle && (angle >= sector.startAngle - epsilon || angle < sector.endAngle - epsilon)) {
-                 inSector = true;
-            }
+            // Normalize sector angles for comparison (especially if startAngle > endAngle)
+            let sAngle = sector.startAngle;
+            let eAngle = sector.endAngle;
 
+            if (sAngle < -Math.PI/2) sAngle += 2 * Math.PI;
+            if (eAngle < -Math.PI/2) eAngle += 2 * Math.PI;
+             if (sAngle > eAngle) { // Sector crosses the starting line (e.g., -PI/2)
+                if (angle >= sAngle || angle < eAngle) {
+                    inSector = true;
+                }
+            } else {
+                if (angle >= sAngle && angle < eAngle) {
+                    inSector = true;
+                }
+            }
 
             if (inSector) {
-                if(tooltipElement) {
-                    tooltipElement.innerHTML = `<strong>${sector.partyName}</strong><hr>${sector.popularity}%`;
-                    tooltipElement.style.display = 'block';
-                    positionTooltip(event);
-                }
+                tooltipElement.innerHTML = `<strong>${sector.partyName}</strong><hr>${sector.popularity}%`;
+                tooltipElement.style.display = 'block';
+                positionTooltip(event);
                 foundSector = true;
                 return;
             }
         }
     }
-    if (!foundSector && tooltipElement) tooltipElement.style.display = 'none';
+    if (!foundSector) tooltipElement.style.display = 'none';
 }
 
 function handlePieChartMouseLeave() {
@@ -353,7 +349,7 @@ function updatePartyList() {
     if (!partyListContainer) { console.error("Контейнер списка партий не найден!"); return; }
     if (!GAME_DATA.parties_array || GAME_DATA.parties_array.length === 0) { partyListContainer.innerHTML = "<li>Нет данных о партиях</li>"; return; }
 
-    const rulingPartyId = "united_russia"; // TODO: Dynamic
+    const rulingPartyId = "united_russia";
     const sortedParties = [...GAME_DATA.parties_array]
         .filter(p => p.popularity > 0 || p.id === rulingPartyId)
         .sort((a, b) => b.popularity - a.popularity);
@@ -374,7 +370,6 @@ function updatePartyList() {
         partyListContainer.appendChild(listItem);
     });
 }
-
 
 // --- UI Initialization Function ---
 function initializeUI() {
@@ -409,7 +404,9 @@ function initializeUI() {
     const partyEmblemEl = partyEmblemContainer?.querySelector('img');
      if (partyData && partyEmblemEl && partyEmblemContainer) {
         partyEmblemEl.src = partyData.icon_path || 'https://via.placeholder.com/45/666/fff?text=Pty';
-        addTooltipEventsToElement(partyEmblemContainer, partyData.name, `Популярность: ${partyData.popularity}%\n${partyData.ideology_tags_rus ? 'Идеологии: ' + partyData.ideology_tags_rus.join(', ') : ''}`, partyData.short_description);
+        let partyEffectsSummary = `Популярность: ${partyData.popularity}%\n`;
+        if (partyData.ideology_tags_rus) partyEffectsSummary += `Идеологии: ${partyData.ideology_tags_rus.join(', ')}`;
+        addTooltipEventsToElement(partyEmblemContainer, partyData.name, partyEffectsSummary, partyData.short_description);
         if(partyEmblemContainer.dataset.tooltip) partyEmblemContainer.removeAttribute('data-tooltip');
     }
 
@@ -417,7 +414,7 @@ function initializeUI() {
     const nationalSpiritsContainer = document.querySelector('.national-spirits');
     if (nationalSpiritsContainer && GAME_DATA.national_spirits) {
         nationalSpiritsContainer.innerHTML = '';
-        const activeSpiritIds = ["great_power_ambitions", "strong_army"]; // Example
+        const activeSpiritIds = ["great_power_ambitions", "strong_army", "fortress_state"]; // Example, make this dynamic
         activeSpiritIds.forEach(spiritId => {
             const spiritData = GAME_DATA.national_spirits[spiritId];
             if (spiritData) {
@@ -453,7 +450,7 @@ function initializeUI() {
                     slotEl.className = 'item-slot constitutional-principle';
                     slotEl.dataset.slotType = `constitutional_principle_${principle.id}`;
                     slotEl.dataset.currentId = currentOption.id;
-                    slotEl.dataset.slotTitle = principle.name;
+                    // slotEl.dataset.slotTitle = principle.name; // Название категории для тултипа пустого слота
 
                     const imgEl = document.createElement('img');
                     imgEl.src = principle.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=C';
@@ -462,6 +459,7 @@ function initializeUI() {
                     labelEl.className = 'item-slot-label-small';
                     labelEl.textContent = currentOption.name_display;
                     slotEl.appendChild(labelEl);
+                    // Для основного слота показываем имя текущей опции, ее эффекты, и название категории/принципа
                     addTooltipEventsToElement(slotEl, currentOption.name_display, currentOption.effects_summary, null, principle.name);
                     slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
                     principlesContainer.appendChild(slotEl);
@@ -482,7 +480,7 @@ function initializeUI() {
                     slotEl.className = 'item-slot development-area';
                     slotEl.dataset.slotType = `development_area_${area.id}`;
                     slotEl.dataset.currentId = currentOption.id;
-                    slotEl.dataset.slotTitle = area.name;
+                    // slotEl.dataset.slotTitle = area.name;
 
                     const imgEl = document.createElement('img');
                     imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=D';
@@ -501,6 +499,7 @@ function initializeUI() {
     // Initialize pre-defined HTML slots (Advisors, Corporations)
     document.querySelectorAll('[data-slot-type]').forEach(slotEl => {
         const slotIdAttr = slotEl.id || "";
+        // Пропускаем контейнеры и элементы, уже обработанные динамической генерацией или специальной логикой
         if (slotIdAttr === 'constitutional-principles-container' || slotIdAttr === 'development-areas-container' ||
             slotEl.dataset.slotType === 'ideology_display' || slotEl.dataset.slotType === 'party_display' ||
             slotEl.classList.contains('constitutional-principle') || slotEl.classList.contains('development-area')) {
@@ -510,7 +509,9 @@ function initializeUI() {
         const slotType = slotEl.dataset.slotType;
         const currentItemId = slotEl.dataset.currentId;
         let currentItemData = null;
-        const slotTitleFromHTML = slotEl.dataset.slotTitle;
+        // slotTitleFromHTML используется, если для слота задан data-slot-title в HTML
+        const slotTitleFromHTML = slotEl.dataset.slotTitle || null;
+
 
         if (currentItemId) {
             if (slotType.startsWith("advisor_")) currentItemData = GAME_DATA.leaders?.[currentItemId];
@@ -530,23 +531,24 @@ function initializeUI() {
             addTooltipEventsToElement(slotEl, currentItemData.name, currentItemData.tooltip_summary || currentItemData.effects_summary, null, slotTitleFromHTML);
         } else if (imgEl) {
             let emptyIconSrc = 'https://via.placeholder.com/50x50/333/666?text=+';
-            if (slotEl.classList.contains('advisor-portrait-slot')) emptyIconSrc = 'https://via.placeholder.com/65x65/333/666?text=+'; // Для пустых советников иконка может быть другой
+            if (slotEl.classList.contains('advisor-portrait-slot')) emptyIconSrc = 'https://via.placeholder.com/65x65/333/666?text=+';
             imgEl.src = emptyIconSrc;
             imgEl.alt = "+";
             if(labelEl) labelEl.textContent = "";
             slotEl.classList.remove('selected');
-            addTooltipEventsToElement(slotEl, null, "Назначить / Выбрать", null, slotTitleFromHTML);
+            addTooltipEventsToElement(slotEl, null, null, null, slotTitleFromHTML); // Передаем slotTitle для пустых слотов
         }
 
+        // Добавляем слушатель клика, если он еще не был добавлен
         if(!slotType.includes("_display") && !slotEl.getAttribute('listenerAttached')) {
            slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
-           slotEl.setAttribute('listenerAttached', 'true');
+           slotEl.setAttribute('listenerAttached', 'true'); // Помечаем, что слушатель добавлен
         }
     });
 
-    // Tooltips for elements that don't trigger side panel but have static tooltips
+    // Tooltips for static elements (focus banner, pie chart etc.)
     document.querySelectorAll('.national-focus-banner, .pie-chart').forEach(el => {
-        if(el.dataset.tooltip && !el.getAttribute('listenerAttached')) {
+        if(el.dataset.tooltip && !el.getAttribute('listenerAttached')) { // Проверяем, что еще не обработан
              addTooltipEventsToElement(el, el.dataset.tooltip, null, null);
              el.setAttribute('listenerAttached', 'true');
         }
