@@ -316,17 +316,29 @@ body {
 
 /* Подпись НАЗВАНИЯ УРОВНЯ внутри .item-slot.development-area */
 .item-slot.development-area .item-slot-label-small {
-    position: static; /* ОБЫЧНОЕ ПОЗИЦИОНИРОВАНИЕ, ПОД ИКОНКОЙ */
-    background-color: rgba(0, 0, 0, 0.7);
-    color: #ccc;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Чуть увеличил непрозрачность для лучшей читаемости */
+    color: #fff;
+    font-size: 0.68em;
     text-align: center;
-    margin-top: auto; /* Прижмет к низу, если есть место после иконки */
-    padding: 0;
-    max-height: 2.4em; /* Две строки для названия */
-    -webkit-line-clamp: 2;
-    overflow: hidden; /* Если текст длиннее, он обрежется */
-    text-overflow: ellipsis; /* Для одной строки сработает */
-    width: calc(100% - 4px); /* Чуть меньше, чтобы не прилипал к краям при word-break */
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1.25; /* Немного увеличим для лучшего вида многострочного текста */
+    padding: 4px 3px; /* Отступы внутри плашки с текстом */
+    
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* По-прежнему пытаемся ограничить 2 строками */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* Для выравнивания текста по центру плашки, если он короче 2х строк, можно добавить: */
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
+    /* Но это может конфликтовать с -webkit-line-clamp. Лучше подобрать padding. */
+    z-index: 1;
 }
 /* Убираем отсюда класс .progress-text, т.к. он теперь часть отдельной шкалы */
 
