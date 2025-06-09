@@ -126,8 +126,8 @@
             "name": "Общественное развитие",
             "current_progress": 25,
             "progress_per_level": 100,
-            "current_level_id": "soc_dev_level_1", // Изменил префикс для большей общности
-            "icon_path": "history/development_areas_icons/social_progress.png", // Предлагаю более общий путь иконки
+            "current_level_id": "soc_dev_level_1",
+            "icon_path": "history/development_areas_icons/social_development.png",
             "levels": [
                 {
                     "id": "soc_dev_level_0",
