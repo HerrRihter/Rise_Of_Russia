@@ -299,7 +299,7 @@ body {
     /* --- КОНЕЦ ФОНА ДЛЯ ПУСТОГО СЛОТА --- */
     border: 1px solid #666;
     border-radius: 5px 5px 0 0; /* Скругление только верхних углов */
-    padding: 8px 5px;
+    padding: 0;
     margin-bottom: 0; /* Убираем отступ, т.к. шкала будет прилегать */
     justify-content: flex-start;
     overflow: hidden; /* Прячем все, что не влезает в этот слот */
