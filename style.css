@@ -50,7 +50,7 @@ body {
 }
 
 .leader-pane {
-    flex-basis: 250px; /* Слегка увеличено для новых размеров иконок идеологии/партии */
+    flex-basis: 250px; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -71,9 +71,9 @@ body {
 
 .ideology-info {
     display: flex;
-    align-items: stretch; /* Выравнивает иконку и текст по высоте */
+    align-items: stretch; 
     width: 100%;
-    max-width: 230px;
+    max-width: 230px; 
     margin-top: 10px;
     margin-bottom: 10px;
     gap: 8px;
@@ -108,7 +108,7 @@ body {
 .national-focus-banner {
     height: 100px; background-color: #555; border: 1px solid #777; margin-bottom: 10px;
     display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-    position: relative; padding: 8px; cursor: pointer; /* Сделали кликабельным */
+    position: relative; padding: 8px; cursor: pointer; 
 }
 .national-focus-banner img.focus-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
 .focus-title-bar {
@@ -128,13 +128,13 @@ body {
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 15px;
-    background-color: transparent; /* Убрали фон */
-    padding: 0;                   /* Убрали паддинг */
-    min-height: 60px; /* Оставляем для выравнивания, если духов нет */
+    background-color: transparent; 
+    padding: 0;                  
+    min-height: 100px; 
 }
 .spirit-icon {
-    width: 100px;  /* Увеличенный размер иконки духа */
-    height: 100px;
+    width: 90px;
+    height: 90px;
     cursor: help;
     display: flex;
     justify-content: center;
@@ -143,7 +143,7 @@ body {
 .spirit-icon img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Идеально для PNG с прозрачностью */
+    object-fit: contain;
 }
 
 .political-details { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px;}
@@ -160,7 +160,7 @@ body {
 }
 .pol-sys-upper { display: flex; align-items: center; margin-bottom: 10px; width: 100%;}
 .pol-sys-icon-wrapper { flex-basis: 40%; flex-shrink: 0; padding-right: 8px; box-sizing: border-box; display: flex; justify-content: center; align-items: center;}
-.pol-sys-icon-wrapper img.flag { width: 100%; max-width: 45px; height: auto; border: 1px solid #777; display: block; }
+.pol-sys-icon-wrapper img.flag { width: 100%; max-width: 45px; height: auto; border: 1px solid #777; display: block; } /* Изначальный размер флага был 50x50, возвращаем max-width */
 .pol-sys-text-wrapper { flex-basis: 60%; text-align: left; font-size: 0.95em; line-height: 1.3; color: #e0e0e0;}
 .balance-btn {
     background-color: #5a5a5a; color: #e0e0e0; border: 1px solid #777;
@@ -168,6 +168,7 @@ body {
     margin-top: auto; display: block; width: 100%;
 }
 .balance-btn:hover { background-color: #6a6a6a; }
+
 
 .party-popularity {
     flex-grow: 1; display: flex; align-items: center; background-color: #2a2a2a;
@@ -213,118 +214,137 @@ body {
     box-sizing: border-box;
 }
 
+/* Единые стили для слотов: принципы, развитие, корпорации (кроме советников) */
 .item-slot,
-.advisor-portrait-slot {
+.constitutional-principle,
+.development-area,
+.corporation-slot {
     width: 132px;
-    min-height: 95px;
+    height: 132px; /* Делаем слот квадратным для иконки 1:1 */
     background-color: #4a4a4a;
     border: 1px solid #666;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center; /* Центрируем содержимое */
     align-items: center;
     cursor: pointer;
-    position: relative;
+    position: relative; /* Для позиционирования подписи */
     box-sizing: border-box;
-    padding: 8px 5px;
+    padding: 0; /* Убираем padding, чтобы изображение могло занять все место */
     overflow: hidden;
-    background-color: #4a4a4a; /* Оставляем как fallback, если картинка не загрузится */
-    background-image: url('history/portraits_background/empty_advisor_bg.png'); /* ЗАМЕНИТЕ ПУТЬ! */
-    background-size: cover;       /* Растянуть или покрыть, чтобы заполнить слот */
-    background-position: center;  /* Центрировать фоновое изображение */
-    background-repeat: no-repeat; /* Не повторять фон */
-    position: relative; /* Нужно, чтобы портрет лег поверх фона */
-}
-
-.advisor-portrait-slot img { /* Портрет самого советника */
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 3px;
-    position: relative; /* Чтобы был поверх фона слота */
-    z-index: 1;        /* Явно выше фона */
-    /* Если портрет советника имеет прозрачность, то фон будет виден сквозь него */
-    /* Если хотите, чтобы портрет полностью перекрывал фон, а фон был виден только в пустых слотах: */
-    /* background-color: #3c3c3c; /* Или цвет, совпадающий с фоном портрета, чтобы скрыть фон слота */
-}
-.item-slot,
-.constitutional-principle,
-.development-area,
-.corporation-slot {
-    width: 132px;   /* Фиксированная ширина */
-    height: 132px;  /* Фиксированная высота (делаем слот квадратным) */
-    background-color: #4a4a4a; /* Фон, если картинка не загрузится */
-    border: 1px solid #666;
-    border-radius: 5px;
-    cursor: pointer;
-    position: relative; /* ВАЖНО: для абсолютного позиционирования подписи */
-    box-sizing: border-box;
-    padding: 0;         /* <<< УБИРАЕМ ВНУТРЕННИЕ ОТСТУПЫ СЛОТА */
-    overflow: hidden;   /* Обрезать все, что выходит за рамки */
 }
 
 .item-slot img,
 .constitutional-principle img,
 .development-area img,
 .corporation-slot img {
-    width: 100%;  /* Картинка занимает ВСЮ ширину слота */
-    height: 100%; /* Картинка занимает ВСЮ высоту слота */
-    object-fit: cover;   /* Изображение заполняет слот, сохраняя пропорции (может обрезаться) */
+    width: 100%; /* Изображение занимает всю ширину слота */
+    height: 100%;/* Изображение занимает всю высоту слота */
+    object-fit: cover; /* Заполняет, сохраняя пропорции, может обрезать */
     display: block;
-    border-radius: 4px; /* Скругление самой картинки, чтобы совпадало со слотом (если border-radius у слота > 0) */
-                         /* Если у слота border-radius: 5px, а у картинки 4px, будет видна тонкая рамка фона слота */
-                         /* Лучше border-radius: inherit; или такой же, как у родителя */
+    border-radius: 4px; /* Синхронизируем с border-radius родителя */
 }
 
+/* Стили для подписи, которая будет накладываться на иконку */
 .item-slot-label-small {
-    position: absolute; /* <<< ПОЗИЦИОНИРУЕМ ПОДПИСЬ ПОВЕРХ КАРТИНКИ */
-    bottom: 0;          /* Прижимаем к низу */
+    position: absolute;
+    bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.6); /* Полупрозрачный фон для читаемости */
-    color: #fff;        /* Белый текст на темном фоне */
-    font-size: 0.65em;
+    background-color: rgba(0, 0, 0, 0.65); /* Фон для читаемости */
+    color: #fff;
+    font-size: 0.68em;
     text-align: center;
-    padding: 3px 5px;   /* Небольшие отступы для текста внутри плашки */
-    width: 100%;        /* Занимает всю ширину картинки */
+    padding: 4px 5px; /* Внутренние отступы для текста */
+    width: 100%;
     box-sizing: border-box;
-    line-height: 1.2;
+    line-height: 1.15;
     word-break: break-word;
-    
-    /* Ограничение высоты текста в 2 строки с троеточием */
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 2; /* Ограничение в 2 строки */
     -webkit-box-orient: vertical;
     overflow: hidden;
-    /* Для браузеров без поддержки -webkit-line-clamp, текст просто обрежется по высоте контейнера, если overflow:hidden на родителя (.item-slot) работает */
-    /* Можно также задать max-height, но троеточие не появится */
-    /* max-height: 2.4em; /* ~2 строки */
 }
 
+/* Обертка для элементов развития (слот + шкала прогресса) */
+.development-area-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 132px; /* Та же ширина, что и у других слотов */
+}
 
+/* Слот для области развития внутри обертки - уже стилизован как .development-area */
+.item-slot.development-area {
+    width: 100%; /* Занимает ширину обертки */
+    height: 95px;  /* Высота для иконки и названия уровня */
+    margin-bottom: 3px; /* Отступ до шкалы прогресса */
+    padding: 8px 5px; /* Вернем padding, т.к. текст уровня теперь внутри */
+    justify-content: flex-start; /* Чтобы иконка была сверху */
+}
+.item-slot.development-area img {
+    width: 48px; /* Иконка области развития */
+    height: 48px;
+    margin-bottom: 5px;
+}
+.item-slot.development-area .item-slot-label-small {
+    position: static; /* Убираем абсолютное позиционирование для этой подписи */
+    background-color: transparent; /* Без фона */
+    color: #ccc;
+    margin-top: auto; /* Прижать к низу */
+    padding: 0; /* Убрать лишние отступы */
+    max-height: 2.4em;
+    -webkit-line-clamp: 2;
+}
+
+/* Шкала прогресса для областей развития */
+.dev-progress-bar-container {
+    width: 90%;
+    height: 16px;
+    background-color: #222;
+    border: 1px solid #555;
+    border-radius: 3px;
+    position: relative;
+    margin-top: 2px;
+    overflow: hidden;
+}
+.dev-progress-bar-fill {
+    height: 100%;
+    background-color: #28a745; /* Пример зеленого */
+    border-radius: 2px;
+    transition: width 0.3s ease-in-out;
+}
+.dev-progress-bar-text {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 0.7em; color: #fff;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+    font-weight: bold; z-index: 1;
+}
+
+/* Стили для портретов советников */
 .advisor-portrait-slot {
-    width: 156px;
-    height: 234px; /* Как было */
-    padding: 0; /* Тоже без паддинга */
-    background-color: #3a3a3a; /* Фоновый цвет, если портрет не загрузится */
+    width: 132px; /* Ширина как у других слотов для сетки */
+    height: 180px;
+    padding: 0;
+    background-color: #3a3a3a; /* Фон для пустого слота или если портрет с прозрачностью */
     border: 1px solid #555;
     border-radius: 5px;
-    overflow: hidden; /* Обрезать портрет, если он выходит за рамки */
-    display: flex; /* Для центрирования, если img меньше */
+    overflow: hidden;
+    display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
     position: relative;
-    box-sizing: border-box;
 }
 .advisor-portrait-slot img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Портрет заполняет весь слот */
+    object-fit: cover;
     display: block;
-    border-radius: 4px; /* Чтобы соответствовать скруглению родителя */
+    border-radius: 4px; /* Для самой картинки */
+    margin-bottom: 0;
 }
 
 .item-slot.selected,
@@ -334,23 +354,6 @@ body {
 .corporation-slot.selected {
     border-color: #bbb;
     box-shadow: 0 0 6px #ddd;
-}
-
-.item-slot-label-small {
-    font-size: 0.68em;
-    color: #ccc;
-    text-align: center;
-    width: 100%;
-    line-height: 1.2;
-    word-break: break-word;
-    max-height: 3.6em;
-    margin-top: auto;
-}
-.item-slot-label-small .progress-text {
-    font-size: 0.9em;
-    color: #a0a0a0;
-    margin-top: 2px;
-    display: block;
 }
 
 
@@ -373,89 +376,39 @@ body {
 }
 .modal-content {
     background-color: #3a3a3a; color: #e0e0e0; margin: auto; padding: 25px;
-    border: 1px solid #888; width: 90%; /* Сделал чуть шире для мобильных, max-width контролирует для десктопа */
-    max-width: 450px; /* Оставляем для десктопа */
-    border-radius: 5px;
+    border: 1px solid #888; width: 90%; border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.4); text-align: center; position:relative;
 }
-.modal-close-button { /* Этот класс используется и для модалки баланса, и для модалки фокуса в вашем HTML */
+.modal-close-button {
     color: #aaa; position:absolute; top:10px; right:15px;
     font-size: 28px; font-weight: bold;
-    cursor: pointer; /* Добавил для ясности */
+    cursor: pointer;
 }
 .modal-close-button:hover, .modal-close-button:focus { color: #fff; text-decoration: none; }
 
-/* Модальное окно Баланса - УТОЧНЕННЫЕ СТИЛИ */
-.balance-scale-container {
-    display: flex;
-    align-items: center; /* Вертикальное выравнивание иконок и шкалы */
-    justify-content: space-between; /* Иконки по краям, шкала между ними */
-    margin: 20px 0;
+/* Модальное окно Баланса */
+.balance-modal-content { /* Для специфичных стилей если нужно, сейчас .modal-content общий */
+    max-width: 450px;
 }
-
-.scale-icon { /* Стили для <img> луны и солнца */
-    width: 32px;  /* ЗАДАЙТЕ ЖЕЛАЕМЫЙ РАЗМЕР (ширина) */
-    height: 32px; /* ЗАДАЙТЕ ЖЕЛАЕМЫЙ РАЗМЕР (высота) */
-    object-fit: contain; /* Изображение впишется, сохранив пропорции */
-    flex-shrink: 0; /* Чтобы иконки не сжимались, если шкала станет очень широкой */
-}
-/* Если нужны специфичные отступы для иконок луны/солнца:
-.moon-icon { margin-right: 5px; }
-.sun-icon { margin-left: 5px; }
-Но обычно justify-content: space-between; и margin у .balance-scale достаточно.
-*/
-
-.balance-scale { /* Контейнер для трека и меток */
-    flex-grow: 1; /* Займет все доступное пространство между иконками */
-    margin: 0 10px; /* Отступы от иконок до самой шкалы (было 15px) */
-}
-
+.balance-scale-container { display: flex; align-items: center; justify-content: space-between; margin: 20px 0; }
+.scale-icon { width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; }
+.balance-scale { flex-grow: 1; margin: 0 10px; }
 .scale-track {
-    width: 100%;
-    height: 10px;
-    background-color: #555;
-    border-radius: 5px;
-    position: relative; /* Для позиционирования маркера */
-    border: 1px solid #777;
+    width: 100%; height: 10px; background-color: #555;
+    border-radius: 5px; position: relative; border: 1px solid #777;
 }
-
 .scale-marker {
-    width: 16px;
-    height: 16px;
-    background-color: #ffd700; /* Золотой маркер */
-    border-radius: 50%;     /* Круглый */
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%); /* Центрирование маркера относительно его left-позиции */
-    border: 2px solid #333; /* Темная обводка для маркера */
-    box-shadow: 0 0 5px #ffd700; /* Легкое свечение */
+    width: 16px; height: 16px; background-color: #ffd700; border-radius: 50%;
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    border: 2px solid #333; box-shadow: 0 0 5px #ffd700;
 }
-
-.scale-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9em;
-    margin-top: 8px;
-    color: #ccc;
-}
-
-#balanceValueDisplay {
-    font-weight: bold;
-    color: #ffd700; /* Золотой цвет для значения */
-}
-
-#balanceValueInput { /* Оставляем без изменений, если его вид вас устраивает */
-    width: 60px;
-    margin-left:5px;
-    background-color: #555;
-    color: white;
-    border: 1px solid #777;
-    padding: 5px;
-}
+.scale-labels { display: flex; justify-content: space-between; font-size: 0.9em; margin-top: 8px; color: #ccc; }
+#balanceValueDisplay { font-weight: bold; color: #ffd700; }
+#balanceValueInput { width: 60px; margin-left:5px; background-color: #555; color: white; border: 1px solid #777; padding: 5px; }
 
 /* Модальное окно Национального Фокуса */
 .focus-modal-content {
-    max-width: 800px; /* Можно шире для картинки фокуса */
+    max-width: 800px;
     text-align: left;
 }
 .focus-modal-content h4 {
@@ -517,15 +470,17 @@ body {
     .leader-pane { margin-right: 0; margin-bottom: 20px; flex-basis: auto; width: 90%; max-width: 400px; }
     .national-info-pane { width: 100%; }
 
-    .item-slot, .advisor-portrait-slot, .constitutional-principle, .development-area, .corporation-slot {
-        width: calc((100% - 4 * 10px) / 5); /* 5 в ряд */
+    .item-slot, .advisor-portrait-slot, .constitutional-principle, .development-area, .corporation-slot, .development-area-wrapper { /* Добавил .development-area-wrapper */
+        width: calc((100% - 4 * 10px) / 5);
         min-height: 85px;
     }
+    .advisor-portrait-slot { height: 150px; } /* Нужно отдельно задавать высоту для советников */
+
+
     .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
         width: 40px; height: 40px;
     }
-    .advisor-portrait-slot { height: 150px; }
-    .advisor-portrait-slot img { width: 100%; height: 100%; }
+     /* Убрано: .advisor-portrait-slot img { width: 100%; height: 100%; } т.к. уже покрыто .advisor-portrait-slot + его img имеет 100% */
     .item-slot-label-small { font-size: 0.65em; max-height: 3.3em; }
 
     .political-details { gap: 8px; }
@@ -534,6 +489,7 @@ body {
     .party-list { font-size: 0.78em; }
 
     .focus-modal-content { max-width: 90%; padding: 20px; }
+    .modal-content { max-width: 90%; /* Для баланса */ }
 }
 
 @media (max-width: 576px) {
@@ -542,16 +498,14 @@ body {
     .window-title-bar { padding: 8px 10px; font-size: 1.1em; }
 
     .upper-section { padding-bottom: 15px; margin-bottom: 10px; }
-    .leader-pane { max-width: 100%; flex-basis: auto; /* Занимает всю доступную ширину родителя на мобильном */ }
+    .leader-pane { max-width: 100%; flex-basis: auto; }
     .leader-portrait { width: 120px; height: 160px; }
     .ideology-icon, .party-emblem { width: 50px; height: 50px; min-width: 50px;}
 
-
     .national-focus-banner { height: 80px; }
     .focus-title-bar { font-size: 0.9em; width: 150px; }
-    .national-spirits { gap: 4px; padding: 5px; min-height: 30px; justify-content: center; } /* Центрируем духи */
-    .spirit-icon { width: 32px; height: 32px; } /* Иконки духов меньше */
-
+    .national-spirits { gap: 4px; padding: 5px; min-height: 30px; justify-content: center; }
+    .spirit-icon { width: 32px; height: 32px; }
 
     .political-details { flex-direction: column; gap: 10px; }
     .ruling-party-info, .political-system-info-container, .party-popularity { flex-basis: auto; width: 100%; }
@@ -562,16 +516,21 @@ body {
 
     .lower-section { padding-right: 0; max-height: none; overflow-y:visible;}
     .category-items { padding: 8px; gap: 8px; }
-    .item-slot, .advisor-portrait-slot, .constitutional-principle, .development-area, .corporation-slot {
-        width: calc((100% - 2 * 8px) / 3); /* 3 в ряд */
+    .item-slot, .advisor-portrait-slot, .constitutional-principle, .development-area, .corporation-slot, .development-area-wrapper { /* Добавил .development-area-wrapper */
+        width: calc((100% - 2 * 8px) / 3);
         min-height: 75px; padding: 5px;
     }
+    .advisor-portrait-slot { height: 120px; }
     .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
         width: 32px; height: 32px; margin-bottom: 3px;
     }
-    .advisor-portrait-slot { height: 120px; }
-    .advisor-portrait-slot img { width: 100%; height: 100%; }
+     /* Убрано: .advisor-portrait-slot img { width: 100%; height: 100%; } */
     .item-slot-label-small { font-size: 0.6em; max-height: 2.4em; }
+
+    /* Стили для шкалы прогресса на мобильных */
+    .dev-progress-bar-container { height: 14px; margin-top: 1px; }
+    .dev-progress-bar-text { font-size: 0.65em; }
+
 
     .side-panel { width: 96%; left: 2%; right: 2%; top: 5px; max-height: calc(100vh - 10px); font-size: 0.9em;}
     .side-panel-header { padding: 8px 10px; }
