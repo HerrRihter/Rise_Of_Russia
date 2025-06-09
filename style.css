@@ -272,8 +272,8 @@ body {
 .constitutional-principle img,
 .development-area img,
 .corporation-slot img {
-    width: 48px;
-    height: 48px;
+    width: 132px;
+    height: 132px;
     object-fit: contain;
     margin-bottom: 5px;
 }
