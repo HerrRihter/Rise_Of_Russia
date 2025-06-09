@@ -323,7 +323,7 @@ body {
 }
 .dev-progress-bar-fill {
     height: 100%;
-    background-color: #28a745; /* Пример зеленого */
+    background-color: #1b4d22;
     border-radius: 2px;
     transition: width 0.3s ease-in-out;
 }
