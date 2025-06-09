@@ -287,8 +287,8 @@ body {
 }
 
 .item-slot.development-area { /* Слот только для иконки и названия уровня */
-    width: 100%;
-    height: 95px; /* Высота для иконки и названия текущего уровня */
+    height: 198px;
+    width: 132px;/* Высота для иконки и названия текущего уровня */
     background-color: #4a4a4a; /* Фон для этой части */
         /* --- ФОН ДЛЯ ПУСТОГО СЛОТА --- */
     background-color: #3a3a3a;
@@ -307,8 +307,8 @@ body {
 }
 
 .item-slot.development-area img { /* Иконка самой области развития */
-    width: 48px;
-    height: 48px;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     margin-bottom: 5px;
     /* z-index и position:relative убраны, т.к. текст теперь всегда под ней */
