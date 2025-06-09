@@ -249,22 +249,25 @@ body {
     /* Если хотите, чтобы портрет полностью перекрывал фон, а фон был виден только в пустых слотах: */
     /* background-color: #3c3c3c; /* Или цвет, совпадающий с фоном портрета, чтобы скрыть фон слота */
 }
+.item-slot, /* Если используется для корпораций и должен быть квадратным */
 .constitutional-principle,
 .development-area,
-.corporation-slot {
-    width: 132px;
-    min-height: 95px;
+.corporation-slot { /* Добавьте этот класс к div-ам корпораций в HTML */
+    width: 132px;   /* Фиксированная ширина для раскладки 8 в ряд */
+    height: 132px;  /* <<< ДЕЛАЕМ СЛОТ КВАДРАТНЫМ (равным ширине) */
+    /* min-height убран, так как теперь есть фиксированная height */
+
     background-color: #4a4a4a;
     border: 1px solid #666;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
+    /* justify-content: flex-start; УБРАНО, так как изображение и текст будут управлять пространством */
+    /* align-items: center; УБРАНО, будем управлять выравниванием img и label отдельно */
     cursor: pointer;
     position: relative;
     box-sizing: border-box;
-    padding: 8px 5px;
+    padding: 5px; /* <<< УМЕНЬШИМ PADDING, чтобы больше места для картинки и текста */
     overflow: hidden;
 }
 
@@ -272,11 +275,36 @@ body {
 .constitutional-principle img,
 .development-area img,
 .corporation-slot img {
-    width: 132px;
-    height: 132px;
-    object-fit: contain;
-    margin-bottom: 5px;
+    width: 100%;  /* <<< КАРТИНКА ЗАНИМАЕТ ВСЮ ШИРИНУ РОДИТЕЛЯ (.item-slot и т.д. с учетом его padding) */
+    height: auto; /* <<< ВЫСОТА АВТОМАТИЧЕСКАЯ для сохранения пропорций 1:1 */
+    aspect-ratio: 1 / 1; /* <<< ЗАСТАВЛЯЕМ КАРТИНКУ БЫТЬ КВАДРАТНОЙ, ЕСЛИ РОДИТЕЛЬ НЕ ИДЕАЛЬНО КВАДРАТНЫЙ ПОСЛЕ PADDING */
+                        /* Это свойство хорошо поддерживается современными браузерами */
+    object-fit: cover;   /* <<< ИЗМЕНЕНО НА 'cover'. Если картинка 1:1, она идеально заполнит квадратный контейнер.
+                              Если пропорции картинки чуть-чуть не 1:1, она все равно заполнит, немного обрезавшись.
+                              Если хотите 'contain' (вписать, могут быть поля), верните 'contain',
+                              но тогда картинка не займет "весь объем", если ее пропорции не идеальны. */
+    display: block;      /* Убирает лишние отступы под картинкой */
+    margin-bottom: 3px;  /* <<< Небольшой отступ перед подписью */
+    border-radius: 2px;  /* Можно добавить небольшое скругление для самих иконок */
 }
+
+.item-slot-label-small {
+    font-size: 0.65em; /* Может потребоваться еще чуть уменьшить */
+    color: #ccc;
+    text-align: center;
+    width: 100%;
+    line-height: 1.15;
+    word-break: break-word;
+    /* max-height УБРАН, высота будет ограничена оставшимся пространством в слоте */
+    overflow: hidden;  /* Обрезать текст, если не влезает */
+    text-overflow: ellipsis; /* Добавить троеточие, если текст обрезан (лучше работает для одной строки) */
+                            /* Для многострочного троеточия может понадобиться -webkit-line-clamp */
+    display: -webkit-box; /* Для многострочного обрезания с троеточием (кроссбраузерность может страдать) */
+    -webkit-line-clamp: 2; /* Количество строк до обрезания */
+    -webkit-box-orient: vertical;
+    margin-top: auto; /* Прижимаем подпись к низу, если есть место */
+}
+
 
 .advisor-portrait-slot {
     height: 180px;
