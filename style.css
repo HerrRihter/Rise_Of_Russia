@@ -216,21 +216,15 @@ body {
 
 .item-slot,
 .constitutional-principle,
-.development-area,
+/* .development-area,  УБИРАЕМ development-area из этой общей группы, так как у него теперь другая структура */
 .corporation-slot {
     width: 132px;
     height: 132px;
-    /* ФОН ДЛЯ ПУСТОГО СЛОТА (флаг) */
-    background-color: #3a3a3a; /* Фоновый цвет, если картинка флага не загрузится */
-    background-image: url('history/portraits_background/empty_advisor_bg.png'); /* ПУТЬ К ФЛАГУ */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    /* КОНЕЦ ФОНА ДЛЯ ПУСТОГО СЛОТА */
+    background-color: #2a2a2a; /* Фон по умолчанию, если нет картинки */
     border: 1px solid #666;
     border-radius: 5px;
     cursor: pointer;
-    position: relative; /* Для абсолютного позиционирования подписи и основной иконки */
+    position: relative;
     box-sizing: border-box;
     padding: 0;
     overflow: hidden;
@@ -239,107 +233,123 @@ body {
     align-items: center;
 }
 
-/* Основное изображение/иконка ВНУТРИ слота (иконка документа, иконка категории) */
 .item-slot img,
 .constitutional-principle img,
-.development-area img,
+/* .development-area img,   УБИРАЕМ development-area img из этой общей группы */
 .corporation-slot img {
-    width: 100%; /* Картинка категории (например, флаг с наложенной иконкой документа) занимает весь слот */
+    width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    position: absolute; /* Чтобы была под текстом, если текст поверх */
-    top: 0;
-    left: 0;
-    z-index: 0; /* Ниже чем подпись */
-    border-radius: 4px; /* Если нужно скруглить и эту картинку */
+    /* border-radius убран, родительский overflow:hidden и border-radius справятся */
 }
 
-/* Стили для подписи, которая будет накладываться на иконку/фон */
+/* Подпись, НАКЛАДЫВАЕМАЯ на изображение (для Конституции, Корпораций) */
 .item-slot-label-small {
     position: absolute;
-    margin-top: auto;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.65); /* ПОЛУПРОЗРАЧНЫЙ ЧЕРНЫЙ ФОН ДЛЯ ПОДПИСИ */
+    background-color: rgba(0, 0, 0, 0.7); /* Чуть увеличил непрозрачность для лучшей читаемости */
     color: #fff;
     font-size: 0.68em;
     text-align: center;
-    padding: 4px 5px;
     width: 100%;
     box-sizing: border-box;
-    line-height: 1.15;
-    word-break: break-word;
+    line-height: 1.25; /* Немного увеличим для лучшего вида многострочного текста */
+    padding: 4px 3px; /* Отступы внутри плашки с текстом */
+    
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 2; /* По-прежнему пытаемся ограничить 2 строками */
     -webkit-box-orient: vertical;
     overflow: hidden;
-    z-index: 1; /* Подпись поверх основного изображения/фона */
+    /* Для выравнивания текста по центру плашки, если он короче 2х строк, можно добавить: */
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
+    /* Но это может конфликтовать с -webkit-line-clamp. Лучше подобрать padding. */
+    z-index: 1;
 }
 
-
-/* Обертка для элементов развития (слот + шкала прогресса) */
+/* --- Стили для ОБЛАСТЕЙ РАЗВИТИЯ --- */
 .development-area-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 132px; /* Та же ширина, что и у других слотов */
+    width: 132px;
 }
 
-/* Слот для области развития внутри обертки - уже стилизован как .development-area */
-.item-slot.development-area {
-    width: 100%; /* Занимает ширину обертки */
-    height: 95px;  /* Высота для иконки и названия уровня */
-            /* --- ФОН ДЛЯ ПУСТОГО СЛОТА --- */
-    background-color: #3a3a3a;
-    background-image: url('history/portraits_background/empty_advisor_bg.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    /* --- КОНЕЦ ФОНА ДЛЯ ПУСТОГО СЛОТА --- */
-    margin-bottom: 3px; /* Отступ до шкалы прогресса */
-    padding: 8px 5px; /* Вернем padding, т.к. текст уровня теперь внутри */
-    justify-content: flex-start; /* Чтобы иконка была сверху */
+.item-slot.development-area { /* Слот только для иконки и названия уровня */
+    width: 100%;
+    height: 95px; /* Высота для иконки и названия текущего уровня */
+    background-color: #4a4a4a; /* Фон для этой части */
+    border: 1px solid #666;
+    border-radius: 5px 5px 0 0; /* Скругление только верхних углов */
+    padding: 8px 5px;
+    margin-bottom: 0; /* Убираем отступ, т.к. шкала будет прилегать */
+    justify-content: flex-start;
+    overflow: hidden; /* Прячем все, что не влезает в этот слот */
+    position: relative; /* Для подписи НАЗВАНИЯ УРОВНЯ, если она абсолютная */
 }
-.item-slot.development-area img {
-    width: 48px; /* Иконка области развития */
+
+.item-slot.development-area img { /* Иконка самой области развития */
+    width: 48px;
     height: 48px;
+    object-fit: contain;
     margin-bottom: 5px;
-}
-.item-slot.development-area .item-slot-label-small {
-    position: static; /* Убираем абсолютное позиционирование для этой подписи */
-    color: #ccc;
-    margin-top: auto; /* Прижать к низу */
-    padding: 0; /* Убрать лишние отступы */
-    max-height: 2.4em;
-    -webkit-line-clamp: 2;
+    /* z-index и position:relative убраны, т.к. текст теперь всегда под ней */
 }
 
-/* Шкала прогресса для областей развития */
-.dev-progress-bar-container {
-    width: 90%;
-    height: 16px;
-    background-color: #222;
-    border: 1px solid #555;
-    border-radius: 3px;
-    position: relative;
-    margin-top: 2px;
-    overflow: hidden;
+/* Подпись НАЗВАНИЯ УРОВНЯ внутри .item-slot.development-area */
+.item-slot.development-area .item-slot-label-small {
+    position: static; /* ОБЫЧНОЕ ПОЗИЦИОНИРОВАНИЕ, ПОД ИКОНКОЙ */
+    background-color: transparent;
+    color: #ccc;
+    margin-top: auto; /* Прижмет к низу, если есть место после иконки */
+    padding: 0;
+    max-height: 2.4em; /* Две строки для названия */
+    -webkit-line-clamp: 2;
+    overflow: hidden; /* Если текст длиннее, он обрежется */
+    text-overflow: ellipsis; /* Для одной строки сработает */
+    width: calc(100% - 4px); /* Чуть меньше, чтобы не прилипал к краям при word-break */
 }
+/* Убираем отсюда класс .progress-text, т.к. он теперь часть отдельной шкалы */
+
+/* Шкала прогресса для областей развития (под слотом) */
+.dev-progress-bar-container {
+    width: 100%; /* Занимает всю ширину обертки development-area-wrapper */
+    height: 20px; /* Увеличим высоту, чтобы текст точно помещался и выглядел лучше */
+    background-color: #222;
+    border: 1px solid #666; /* Та же рамка, что и у слота */
+    border-top: none; /* Убираем верхнюю рамку, чтобы сливалась со слотом */
+    border-radius: 0 0 5px 5px; /* Скругление только нижних углов */
+    position: relative;
+    margin-top: 0; /* Прижимаем к слоту */
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
 .dev-progress-bar-fill {
     height: 100%;
-    background-color: #1b4d22;
-    border-radius: 2px;
+    background-color: #2c6e3a; /* Немного изменил зеленый */
+    border-radius: 0; /* Убираем скругление у самой полосы, т.к. контейнер скруглен */
     transition: width 0.3s ease-in-out;
 }
+
 .dev-progress-bar-text {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    display: flex; justify-content: center; align-items: center;
-    font-size: 0.7em; color: #fff;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
-    font-weight: bold; z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.75em; /* Немного увеличим текст прогресса */
+    color: #fff;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.6);
+    font-weight: bold;
+    z-index: 1;
 }
 
 /* Стили для портретов советников */
