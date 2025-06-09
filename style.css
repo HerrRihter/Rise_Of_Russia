@@ -290,6 +290,13 @@ body {
 .item-slot.development-area {
     width: 100%; /* Занимает ширину обертки */
     height: 95px;  /* Высота для иконки и названия уровня */
+            /* --- ФОН ДЛЯ ПУСТОГО СЛОТА --- */
+    background-color: #3a3a3a;
+    background-image: url('history/portraits_background/empty_advisor_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* --- КОНЕЦ ФОНА ДЛЯ ПУСТОГО СЛОТА --- */
     margin-bottom: 3px; /* Отступ до шкалы прогресса */
     padding: 8px 5px; /* Вернем padding, т.к. текст уровня теперь внутри */
     justify-content: flex-start; /* Чтобы иконка была сверху */
@@ -301,13 +308,6 @@ body {
 }
 .item-slot.development-area .item-slot-label-small {
     position: static; /* Убираем абсолютное позиционирование для этой подписи */
-        /* --- ФОН ДЛЯ ПУСТОГО СЛОТА --- */
-    background-color: #3a3a3a;
-    background-image: url('history/portraits_background/empty_advisor_bg.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    /* --- КОНЕЦ ФОНА ДЛЯ ПУСТОГО СЛОТА --- */
     color: #ccc;
     margin-top: auto; /* Прижать к низу */
     padding: 0; /* Убрать лишние отступы */
