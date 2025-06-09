@@ -214,64 +214,69 @@ body {
     box-sizing: border-box;
 }
 
-/* Единые стили для слотов: принципы, развитие, корпорации (кроме советников) */
 .item-slot,
 .constitutional-principle,
 .development-area,
 .corporation-slot {
     width: 132px;
-    height: 132px; /* Делаем слот квадратным для иконки 1:1 */
-    /* --- ФОН ДЛЯ ПУСТОГО СЛОТА --- */
-    background-color: #3a3a3a;
-    background-image: url('history/portraits_background/empty_advisor_bg.png');
+    height: 132px;
+    /* ФОН ДЛЯ ПУСТОГО СЛОТА (флаг) */
+    background-color: #3a3a3a; /* Фоновый цвет, если картинка флага не загрузится */
+    background-image: url('history/portraits_background/empty_advisor_bg.png'); /* ПУТЬ К ФЛАГУ */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /* --- КОНЕЦ ФОНА ДЛЯ ПУСТОГО СЛОТА --- */
+    /* КОНЕЦ ФОНА ДЛЯ ПУСТОГО СЛОТА */
     border: 1px solid #666;
     border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Центрируем содержимое */
-    align-items: center;
     cursor: pointer;
-    position: relative; /* Для позиционирования подписи */
+    position: relative; /* Для абсолютного позиционирования подписи и основной иконки */
     box-sizing: border-box;
-    padding: 0; /* Убираем padding, чтобы изображение могло занять все место */
+    padding: 0;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+/* Основное изображение/иконка ВНУТРИ слота (иконка документа, иконка категории) */
 .item-slot img,
 .constitutional-principle img,
 .development-area img,
 .corporation-slot img {
-    width: 100%; /* Изображение занимает всю ширину слота */
-    height: 100%;/* Изображение занимает всю высоту слота */
-    object-fit: cover; /* Заполняет, сохраняя пропорции, может обрезать */
+    width: 100%; /* Картинка категории (например, флаг с наложенной иконкой документа) занимает весь слот */
+    height: 100%;
+    object-fit: cover;
     display: block;
-    border-radius: 4px; /* Синхронизируем с border-radius родителя */
+    position: absolute; /* Чтобы была под текстом, если текст поверх */
+    top: 0;
+    left: 0;
+    z-index: 0; /* Ниже чем подпись */
+    border-radius: 4px; /* Если нужно скруглить и эту картинку */
 }
 
-/* Стили для подписи, которая будет накладываться на иконку */
+/* Стили для подписи, которая будет накладываться на иконку/фон */
 .item-slot-label-small {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.65); /* Фон для читаемости */
+    background-color: rgba(0, 0, 0, 0.65); /* ПОЛУПРОЗРАЧНЫЙ ЧЕРНЫЙ ФОН ДЛЯ ПОДПИСИ */
     color: #fff;
     font-size: 0.68em;
     text-align: center;
-    padding: 4px 5px; /* Внутренние отступы для текста */
+    padding: 4px 5px;
     width: 100%;
     box-sizing: border-box;
     line-height: 1.15;
     word-break: break-word;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Ограничение в 2 строки */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    z-index: 1; /* Подпись поверх основного изображения/фона */
 }
+
 
 /* Обертка для элементов развития (слот + шкала прогресса) */
 .development-area-wrapper {
