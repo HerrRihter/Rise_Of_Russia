@@ -258,6 +258,7 @@ body {
 /* Стили для подписи, которая будет накладываться на иконку/фон */
 .item-slot-label-small {
     position: absolute;
+    margin-top: auto;
     bottom: 0;
     left: 0;
     right: 0;
