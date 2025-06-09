@@ -459,30 +459,56 @@ function initializeUI() {
     if (developmentContainer && GAME_DATA.development_areas) {
         developmentContainer.innerHTML = '';
         Object.values(GAME_DATA.development_areas).sort((a,b) => (a.order || Infinity) - (b.order || Infinity))
-            .forEach(area => {
-                const currentLevelData = area.levels?.find(lvl => lvl.id === area.current_level_id);
+            .forEach(area => { // area - это объект самой области развития
+                const currentLevelData = area.levels?.find(lvl => lvl.id === area.current_level_id); // Находим данные текущего УРОВНЯ
+
                 if (currentLevelData) {
-                    const areaWrapperEl = document.createElement('div'); areaWrapperEl.className = 'development-area-wrapper';
-                    const slotEl = document.createElement('div'); slotEl.className = 'item-slot development-area';
-                    slotEl.dataset.slotType = `development_area_${area.id}`; slotEl.dataset.currentId = area.current_level_id;
-                    const imgEl = document.createElement('img'); imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=D'; slotEl.appendChild(imgEl);
-                    const labelEl = document.createElement('span'); labelEl.className = 'item-slot-label-small';
-                    labelEl.textContent = currentLevelData.name_display; slotEl.appendChild(labelEl);
+                    const areaWrapperEl = document.createElement('div');
+                    areaWrapperEl.className = 'development-area-wrapper';
+
+                    const slotEl = document.createElement('div');
+                    slotEl.className = 'item-slot development-area';
+                    slotEl.dataset.slotType = `development_area_${area.id}`;
+                    slotEl.dataset.currentId = area.current_level_id; // ID текущего УРОВНЯ
+
+                    const imgEl = document.createElement('img');
+                    // --- ИСПРАВЛЕНИЕ ЗДЕСЬ ---
+                    // Иконка берется из данных текущего УРОВНЯ (currentLevelData)
+                    imgEl.src = currentLevelData.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=LvlErr';
+                    imgEl.alt = currentLevelData.name_display?.substring(0,3) || area.name?.substring(0,3) || "Dev";
+                    slotEl.appendChild(imgEl);
+
+                    const labelEl = document.createElement('span');
+                    labelEl.className = 'item-slot-label-small';
+                    // Название уровня и прогресс области
+                    labelEl.innerHTML = `${currentLevelData.name_display}<br><span class="progress-text">${area.current_progress}/${area.progress_per_level}</span>`;
+                    slotEl.appendChild(labelEl);
+
                     const effectsForTooltip = `Прогресс: ${area.current_progress}/${area.progress_per_level}`;
                     addTooltipEventsToElement(slotEl, currentLevelData.name_display, effectsForTooltip, currentLevelData.description, area.name);
-                    slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
+                    
+                    slotEl.addEventListener('click', function() {
+                         openSidePanelForCategory(this.dataset.slotType, this);
+                    });
                     areaWrapperEl.appendChild(slotEl);
-                    const progressBarContainer = document.createElement('div'); progressBarContainer.className = 'dev-progress-bar-container';
-                    const progressBarFill = document.createElement('div'); progressBarFill.className = 'dev-progress-bar-fill';
+
+                    const progressBarContainer = document.createElement('div');
+                    progressBarContainer.className = 'dev-progress-bar-container';
+                    const progressBarFill = document.createElement('div');
+                    progressBarFill.className = 'dev-progress-bar-fill';
                     const progressPercentage = (area.current_progress / area.progress_per_level) * 100;
                     progressBarFill.style.width = `${Math.min(100, Math.max(0, progressPercentage))}%`;
                     progressBarContainer.appendChild(progressBarFill);
-                    const progressTextOverlay = document.createElement('span'); progressTextOverlay.className = 'dev-progress-bar-text';
+                    const progressTextOverlay = document.createElement('span');
+                    progressTextOverlay.className = 'dev-progress-bar-text';
                     progressTextOverlay.textContent = `${area.current_progress}/${area.progress_per_level}`;
                     progressBarContainer.appendChild(progressTextOverlay);
                     areaWrapperEl.appendChild(progressBarContainer);
+
                     developmentContainer.appendChild(areaWrapperEl);
-                } else { console.warn(`Для области развития '${area.id}' не найден активный уровень по ID: '${area.current_level_id}'.`); }
+                } else {
+                     console.warn(`Для области развития '${area.id}' не найден активный уровень по ID: '${area.current_level_id}'. Проверьте массив 'levels' и ID в JSON.`);
+                }
         });
     }
 
