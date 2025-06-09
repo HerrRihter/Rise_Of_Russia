@@ -305,7 +305,7 @@ body {
 
 
 .advisor-portrait-slot {
-    width: 132px;
+    width: 156px;
     height: 234px; /* Как было */
     padding: 0; /* Тоже без паддинга */
     background-color: #3a3a3a; /* Фоновый цвет, если портрет не загрузится */
