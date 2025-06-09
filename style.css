@@ -326,25 +326,35 @@ body {
 
 /* Стили для портретов советников */
 .advisor-portrait-slot {
-    width: 132px; /* Ширина как у других слотов для сетки */
-    height: 180px;
-    padding: 0;
-    background-color: #3a3a3a; /* Фон для пустого слота или если портрет с прозрачностью */
+    width: 132px;
+    height: 234px;
+    
+    /* --- ФОН ДЛЯ ПУСТОГО СЛОТА --- */
+    background-color: #3a3a3a;
+    background-image: url('history/portraits_background/empty_advisor_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* --- КОНЕЦ ФОНА ДЛЯ ПУСТОГО СЛОТА --- */
+    
     border: 1px solid #555;
     border-radius: 5px;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
     position: relative;
+    box-sizing: border-box;
+    padding: 0;
 }
+
 .advisor-portrait-slot img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    border-radius: 4px; /* Для самой картинки */
-    margin-bottom: 0;
+    border-radius: 4px;
 }
 
 .item-slot.selected,
