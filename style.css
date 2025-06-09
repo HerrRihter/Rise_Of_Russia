@@ -221,7 +221,13 @@ body {
 .corporation-slot {
     width: 132px;
     height: 132px; /* Делаем слот квадратным для иконки 1:1 */
-    background-color: #4a4a4a;
+    /* --- ФОН ДЛЯ ПУСТОГО СЛОТА --- */
+    background-color: #3a3a3a;
+    background-image: url('history/portraits_background/empty_advisor_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* --- КОНЕЦ ФОНА ДЛЯ ПУСТОГО СЛОТА --- */
     border: 1px solid #666;
     border-radius: 5px;
     display: flex;
@@ -290,7 +296,13 @@ body {
 }
 .item-slot.development-area .item-slot-label-small {
     position: static; /* Убираем абсолютное позиционирование для этой подписи */
-    background-color: transparent; /* Без фона */
+        /* --- ФОН ДЛЯ ПУСТОГО СЛОТА --- */
+    background-color: #3a3a3a;
+    background-image: url('history/portraits_background/empty_advisor_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* --- КОНЕЦ ФОНА ДЛЯ ПУСТОГО СЛОТА --- */
     color: #ccc;
     margin-top: auto; /* Прижать к низу */
     padding: 0; /* Убрать лишние отступы */
