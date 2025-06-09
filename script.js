@@ -37,19 +37,28 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
         }
 
         if (name) {
-            if (tooltipContent) tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+            if (tooltipContent && !tooltipContent.endsWith("</small>")) tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+            else if (tooltipContent) tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
             tooltipContent += `<strong>${name}</strong>`;
         }
         
         if (effectsSummary) {
-            if (tooltipContent && !(tooltipContent.endsWith("</strong>") || (tooltipContent.endsWith("</small>") && !name) ) ) {
+            if (tooltipContent && !tooltipContent.endsWith("</strong>") && !(tooltipContent.endsWith("</small>") && !name) ) {
+                 tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+            } else if (!tooltipContent && effectsSummary) {
+                // No hr
+            } else if (tooltipContent && !name && slotTitle){
                  tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
             }
             tooltipContent += effectsSummary.replace(/\n/g, '<br>');
         }
 
         if (fullDescription) {
-            if (tooltipContent) tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+            if (tooltipContent && !tooltipContent.endsWith("<br>") && !tooltipContent.endsWith("</strong>") && !tooltipContent.endsWith("</small>")) tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+             else if (tooltipContent && (tooltipContent.endsWith("<br>") || tooltipContent.endsWith("</strong>") || tooltipContent.endsWith("</small>"))) {
+                 // Already has content, implies previous section existed.
+                 tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
+             }
             tooltipContent += "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
         }
         
@@ -85,7 +94,7 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
 // --- Balance Modal Logic ---
 const balanceModal = document.getElementById('balanceModal');
 const balanceButton = document.getElementById('balanceButton');
-const closeBalanceModalBtn = document.getElementById('closeBalanceModalBtn_Balance'); // Используем уникальный ID
+const closeBalanceModalBtn_Balance = document.getElementById('closeBalanceModalBtn_Balance'); // Changed ID for clarity
 const balanceMarker = document.getElementById('balanceMarker');
 const balanceValueDisplay = document.getElementById('balanceValueDisplay');
 
@@ -98,8 +107,8 @@ function updateBalanceScale(value) {
     if(balanceValueInput) balanceValueInput.value = value;
 }
 if (balanceButton) balanceButton.onclick = () => { if(balanceModal) balanceModal.style.display = 'flex'; updateBalanceScale(parseInt(balanceValueDisplay?.textContent || '0')); };
-if (closeBalanceModalBtn) closeBalanceModalBtn.onclick = () => { if(balanceModal) balanceModal.style.display = 'none'; };
-// window.onclick для balanceModal уже был, не дублируем.
+if (closeBalanceModalBtn_Balance) closeBalanceModalBtn_Balance.onclick = () => { if(balanceModal) balanceModal.style.display = 'none'; };
+// Removed redundant window.onclick for balanceModal, it's handled globally later if needed or per modal
 
 // --- Game Data Loading and Management ---
 const GAME_DATA = { leaders: {}, constitutional_principles: {}, development_areas: {}, corporations: {}, ideologies: {}, parties: {}, national_spirits: {} };
@@ -225,6 +234,7 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
     } else if (developmentAreaId && GAME_DATA.development_areas[developmentAreaId]) {
         parentCategoryData = GAME_DATA.development_areas[developmentAreaId];
         parentCategoryData.current_level_id = selectedOptionId;
+        // parentCategoryData.current_progress = 0; // Сбрасывать прогресс при смене уровня/политики? Решите сами
         chosenData = parentCategoryData.levels?.find(lvl => lvl.id === selectedOptionId);
     } else if (targetSlotType.startsWith("corporation_slot_") && GAME_DATA.corporations) {
         chosenData = GAME_DATA.corporations[selectedOptionId];
@@ -251,10 +261,12 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
         labelTextContent = `${chosenData.name_display}<br><span class="progress-text">${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}</span>`;
         tooltipEffectsForSlot = `Прогресс: ${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}`;
     } else if (principleId && parentCategoryData) {
-        // Для принципов effects_summary не используется в тултипе основного слота, только description
+        // Для принципов эффекты (если они были бы) берутся из chosenData (т.е. из option), а не parentCategoryData
+        tooltipEffectsForSlot = null; // Т.к. убрали effects_summary из options принципов
+        tooltipDescriptionForSlot = chosenData.description;
     } else {
         tooltipEffectsForSlot = chosenData.tooltip_summary || chosenData.effects_summary;
-        tooltipDescriptionForSlot = (targetSlotType.startsWith("advisor_") || targetSlotType.startsWith("corporation_slot_")) ? null : chosenData.description;
+        tooltipDescriptionForSlot = chosenData.description; // Для советников/корпораций может быть и полное описание
     }
 
     if (mainSlotLabel) mainSlotLabel.innerHTML = labelTextContent;
@@ -268,12 +280,8 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
           if (optEl.dataset.optionId === selectedOptionId) optEl.classList.add('active');
       });
     }
-    // if(selectionSidePanel) selectionSidePanel.style.display = 'none';
 }
-if(closeSidePanelBtn_SP) { // Проверяем что кнопка существует перед добавлением слушателя
-    closeSidePanelBtn_SP.onclick = () => { if(selectionSidePanel) selectionSidePanel.style.display = 'none'; };
-}
-
+if(closeSidePanelBtn_SP) closeSidePanelBtn_SP.onclick = () => { if(selectionSidePanel) selectionSidePanel.style.display = 'none'; };
 
 // --- Party Politics UI ---
 function drawPoliticalPieChart() {
@@ -298,7 +306,7 @@ function drawPoliticalPieChart() {
         sectors.push({ partyName: party.name, popularity: party.popularity, startAngle: currentAngle, endAngle: endAngle });
         currentAngle = endAngle;
     });
-    if(canvas._handleMouseMove) canvas.removeEventListener('mousemove', canvas._handleMouseMove);
+    if(canvas._handleMouseMove) canvas.removeEventListener('mousemove', canvas._handleMouseMove); // Prevent duplicate listeners
     const boundHandleMouseMove = (event) => handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius);
     canvas._handleMouseMove = boundHandleMouseMove;
     canvas.addEventListener('mousemove', boundHandleMouseMove);
@@ -311,14 +319,17 @@ function handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radiu
     if(!tooltipElement) return; const rect = canvas.getBoundingClientRect(); const mouseX = event.clientX - rect.left; const mouseY = event.clientY - rect.top;
     const dx = mouseX - centerX; const dy = mouseY - centerY; const distance = Math.sqrt(dx * dx + dy * dy); let foundSector = false;
     if (distance <= radius) {
-        let angle = Math.atan2(dy, dx); if (angle < -Math.PI / 2) angle += 2 * Math.PI;
+        let angle = Math.atan2(dy, dx); if (angle < -Math.PI / 2) angle += 2 * Math.PI; // Normalize to the same system as drawing
         for (const sector of sectors) {
-            let inSector = false; let sAngle = sector.startAngle; let eAngle = sector.endAngle;
-            while (sAngle < -Math.PI/2) sAngle += 2*Math.PI; while (sAngle >= 3*Math.PI/2) sAngle -= 2*Math.PI; // Normalize sAngle to be in [-PI/2, 3PI/2)
-            while (eAngle < -Math.PI/2) eAngle += 2*Math.PI; while (eAngle >= 3*Math.PI/2) eAngle -= 2*Math.PI; // Normalize eAngle
-
-            if (sAngle > eAngle) { if (angle >= sAngle || angle < eAngle) inSector = true; }
-            else { if (angle >= sAngle && angle < eAngle) inSector = true; }
+            let inSector = false;
+            // atan2 range is -PI to PI. Our drawing starts at -PI/2 and goes clockwise.
+            // A sector is {startAngle, endAngle} also in that system.
+            // If endAngle is less than startAngle it means the sector crosses the -PI/2 (or 3PI/2) line
+            if (sector.startAngle <= sector.endAngle) { // Normal sector
+                if (angle >= sector.startAngle && angle < sector.endAngle) inSector = true;
+            } else { // Sector crosses the vertical top line (our -PI/2)
+                if (angle >= sector.startAngle || angle < sector.endAngle) inSector = true;
+            }
             if (inSector) {
                 tooltipElement.innerHTML = `<strong>${sector.partyName}</strong><hr>${sector.popularity}%`;
                 tooltipElement.style.display = 'block'; positionTooltip(event); foundSector = true; return;
@@ -403,10 +414,11 @@ function initializeUI() {
         });
 
         const aggregatorSpiritData = GAME_DATA.national_spirits["development_pace_aggregator"];
-        if (aggregatorSpiritData) {
+        if (aggregatorSpiritData && GAME_DATA.development_areas) { // Проверяем, что и области развития загружены
             let effectsForAggregator = "Суммарные импульсы к развитию:";
             Object.keys(totalDevelopmentImpulses).forEach(areaKey => {
-                const areaName = GAME_DATA.development_areas[areaKey]?.name || areaKey.charAt(0).toUpperCase() + areaKey.slice(1).replace(/_/g, ' ');
+                const areaData = GAME_DATA.development_areas[areaKey];
+                const areaName = areaData?.name || areaKey.charAt(0).toUpperCase() + areaKey.slice(1).replace(/_/g, ' ');
                 const impulseValue = totalDevelopmentImpulses[areaKey];
                 effectsForAggregator += `\n  ${areaName}: ${impulseValue >= 0 ? '+' : ''}${impulseValue}`;
             });
@@ -450,17 +462,26 @@ function initializeUI() {
             .forEach(area => {
                 const currentLevelData = area.levels?.find(lvl => lvl.id === area.current_level_id);
                 if (currentLevelData) {
+                    const areaWrapperEl = document.createElement('div'); areaWrapperEl.className = 'development-area-wrapper';
                     const slotEl = document.createElement('div'); slotEl.className = 'item-slot development-area';
-                    slotEl.dataset.slotType = `development_area_${area.id}`;
-                    slotEl.dataset.currentId = area.current_level_id;
+                    slotEl.dataset.slotType = `development_area_${area.id}`; slotEl.dataset.currentId = area.current_level_id;
                     const imgEl = document.createElement('img'); imgEl.src = area.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=D'; slotEl.appendChild(imgEl);
                     const labelEl = document.createElement('span'); labelEl.className = 'item-slot-label-small';
-                    labelEl.innerHTML = `${currentLevelData.name_display}<br><span class="progress-text">${area.current_progress}/${area.progress_per_level}</span>`;
-                    slotEl.appendChild(labelEl);
+                    labelEl.textContent = currentLevelData.name_display; slotEl.appendChild(labelEl);
                     const effectsForTooltip = `Прогресс: ${area.current_progress}/${area.progress_per_level}`;
                     addTooltipEventsToElement(slotEl, currentLevelData.name_display, effectsForTooltip, currentLevelData.description, area.name);
                     slotEl.addEventListener('click', function() { openSidePanelForCategory(this.dataset.slotType, this); });
-                    developmentContainer.appendChild(slotEl);
+                    areaWrapperEl.appendChild(slotEl);
+                    const progressBarContainer = document.createElement('div'); progressBarContainer.className = 'dev-progress-bar-container';
+                    const progressBarFill = document.createElement('div'); progressBarFill.className = 'dev-progress-bar-fill';
+                    const progressPercentage = (area.current_progress / area.progress_per_level) * 100;
+                    progressBarFill.style.width = `${Math.min(100, Math.max(0, progressPercentage))}%`;
+                    progressBarContainer.appendChild(progressBarFill);
+                    const progressTextOverlay = document.createElement('span'); progressTextOverlay.className = 'dev-progress-bar-text';
+                    progressTextOverlay.textContent = `${area.current_progress}/${area.progress_per_level}`;
+                    progressBarContainer.appendChild(progressTextOverlay);
+                    areaWrapperEl.appendChild(progressBarContainer);
+                    developmentContainer.appendChild(areaWrapperEl);
                 } else { console.warn(`Для области развития '${area.id}' не найден активный уровень по ID: '${area.current_level_id}'.`); }
         });
     }
@@ -499,8 +520,10 @@ function initializeUI() {
         }
     });
 
+    // Static tooltips that don't open panels
     document.querySelectorAll('.national-focus-banner, .pie-chart').forEach(el => {
         if(el.dataset.tooltip && !el.getAttribute('listenerAttached')) {
+             // For these, the data-tooltip itself is the "name" or main content
              addTooltipEventsToElement(el, el.dataset.tooltip, null, null);
              el.setAttribute('listenerAttached', 'true');
         }
@@ -509,18 +532,16 @@ function initializeUI() {
 
 // --- National Focus Modal Logic ---
 const nationalFocusModal = document.getElementById('nationalFocusModal');
-const closeFocusModalBtn_NF = document.getElementById('closeFocusModalBtn'); // Используем ID из вашего HTML
+const closeFocusModalBtn_NF = document.getElementById('closeFocusModalBtn');
 const nationalFocusBannerClickable = document.getElementById('nationalFocusBannerClickable');
 const focusModalTitle = document.getElementById('focusModalTitle');
 const focusModalImage = document.getElementById('focusModalImage');
 const focusModalDescription = document.getElementById('focusModalDescription');
 
-// Загрузка данных для текущего нац. фокуса (лучше делать это в initializeGameData, если данные в JSON)
-// Пока что оставим заглушку, которую вы можете заполнять по ходу игры
 let currentNationalFocusData = {
-    title: "Осень 2003 - Ход 23", // Это будет браться с баннера
-    full_image_path: "history/turn_images/Autumn2003.png", // ПУТЬ К ПОЛНОМУ ИЗОБРАЖЕНИЮ
-    custom_description: "Краткая сводка для любопытных"
+    title: "Осень 2003 - Ход 23",
+    full_image_path: "history/turn_images/Autumn2003_full.png", // Пример, нужен ваш файл
+    custom_description: "Краткая сводка для любопытных.\nПодробности текущего этапа игры или особого события, связанного с национальным фокусом."
 };
 
 if (nationalFocusBannerClickable) {
@@ -528,25 +549,21 @@ if (nationalFocusBannerClickable) {
     nationalFocusBannerClickable.addEventListener('click', () => {
         if (nationalFocusModal && focusModalTitle && focusModalImage && focusModalDescription) {
             const mainFocusTitleEl = document.getElementById('mainFocusTitle');
-            const currentTitleOnBanner = mainFocusTitleEl ? mainFocusTitleEl.textContent : "Национальный Фокус";
-
-            // Здесь вы можете иметь логику, чтобы currentNationalFocusData обновлялся на основе currentTitleOnBanner
-            // или другого идентификатора текущего фокуса, если у вас несколько фокусов
-            // Пока просто используем то, что есть в currentNationalFocusData
-            focusModalTitle.textContent = currentNationalFocusData.title || currentTitleOnBanner;
+            // Данные для модального окна НАЦ ФОКУСА, если они будут меняться, лучше грузить их из отдельного JSON или обновлять currentNationalFocusData
+            // Сейчас используется title с основного баннера, если currentNationalFocusData.title пуст
+            focusModalTitle.textContent = currentNationalFocusData.title || (mainFocusTitleEl ? mainFocusTitleEl.textContent : "Национальный Фокус");
             focusModalImage.src = currentNationalFocusData.full_image_path || "https://via.placeholder.com/700x400/222/fff?text=Full+Focus+Art";
             focusModalImage.alt = focusModalTitle.textContent;
-            focusModalDescription.textContent = currentNationalFocusData.custom_description || "Описание для этого фокуса не предоставлено.";
+            focusModalDescription.textContent = currentNationalFocusData.custom_description || "Описание не предоставлено.";
             nationalFocusModal.style.display = 'flex';
         } else { console.error("Элементы модального окна нац. фокуса не найдены!"); }
     });
 }
-if (closeFocusModalBtn_NF) { // Убедимся что кнопка существует
+if (closeFocusModalBtn_NF) {
     closeFocusModalBtn_NF.onclick = function() {
         if (nationalFocusModal) nationalFocusModal.style.display = 'none';
     }
 }
-// Закрытие модального окна фокуса по клику вне контента
 window.addEventListener('click', function(event) {
     if (event.target == nationalFocusModal && nationalFocusModal) {
         nationalFocusModal.style.display = 'none';
