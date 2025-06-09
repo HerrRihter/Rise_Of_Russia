@@ -540,7 +540,7 @@ const focusModalDescription = document.getElementById('focusModalDescription');
 
 let currentNationalFocusData = {
     title: "Осень 2003 - Ход 23",
-    full_image_path: "history/turn_images/Autumn2003_full.png", // Пример, нужен ваш файл
+    full_image_path: "history/turn_images/Autumn2003.png", // Пример, нужен ваш файл
     custom_description: "Краткая сводка для любопытных.\nПодробности текущего этапа игры или особого события, связанного с национальным фокусом."
 };
 
