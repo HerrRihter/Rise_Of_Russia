@@ -41,7 +41,6 @@
             "current_progress": 23,
             "progress_per_level": 100,
             "current_level_id": "wel_level_2",
-            "icon_path": "history/development_areas_icons/welfare.png",
             "levels": [
                  { "id": "wel_level_0",  "icon_path": "history/development_areas_icons/welfare_level_0.png", "name_display": "Массовая нищета", "description": "Более половины населения живет за чертой бедности. Доходы не обеспечивают даже минимальных физиологических потребностей. Социальные услуги деградировали." },
                  { "id": "wel_level_1",  "icon_path": "history/development_areas_icons/welfare_level_1.png", "name_display": "Повсеместные финансовые трудности", "description": "Большая часть граждан испытывает постоянные финансовые трудности. Социальное неравенство достигает критических отметок. Небольшая прослойка сверхбогатых контрастирует с общей бедностью." },
