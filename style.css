@@ -549,104 +549,87 @@ body {
 .side-panel-option-name { flex-grow: 1; font-size: 0.95em; line-height: 1.3; }
 
 
-/* --- Адаптивные стили (исправленные для Сценария Б) --- */
-
+/* --- Адаптивные стили --- */
 @media (max-width: 992px) {
-    /* ... (общие адаптивные стили для body, main-content и т.д. остаются) ... */
+    body { padding: 10px; }
+    .main-content { padding: 10px; }
+    .upper-section { flex-direction: column; align-items: center; }
+    .leader-pane { margin-right: 0; margin-bottom: 20px; flex-basis: auto; width: 90%; max-width: 400px; }
+    .national-info-pane { width: 100%; }
 
-    /* Родительские слоты уменьшаются */
-    .item-slot,
-    .advisor-portrait-slot,
-    .constitutional-principle,
-    .development-area-wrapper, /* Обёртка для области развития */
-    .corporation-slot {
-        width: calc((100% - 4 * 10px) / 5); /* Пример: 5 в ряд */
-        /* min-height оставляем адаптивным или уменьшаем пропорционально ширине,
-           если хотим сохранить квадратность или другие пропорции для .item-slot */
+    .item-slot, .advisor-portrait-slot, .constitutional-principle, .development-area, .corporation-slot, .development-area-wrapper { /* Добавил .development-area-wrapper */
+        width: calc((100% - 4 * 10px) / 5);
+        min-height: 85px;
     }
+    .advisor-portrait-slot { height: 150px; } /* Нужно отдельно задавать высоту для советников */
 
-    .item-slot.development-area { /* Слот внутри обертки */
-        height: 70px; /* или другое значение, чтобы подпись уровня влезала */
-        min-height: 70px;
-    }
 
-    .advisor-portrait-slot {
-        height: 150px; /* Пропорционально уменьшенная высота */
+    .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
+        width: 40px; height: 40px;
     }
-    
-    /* ВАЖНО: Изображения ВНУТРИ слотов теперь должны заполнять уменьшенный родитель */
-    .item-slot img,
-    .constitutional-principle img,
-    .development-area img, /* img ВНУТРИ .item-slot.development-area */
-    .corporation-slot img {
-        width: 100%;   /* Заполняет новую ширину родителя */
-        height: 100%;  /* Заполняет новую высоту родителя */
-        object-fit: cover; /* или contain, по вашему выбору */
-        /* margin-bottom НЕ МЕНЯЕМ, т.к. он в px */
-    }
+     /* Убрано: .advisor-portrait-slot img { width: 100%; height: 100%; } т.к. уже покрыто .advisor-portrait-slot + его img имеет 100% */
+    .item-slot-label-small { font-size: 0.65em; max-height: 3.3em; }
 
-    /* Для иконки внутри development-area (которая не 100%x100%) ее размер надо задать */
-    .item-slot.development-area img {
-        width: 40px; /* Размер иконки категории для планшета */
-        height: 40px;
-    }
+    .political-details { gap: 8px; }
+    .pie-chart { width: 100px; height: 100px;}
+    #partyPieChartCanvas { width: 100px; height: 100px; }
+    .party-list { font-size: 0.78em; }
 
-    .advisor-portrait-slot img { /* Портрет по-прежнему заполняет весь свой слот */
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    
-    /* ... (стили для подписей и остального можно тоже пропорционально уменьшить) ... */
-    .item-slot-label-small { font-size: 0.65em; }
-    .dev-progress-bar-container { height: 16px; }
-    .dev-progress-bar-text { font-size: 0.7em; }
+    .focus-modal-content { max-width: 90%; padding: 20px; }
+    .modal-content { max-width: 90%; /* Для баланса */ }
 }
 
 @media (max-width: 576px) {
-    /* ... (общие адаптивные стили для body, main-content и т.д. остаются) ... */
+    body { padding: 5px; }
+    .main-content { padding: 5px; }
+    .window-title-bar { padding: 8px 10px; font-size: 1.1em; }
 
-    /* Родительские слоты еще уменьшаются */
-    .item-slot,
-    .advisor-portrait-slot,
-    .constitutional-principle,
-    .development-area-wrapper,
-    .corporation-slot {
-        width: calc((100% - 2 * 8px) / 3); /* Пример: 3 в ряд */
-    }
-    
-    .item-slot.development-area {
-        height: 65px;
-        min-height: 65px;
-    }
+    .upper-section { padding-bottom: 15px; margin-bottom: 10px; }
+    .leader-pane { max-width: 100%; flex-basis: auto; }
+    .leader-portrait { width: 120px; height: 160px; }
+    .ideology-icon, .party-emblem { width: 50px; height: 50px; min-width: 50px;}
 
-    .advisor-portrait-slot {
-        height: 120px;
-    }
+    .national-focus-banner { height: 80px; }
+    .focus-title-bar { font-size: 0.9em; width: 150px; }
+    .national-spirits { gap: 4px; padding: 5px; min-height: 30px; justify-content: center; }
+    .spirit-icon { width: 32px; height: 32px; }
 
-    /* Изображения ВНУТРИ слотов */
-    .item-slot img,
-    .constitutional-principle img,
-    .development-area img,
-    .corporation-slot img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* или contain */
-    }
-    
-    /* Для иконки внутри development-area */
-    .item-slot.development-area img {
-        width: 32px;
-        height: 32px;
-    }
+    .political-details { flex-direction: column; gap: 10px; }
+    .ruling-party-info, .political-system-info-container, .party-popularity { flex-basis: auto; width: 100%; }
+    .party-popularity { flex-direction: column; align-items: stretch; }
+    .pie-chart { width: 90px; height: 90px; margin-right: 0; margin-bottom: 10px; align-self: center;}
+    #partyPieChartCanvas { width: 90px; height: 90px; }
+    .party-list { max-height: 90px; }
 
-    .advisor-portrait-slot img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+    .lower-section { padding-right: 0; max-height: none; overflow-y:visible;}
+    .category-items { padding: 8px; gap: 8px; }
+    .item-slot, .advisor-portrait-slot, .constitutional-principle, .development-area, .corporation-slot, .development-area-wrapper { /* Добавил .development-area-wrapper */
+        width: calc((100% - 2 * 8px) / 3);
+        min-height: 75px; padding: 5px;
     }
-    /* ... (стили для подписей и остального можно тоже пропорционально уменьшить) ... */
-    .item-slot-label-small { font-size: 0.6em; }
-    .dev-progress-bar-container { height: 14px; }
+    .advisor-portrait-slot { height: 120px; }
+    .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
+        width: 32px; height: 32px; margin-bottom: 3px;
+    }
+     /* Убрано: .advisor-portrait-slot img { width: 100%; height: 100%; } */
+    .item-slot-label-small { font-size: 0.6em; max-height: 2.4em; }
+
+    /* Стили для шкалы прогресса на мобильных */
+    .dev-progress-bar-container { height: 14px; margin-top: 1px; }
     .dev-progress-bar-text { font-size: 0.65em; }
+
+
+    .side-panel { width: 96%; left: 2%; right: 2%; top: 5px; max-height: calc(100vh - 10px); font-size: 0.9em;}
+    .side-panel-header { padding: 8px 10px; }
+    .side-panel-header h4 { font-size: 1em; }
+    .side-panel-option { padding: 8px; margin-bottom: 4px; }
+    .side-panel-option-icon { width: 30px; height: 30px; min-width: 30px; margin-right: 8px;}
+    .side-panel-option-name { font-size: 0.9em; }
+
+    .tooltip { font-size: 0.8em; max-width: 90vw; padding: 8px 10px; }
+
+    .focus-modal-content { max-width: 95%; padding: 15px; }
+    .focus-modal-content h4 { font-size: 1.1em; }
+    .focus-modal-image-container { max-height: 40vh; }
+    .focus-modal-description { font-size: 0.9em; max-height: 30vh; }
 }
