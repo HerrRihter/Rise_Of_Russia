@@ -611,7 +611,7 @@ body {
     .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
         width: 32px; height: 32px; margin-bottom: 3px;
     }
-     /* Убрано: .advisor-portrait-slot img { width: 100%; height: 100%; } */
+    .advisor-portrait-slot img { width: 100%; height: 100%; }
     .item-slot-label-small { font-size: 0.6em; max-height: 2.4em; }
 
     /* Стили для шкалы прогресса на мобильных */
