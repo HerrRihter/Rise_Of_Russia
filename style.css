@@ -562,26 +562,23 @@ body {
         min-height: 85px;
     }
     
+    .advisor-portrait-slot { 
+        height: 150px; 
+    }
+    
     /* Отдельные стили для областей развития */
     .development-area-wrapper {
         width: calc((100% - 4 * 10px) / 5);
     }
     
     .item-slot.development-area {
-        height: 85px; /* Уменьшенная высота для мобильных */
+        height: 85px;
         width: 100%;
     }
     
     .dev-progress-bar-container {
-        height: 15px; /* Уменьшенная высота прогресс-бара */
+        height: 15px;
     }
-    
-    .advisor-portrait-slot { height: 150px; }
-
-    /* УБИРАЕМ переопределение размеров изображений - пусть остаются 100% */
-    /* .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
-        width: 40px; height: 40px;
-    } */
     
     .item-slot-label-small { font-size: 0.65em; max-height: 3.3em; }
 
@@ -619,54 +616,64 @@ body {
     .lower-section { padding-right: 0; max-height: none; overflow-y:visible;}
     .category-items { padding: 8px; gap: 8px; }
     
-    .item-slot, .advisor-portrait-slot, .constitutional-principle, .corporation-slot {
+    /* Основные слоты - убираем padding полностью */
+    .item-slot, .constitutional-principle, .corporation-slot {
         width: calc((100% - 2 * 8px) / 3);
         min-height: 75px; 
-        padding: 0; /* Убираем padding, чтобы изображения заполняли весь слот */
+        padding: 0; /* Полностью убираем padding */
     }
     
-    /* Отдельные стили для областей развития на очень маленьких экранах */
+    /* Советники - тоже убираем padding */
+    .advisor-portrait-slot { 
+        width: calc((100% - 2 * 8px) / 3);
+        height: 120px; 
+        padding: 0; /* Убираем padding */
+    }
+    
+    /* Области развития - особая обработка */
     .development-area-wrapper {
         width: calc((100% - 2 * 8px) / 3);
-        min-height: auto; /* Убираем фиксированную высоту */
+        min-height: auto;
     }
     
     .item-slot.development-area {
-        height: 60px; /* Еще более компактная версия */
+        height: 60px;
         width: 100%;
-        padding: 0;
+        padding: 0; /* Убираем padding */
+    }
+    
+    /* Изображения заполняют весь контейнер */
+    .item-slot img, 
+    .constitutional-principle img, 
+    .corporation-slot img,
+    .advisor-portrait-slot img {
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; /* Заполняем весь контейнер с сохранением пропорций */
+        display: block;
+    }
+    
+    /* Для областей развития используем contain, чтобы иконка была видна полностью */
+    .item-slot.development-area img {
+        width: 100%; 
+        height: 100%; 
+        object-fit: contain; /* Показываем всю иконку */
+        display: block;
     }
     
     .dev-progress-bar-container { 
         height: 12px; 
-        margin-top: 1px; 
+        margin-top: 0px; /* Убираем отступ */
     }
     
     .dev-progress-bar-text { 
         font-size: 0.65em; 
     }
     
-    .advisor-portrait-slot { 
-        height: 120px; 
-        padding: 0; /* Убираем padding */
-    }
-    
-    /* УБИРАЕМ переопределение размеров изображений */
-    /* .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
-        width: 32px; height: 32px; margin-bottom: 3px;
-    } */
-    
-    /* Изображения советников должны заполнять весь контейнер */
-    .advisor-portrait-slot img { 
-        width: 100%; 
-        height: 100%; 
-        object-fit: cover;
-    }
-    
     .item-slot-label-small { 
         font-size: 0.6em; 
         max-height: 2.4em; 
-        padding: 2px 3px; /* Уменьшенные отступы */
+        padding: 2px 3px; /* Минимальные отступы для текста */
     }
 
     .side-panel { width: 96%; left: 2%; right: 2%; top: 5px; max-height: calc(100vh - 10px); font-size: 0.9em;}
@@ -682,4 +689,5 @@ body {
     .focus-modal-content h4 { font-size: 1.1em; }
     .focus-modal-image-container { max-height: 40vh; }
     .focus-modal-description { font-size: 0.9em; max-height: 30vh; }
+}
 }
