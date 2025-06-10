@@ -561,11 +561,11 @@ body {
         width: calc((100% - 4 * 10px) / 5);
         min-height: 85px;
     }
-    .advisor-portrait-slot { height: 150px; } /* Нужно отдельно задавать высоту для советников */
+    .advisor-portrait-slot { width: 100%; height: 100% } /* Нужно отдельно задавать высоту для советников */
 
 
     .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
-        width: 40px; height: 40px;
+        width: 100%; height: 100%;
     }
      /* Убрано: .advisor-portrait-slot img { width: 100%; height: 100%; } т.к. уже покрыто .advisor-portrait-slot + его img имеет 100% */
     .item-slot-label-small { font-size: 0.65em; max-height: 3.3em; }
@@ -586,7 +586,7 @@ body {
 
     .upper-section { padding-bottom: 15px; margin-bottom: 10px; }
     .leader-pane { max-width: 100%; flex-basis: auto; }
-    .leader-portrait { width: 120px; height: 160px; }
+    .leader-portrait { width: 100%; height: 100%; }
     .ideology-icon, .party-emblem { width: 50px; height: 50px; min-width: 50px;}
 
     .national-focus-banner { height: 80px; }
@@ -605,11 +605,11 @@ body {
     .category-items { padding: 8px; gap: 8px; }
     .item-slot, .advisor-portrait-slot, .constitutional-principle, .development-area, .corporation-slot, .development-area-wrapper { /* Добавил .development-area-wrapper */
         width: calc((100% - 2 * 8px) / 3);
-        min-height: 75px; padding: 5px;
+        min-height: 75px; padding: 0;
     }
-    .advisor-portrait-slot { height: 120px; }
+    .advisor-portrait-slot { width: 100%; height: 100% }
     .item-slot img, .constitutional-principle img, .development-area img, .corporation-slot img {
-        width: 32px; height: 32px; margin-bottom: 3px;
+        width: 100%; height: 100%; margin-bottom: 3px;
     }
      /* Убрано: .advisor-portrait-slot img { width: 100%; height: 100%; } */
     .item-slot-label-small { font-size: 0.6em; max-height: 2.4em; }
