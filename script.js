@@ -1,5 +1,7 @@
 // script.js
 
+let tooltipElement = null; // Объявить здесь, но не присваивать
+
 // --- Вспомогательная функция для скачивания JSON ---
 function downloadJSON(data, filename) {
     const jsonDataStr = JSON.stringify(data, null, 4); // null, 4 для красивого форматирования
@@ -773,8 +775,11 @@ function isDescendant(parent, child) {
 
 // --- Start Application ---
 document.addEventListener('DOMContentLoaded', () => {
+    tooltipElement = document.querySelector('.tooltip'); // Инициализируем здесь!
+    if (!tooltipElement) {
+        console.error("Элемент .tooltip не найден в DOM!");
+    }
     initializeGameData();
-    // Привязка события к кнопке сохранения
     const saveButton = document.getElementById('saveChangesButton');
     if (saveButton) {
         saveButton.addEventListener('click', handleSaveChanges);
