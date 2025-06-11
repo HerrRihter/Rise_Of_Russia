@@ -33,16 +33,14 @@
             </div>
 
             <div class="national-info-pane">
-                <!-- ИЗМЕНЕННЫЙ БЛОК НАЦИОНАЛЬНОГО ФОКУСА -->
                 <div class="national-focus-banner" id="nationalFocusBannerClickable" data-tooltip="Текущая краткая сводка
 Нажмите для деталей...">
                     <img src="history/turn_images/Autumn2003.png" alt="Национальный Фокус" class="focus-bg" id="mainFocusBannerImage">
-                    <div class="focus-title-bar" id="mainFocusTitle">Осень 2003 - Ход 23</div>
+                    <div class="focus-title-bar" id="mainFocusTitle">Загрузка фокуса...</div>
                     <div class="focus-progress-bar">
                         <div class="focus-progress" style="width: 75%;"></div>
                     </div>
                 </div>
-                <!-- КОНЕЦ ИЗМЕНЕННОГО БЛОКА НАЦИОНАЛЬНОГО ФОКУСА -->
 
                 <div class="national-spirits">
                     <!-- Динамически из JS -->
@@ -78,7 +76,6 @@
         </div>
 
         <div class="lower-section">
-            <!-- Правительство -->
             <div class="category-block">
                 <div class="category-header">
                     <img src="https://via.placeholder.com/20/fff/000?text=G" alt="gov" class="category-header-icon">
@@ -160,13 +157,16 @@
     </div> <!-- /main-content -->
 </div> <!-- /hoi4-politics-screen -->
 
-<!-- Модальное окно для Национального Фокуса (из предыдущего ответа) -->
 <div id="nationalFocusModal" class="modal">
     <div class="modal-content focus-modal-content">
         <span class="modal-close-button" id="closeFocusModalBtn">×</span>
         <h4 id="focusModalTitle">Название Национального Фокуса</h4>
         <div class="focus-modal-image-container">
             <img src="" alt="Национальный фокус (полное изображение)" id="focusModalImage">
+        </div>
+        <!-- Новый контейнер для проектов -->
+        <div class="focus-modal-projects-container" id="focusModalProjectsContainer">
+            <!-- Проекты будут добавлены сюда динамически из JS -->
         </div>
         <div class="focus-modal-description" id="focusModalDescription">
             Заглушка: Здесь будет подробное описание для национального фокуса.
@@ -176,32 +176,30 @@
 
 <div class="tooltip" style="display: none;"></div>
 
-<!-- Balance Modal -->
 <div id="balanceModal" class="modal">
     <div class="modal-content">
-        <span class="modal-close-button" id="closeBalanceModalBtn_Balance">×</span> <!-- ID кнопки изменен во избежание конфликта -->
+        <span class="modal-close-button" id="closeBalanceModalBtn_Balance">×</span>
         <h4>Баланс Сил</h4>
-<div class="balance-scale-container">
-                <img src="history/icons/Lunar.png" alt="Луна" class="scale-icon moon-icon">
-                <div class="balance-scale">
-                    <div class="scale-track">
-                        <div class="scale-marker" id="balanceMarker"></div>
-                    </div>
-                    <div class="scale-labels">
-                        <span>-50</span>
-                        <span>0</span>
-                        <span>+50</span>
-                    </div>
+        <div class="balance-scale-container">
+            <img src="history/icons/Lunar.png" alt="Луна" class="scale-icon moon-icon">
+            <div class="balance-scale">
+                <div class="scale-track">
+                    <div class="scale-marker" id="balanceMarker"></div>
                 </div>
-                <img src="history/icons/Solar.png" alt="Солнце" class="scale-icon sun-icon">
+                <div class="scale-labels">
+                    <span>-50</span>
+                    <span>0</span>
+                    <span>+50</span>
+                </div>
             </div>
+            <img src="history/icons/Solar.png" alt="Солнце" class="scale-icon sun-icon">
+        </div>
         <p>Текущее значение: <span id="balanceValueDisplay">6</span></p>
         <button onclick="updateBalanceScale(document.getElementById('balanceValueInput').valueAsNumber)" style="margin-top:10px; padding:5px;">Установить</button>
         <input type="number" id="balanceValueInput" value="0" min="-50" max="50" style="width: 60px; margin-left:5px;">
     </div>
 </div>
 
-<!-- Side Panel (for selection) -->
 <div id="selectionSidePanel" class="side-panel">
     <div class="side-panel-header">
         <h4 id="sidePanelTitle">Выберите Опцию</h4>

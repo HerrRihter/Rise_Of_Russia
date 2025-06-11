@@ -56,7 +56,6 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
         if (fullDescription) {
             if (tooltipContent && !tooltipContent.endsWith("<br>") && !tooltipContent.endsWith("</strong>") && !tooltipContent.endsWith("</small>")) tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
              else if (tooltipContent && (tooltipContent.endsWith("<br>") || tooltipContent.endsWith("</strong>") || tooltipContent.endsWith("</small>"))) {
-                 // Already has content, implies previous section existed.
                  tooltipContent += "<hr style='margin-top:4px; margin-bottom:4px; border-color:#444;'>";
              }
             tooltipContent += "<small>" + fullDescription.replace(/\n/g, '<br>') + "</small>";
@@ -94,7 +93,7 @@ function addTooltipEventsToElement(element, name, effectsSummary, fullDescriptio
 // --- Balance Modal Logic ---
 const balanceModal = document.getElementById('balanceModal');
 const balanceButton = document.getElementById('balanceButton');
-const closeBalanceModalBtn_Balance = document.getElementById('closeBalanceModalBtn_Balance'); // Changed ID for clarity
+const closeBalanceModalBtn_Balance = document.getElementById('closeBalanceModalBtn_Balance');
 const balanceMarker = document.getElementById('balanceMarker');
 const balanceValueDisplay = document.getElementById('balanceValueDisplay');
 
@@ -108,10 +107,18 @@ function updateBalanceScale(value) {
 }
 if (balanceButton) balanceButton.onclick = () => { if(balanceModal) balanceModal.style.display = 'flex'; updateBalanceScale(parseInt(balanceValueDisplay?.textContent || '0')); };
 if (closeBalanceModalBtn_Balance) closeBalanceModalBtn_Balance.onclick = () => { if(balanceModal) balanceModal.style.display = 'none'; };
-// Removed redundant window.onclick for balanceModal, it's handled globally later if needed or per modal
 
 // --- Game Data Loading and Management ---
-const GAME_DATA = { leaders: {}, constitutional_principles: {}, development_areas: {}, corporations: {}, ideologies: {}, parties: {}, national_spirits: {} };
+const GAME_DATA = { 
+    leaders: {}, 
+    constitutional_principles: {}, 
+    development_areas: {}, 
+    corporations: {}, 
+    ideologies: {}, 
+    parties: {}, 
+    national_spirits: {},
+    currentNationalFocus: null 
+};
 const ALL_DATA_FILES_TO_LOAD = [
     "history/leaders.json",
     "history/constitutional_principles.json",
@@ -119,7 +126,8 @@ const ALL_DATA_FILES_TO_LOAD = [
     "history/corporations.json",
     "history/ideologies.json",
     "history/parties.json",
-    "history/national_spirits.json"
+    "history/national_spirits.json",
+    "history/national_focus_data.json"
 ];
 
 async function loadJsonFile(filePath) {
@@ -145,6 +153,9 @@ async function initializeGameData() {
         }
         else if (filePath.endsWith('parties.json') && data.options) { GAME_DATA.parties_array = data.options; GAME_DATA.parties = {}; data.options.forEach(p => {if(p.id)GAME_DATA.parties[p.id] = p;}); }
         else if (filePath.endsWith('national_spirits.json') && data.options) { GAME_DATA.national_spirits = {}; data.options.forEach(s => {if(s.id)GAME_DATA.national_spirits[s.id] = s;}); }
+        else if (filePath.endsWith('national_focus_data.json') && data.current_focus) { 
+            GAME_DATA.currentNationalFocus = data.current_focus;
+        }
     });
     await Promise.all(loadPromises);
     console.log("Игровые данные загружены:", GAME_DATA);
@@ -234,7 +245,6 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
     } else if (developmentAreaId && GAME_DATA.development_areas[developmentAreaId]) {
         parentCategoryData = GAME_DATA.development_areas[developmentAreaId];
         parentCategoryData.current_level_id = selectedOptionId;
-        // parentCategoryData.current_progress = 0; // Сбрасывать прогресс при смене уровня/политики? Решите сами
         chosenData = parentCategoryData.levels?.find(lvl => lvl.id === selectedOptionId);
     } else if (targetSlotType.startsWith("corporation_slot_") && GAME_DATA.corporations) {
         chosenData = GAME_DATA.corporations[selectedOptionId];
@@ -261,12 +271,11 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
         labelTextContent = `${chosenData.name_display}<br><span class="progress-text">${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}</span>`;
         tooltipEffectsForSlot = `Прогресс: ${parentCategoryData.current_progress}/${parentCategoryData.progress_per_level}`;
     } else if (principleId && parentCategoryData) {
-        // Для принципов эффекты (если они были бы) берутся из chosenData (т.е. из option), а не parentCategoryData
-        tooltipEffectsForSlot = null; // Т.к. убрали effects_summary из options принципов
+        tooltipEffectsForSlot = null; 
         tooltipDescriptionForSlot = chosenData.description;
     } else {
         tooltipEffectsForSlot = chosenData.tooltip_summary || chosenData.effects_summary;
-        tooltipDescriptionForSlot = chosenData.description; // Для советников/корпораций может быть и полное описание
+        tooltipDescriptionForSlot = chosenData.description; 
     }
 
     if (mainSlotLabel) mainSlotLabel.innerHTML = labelTextContent;
@@ -306,7 +315,7 @@ function drawPoliticalPieChart() {
         sectors.push({ partyName: party.name, popularity: party.popularity, startAngle: currentAngle, endAngle: endAngle });
         currentAngle = endAngle;
     });
-    if(canvas._handleMouseMove) canvas.removeEventListener('mousemove', canvas._handleMouseMove); // Prevent duplicate listeners
+    if(canvas._handleMouseMove) canvas.removeEventListener('mousemove', canvas._handleMouseMove); 
     const boundHandleMouseMove = (event) => handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radius);
     canvas._handleMouseMove = boundHandleMouseMove;
     canvas.addEventListener('mousemove', boundHandleMouseMove);
@@ -319,15 +328,12 @@ function handlePieChartMouseMove(event, canvas, sectors, centerX, centerY, radiu
     if(!tooltipElement) return; const rect = canvas.getBoundingClientRect(); const mouseX = event.clientX - rect.left; const mouseY = event.clientY - rect.top;
     const dx = mouseX - centerX; const dy = mouseY - centerY; const distance = Math.sqrt(dx * dx + dy * dy); let foundSector = false;
     if (distance <= radius) {
-        let angle = Math.atan2(dy, dx); if (angle < -Math.PI / 2) angle += 2 * Math.PI; // Normalize to the same system as drawing
+        let angle = Math.atan2(dy, dx); if (angle < -Math.PI / 2) angle += 2 * Math.PI; 
         for (const sector of sectors) {
             let inSector = false;
-            // atan2 range is -PI to PI. Our drawing starts at -PI/2 and goes clockwise.
-            // A sector is {startAngle, endAngle} also in that system.
-            // If endAngle is less than startAngle it means the sector crosses the -PI/2 (or 3PI/2) line
-            if (sector.startAngle <= sector.endAngle) { // Normal sector
+            if (sector.startAngle <= sector.endAngle) { 
                 if (angle >= sector.startAngle && angle < sector.endAngle) inSector = true;
-            } else { // Sector crosses the vertical top line (our -PI/2)
+            } else { 
                 if (angle >= sector.startAngle || angle < sector.endAngle) inSector = true;
             }
             if (inSector) {
@@ -389,6 +395,16 @@ function initializeUI() {
         addTooltipEventsToElement(partyEmblemContainer, partyData.name, partyEffectsSummary, partyData.short_description);
         if(partyEmblemContainer.dataset.tooltip) partyEmblemContainer.removeAttribute('data-tooltip');
     }
+    
+    // National Focus Banner (Main Page)
+    const mainFocusBannerImageEl = document.getElementById('mainFocusBannerImage');
+    const mainFocusTitleEl = document.getElementById('mainFocusTitle'); 
+    if (GAME_DATA.currentNationalFocus && mainFocusBannerImageEl && mainFocusTitleEl) {
+        mainFocusBannerImageEl.src = GAME_DATA.currentNationalFocus.banner_image_path || 'https://via.placeholder.com/700x100/555/fff?text=Focus+Banner';
+        mainFocusBannerImageEl.alt = GAME_DATA.currentNationalFocus.title || "Национальный Фокус";
+        mainFocusTitleEl.textContent = GAME_DATA.currentNationalFocus.title || "Название Фокуса";
+    }
+
 
     // National Spirits
     const nationalSpiritsContainer = document.querySelector('.national-spirits');
@@ -414,7 +430,7 @@ function initializeUI() {
         });
 
         const aggregatorSpiritData = GAME_DATA.national_spirits["development_pace_aggregator"];
-        if (aggregatorSpiritData && GAME_DATA.development_areas) { // Проверяем, что и области развития загружены
+        if (aggregatorSpiritData && GAME_DATA.development_areas) { 
             let effectsForAggregator = "Суммарные импульсы к развитию:";
             Object.keys(totalDevelopmentImpulses).forEach(areaKey => {
                 const areaData = GAME_DATA.development_areas[areaKey];
@@ -459,8 +475,8 @@ function initializeUI() {
     if (developmentContainer && GAME_DATA.development_areas) {
         developmentContainer.innerHTML = '';
         Object.values(GAME_DATA.development_areas).sort((a,b) => (a.order || Infinity) - (b.order || Infinity))
-            .forEach(area => { // area - это объект самой области развития
-                const currentLevelData = area.levels?.find(lvl => lvl.id === area.current_level_id); // Находим данные текущего УРОВНЯ
+            .forEach(area => { 
+                const currentLevelData = area.levels?.find(lvl => lvl.id === area.current_level_id); 
 
                 if (currentLevelData) {
                     const areaWrapperEl = document.createElement('div');
@@ -469,18 +485,15 @@ function initializeUI() {
                     const slotEl = document.createElement('div');
                     slotEl.className = 'item-slot development-area';
                     slotEl.dataset.slotType = `development_area_${area.id}`;
-                    slotEl.dataset.currentId = area.current_level_id; // ID текущего УРОВНЯ
+                    slotEl.dataset.currentId = area.current_level_id; 
 
                     const imgEl = document.createElement('img');
-                    // --- ИСПРАВЛЕНИЕ ЗДЕСЬ ---
-                    // Иконка берется из данных текущего УРОВНЯ (currentLevelData)
                     imgEl.src = currentLevelData.icon_path || 'https://via.placeholder.com/50x50/4a4a4a/fff?text=LvlErr';
                     imgEl.alt = currentLevelData.name_display?.substring(0,3) || area.name?.substring(0,3) || "Dev";
                     slotEl.appendChild(imgEl);
 
                     const labelEl = document.createElement('span');
                     labelEl.className = 'item-slot-label-small';
-                    // Название уровня и прогресс области
                     labelEl.innerHTML = `${currentLevelData.name_display}<br><span class="progress-text">${area.current_progress}/${area.progress_per_level}</span>`;
                     slotEl.appendChild(labelEl);
 
@@ -549,7 +562,6 @@ function initializeUI() {
     // Static tooltips that don't open panels
     document.querySelectorAll('.national-focus-banner, .pie-chart').forEach(el => {
         if(el.dataset.tooltip && !el.getAttribute('listenerAttached')) {
-             // For these, the data-tooltip itself is the "name" or main content
              addTooltipEventsToElement(el, el.dataset.tooltip, null, null);
              el.setAttribute('listenerAttached', 'true');
         }
@@ -563,26 +575,67 @@ const nationalFocusBannerClickable = document.getElementById('nationalFocusBanne
 const focusModalTitle = document.getElementById('focusModalTitle');
 const focusModalImage = document.getElementById('focusModalImage');
 const focusModalDescription = document.getElementById('focusModalDescription');
-
-let currentNationalFocusData = {
-    title: "Осень 2003 - Ход 23",
-    full_image_path: "history/turn_images/Autumn2003.png", // Пример, нужен ваш файл
-    custom_description: "Краткая сводка для любопытных.\nОсень 2003 года принесла в Россию череду событий, имевших далеко идущие последствия. Страна входила в активную фазу предвыборной кампании в Государственную Думу, которая с самого начала проходила в условиях четко выстроенной государственной вертикали, предполагающей предсказуемый результат. Этот процесс сопровождался заметным внутренним напряжением в правящей партии «Единая Россия», что добавляло интриги в кажущийся монолитным политический пейзаж. \nНа экономическом фронте продолжалась консолидация государственных активов в стратегических отраслях, начатая летом в оборонно-промышленном комплексе. Однако главным событием, определившим осеннюю повестку и во многом будущий экономический курс страны, стало начало открытого и масштабного давления на одну из крупнейших независимых нефтяных компаний – ЮКОС, что сигнализировало о кардинальном пересмотре отношений государства и крупного частного бизнеса. \nМеждународная обстановка оставалась сложной. Последствия иракской кампании продолжали влиять на глобальную политику; обострялась ситуация вокруг иранской ядерной программы. У южных границ России, в Грузии, назревал глубокий политический кризис, кульминацией которого стала ноябрьская «Революция роз», что не могло не вызывать беспокойства в Москве. \nОбщественные настроения характеризовались ожиданием декабрьских выборов, пристальным, хотя и не всегда открыто выражаемым, вниманием к судьбе ЮКОСа и его руководителей, и общей адаптацией к усиливающейся роли государства во всех сферах жизни."
-};
+const focusModalProjectsContainer = document.getElementById('focusModalProjectsContainer'); 
 
 if (nationalFocusBannerClickable) {
     nationalFocusBannerClickable.style.cursor = 'pointer';
     nationalFocusBannerClickable.addEventListener('click', () => {
-        if (nationalFocusModal && focusModalTitle && focusModalImage && focusModalDescription) {
-            const mainFocusTitleEl = document.getElementById('mainFocusTitle');
-            // Данные для модального окна НАЦ ФОКУСА, если они будут меняться, лучше грузить их из отдельного JSON или обновлять currentNationalFocusData
-            // Сейчас используется title с основного баннера, если currentNationalFocusData.title пуст
-            focusModalTitle.textContent = currentNationalFocusData.title || (mainFocusTitleEl ? mainFocusTitleEl.textContent : "Национальный Фокус");
-            focusModalImage.src = currentNationalFocusData.full_image_path || "https://via.placeholder.com/700x400/222/fff?text=Full+Focus+Art";
-            focusModalImage.alt = focusModalTitle.textContent;
-            focusModalDescription.textContent = currentNationalFocusData.custom_description || "Описание не предоставлено.";
+        const focusData = GAME_DATA.currentNationalFocus; 
+
+        if (nationalFocusModal && focusModalTitle && focusModalImage && focusModalDescription && focusModalProjectsContainer && focusData) {
+            focusModalTitle.textContent = focusData.title || "Национальный Фокус";
+            focusModalImage.src = focusData.modal_full_image_path || "https://via.placeholder.com/700x400/222/fff?text=Full+Focus+Art";
+            focusModalImage.alt = focusData.title || "Национальный фокус";
+            focusModalDescription.textContent = focusData.description || "Описание не предоставлено.";
+
+            focusModalProjectsContainer.innerHTML = ''; 
+            if (focusData.projects && focusData.projects.length > 0) {
+                focusData.projects.forEach(project => {
+                    const projectItemEl = document.createElement('div');
+                    projectItemEl.className = 'focus-project-item';
+
+                    const iconWrapperEl = document.createElement('div');
+                    iconWrapperEl.className = 'focus-project-icon';
+                    const iconEl = document.createElement('img');
+                    iconEl.src = project.icon_path || 'https://via.placeholder.com/90/777/fff?text=P'; // Иконка по умолчанию 90x90
+                    iconEl.alt = project.name?.substring(0,3) || "Proj";
+                    iconWrapperEl.appendChild(iconEl);
+
+                    const progressBarContainerEl = document.createElement('div');
+                    progressBarContainerEl.className = 'focus-project-progress-bar-container';
+                    
+                    const progressBarFillEl = document.createElement('div');
+                    progressBarFillEl.className = 'focus-project-progress-bar-fill';
+                    const progressPercentage = (project.current_progress / project.max_progress) * 100;
+                    progressBarFillEl.style.width = `${Math.min(100, Math.max(0, progressPercentage))}%`;
+                    
+                    // ДОБАВЛЕНО: Текст на прогресс-баре
+                    const progressTextEl = document.createElement('span');
+                    progressTextEl.className = 'focus-project-progress-bar-text';
+                    progressTextEl.textContent = `${project.current_progress}/${project.max_progress}`;
+
+                    progressBarContainerEl.appendChild(progressBarFillEl);
+                    progressBarContainerEl.appendChild(progressTextEl); // Добавляем текст ВНУТРЬ контейнера прогресс-бара
+
+                    projectItemEl.appendChild(iconWrapperEl);
+                    projectItemEl.appendChild(progressBarContainerEl);
+
+                    addTooltipEventsToElement(
+                        projectItemEl, 
+                        project.name,
+                        project.tooltip_summary,
+                        project.tooltip_description
+                    );
+                    focusModalProjectsContainer.appendChild(projectItemEl);
+                });
+            } else {
+                focusModalProjectsContainer.innerHTML = '<p style="text-align:center;color:#888;width:100%; margin: 10px 0;">Нет активных проектов для этого фокуса.</p>';
+            }
             nationalFocusModal.style.display = 'flex';
-        } else { console.error("Элементы модального окна нац. фокуса не найдены!"); }
+        } else { 
+            console.error("Элементы модального окна нац. фокуса не найдены или данные фокуса (GAME_DATA.currentNationalFocus) отсутствуют!"); 
+            if(!focusData) console.error("GAME_DATA.currentNationalFocus is null or undefined.");
+        }
     });
 }
 if (closeFocusModalBtn_NF) {
@@ -594,8 +647,34 @@ window.addEventListener('click', function(event) {
     if (event.target == nationalFocusModal && nationalFocusModal) {
         nationalFocusModal.style.display = 'none';
     }
+    if (event.target == balanceModal && balanceModal) {
+        balanceModal.style.display = 'none';
+    }
+    if (selectionSidePanel && selectionSidePanel.style.display === 'flex' && 
+        !selectionSidePanel.contains(event.target) && 
+        clickedMainSlotElement && !clickedMainSlotElement.contains(event.target) &&
+        event.target !== clickedMainSlotElement && !isDescendant(clickedMainSlotElement, event.target)) {
+        let isClickOnTrigger = false;
+        document.querySelectorAll('[data-slot-type]').forEach(trigger => {
+            if (trigger.contains(event.target) || trigger === event.target) {
+                isClickOnTrigger = true;
+            }
+        });
+        if (!isClickOnTrigger) {
+            selectionSidePanel.style.display = 'none';
+        }
+    }
 });
-
+function isDescendant(parent, child) {
+    let node = child.parentNode;
+    while (node != null) {
+        if (node == parent) {
+            return true;
+        }
+        node = node.parentNode;
+    }
+    return false;
+}
 
 // --- Start Application ---
 document.addEventListener('DOMContentLoaded', initializeGameData);
