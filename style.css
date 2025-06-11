@@ -312,7 +312,7 @@ body {
 }
 
 .item-slot.development-area { /* Слот только для иконки и названия уровня */
-    height: 198px;
+    height: 197px;
     width: 132px;/* Высота для иконки и названия текущего уровня */
     background-color: #4a4a4a; /* Фон для этой части */
         /* --- ФОН ДЛЯ ПУСТОГО СЛОТА --- */
@@ -570,7 +570,7 @@ body {
 
 
     .item-slot.development-area img { padding: 0; }
-    .dev-progress-bar-container { height: 12px; margin-top: 0px; }
+    .dev-progress-bar-container { height: 12px; width: 90px; margin-top: 0px;}
     .dev-progress-bar-text { font-size: 0.65em; }
     .side-panel { width: 96%; left: 2%; right: 2%; top: 5px; max-height: calc(100vh - 10px); font-size: 0.9em;}
     .side-panel-header { padding: 8px 10px; }
