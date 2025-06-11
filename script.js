@@ -1,7 +1,101 @@
 // script.js
 
-// --- Global tooltip element ---
-const tooltipElement = document.querySelector('.tooltip');
+// --- Вспомогательная функция для скачивания JSON ---
+function downloadJSON(data, filename) {
+    const jsonDataStr = JSON.stringify(data, null, 4); // null, 4 для красивого форматирования
+    const blob = new Blob([jsonDataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    console.log(`Файл ${filename} готов для скачивания.`);
+}
+
+// --- Функция сохранения изменений ---
+function handleSaveChanges() {
+    console.log("Начало сохранения изменений...");
+
+    // 1. Конституционные принципы
+    if (GAME_DATA.constitutional_principles && GAME_DATA.constitutional_principles_original_structure) {
+        const principlesToSave = JSON.parse(JSON.stringify(GAME_DATA.constitutional_principles_original_structure)); // Глубокая копия оригинальной структуры
+        
+        principlesToSave.principles.forEach(principle => {
+            const slotEl = document.querySelector(`.constitutional-principle[data-slot-type="constitutional_principle_${principle.id}"]`);
+            if (slotEl && slotEl.dataset.currentId) {
+                const selectedOptionId = slotEl.dataset.currentId;
+                principle.options.forEach(opt => {
+                    opt.is_current = (opt.id === selectedOptionId);
+                });
+            } else {
+                 console.warn(`Слот для принципа ${principle.id} не найден или не имеет currentId.`);
+            }
+        });
+        downloadJSON(principlesToSave, 'constitutional_principles_updated.json');
+    } else {
+        console.warn("Данные о конституционных принципах не загружены или нет оригинальной структуры для сохранения.");
+    }
+
+    // 2. Области развития
+    if (GAME_DATA.development_areas && GAME_DATA.development_areas_original_structure) {
+        const areasToSave = JSON.parse(JSON.stringify(GAME_DATA.development_areas_original_structure)); // Глубокая копия
+
+        areasToSave.areas.forEach(areaData => {
+            const areaWrapperEl = document.querySelector(`.development-area-wrapper .item-slot.development-area[data-slot-type="development_area_${areaData.id}"]`);
+            if (areaWrapperEl && areaWrapperEl.dataset.currentId) {
+                areaData.current_level_id = areaWrapperEl.dataset.currentId;
+                
+                let progressText = "";
+                const labelEl = areaWrapperEl.querySelector('.item-slot-label-small .progress-text');
+                if (labelEl) {
+                    progressText = labelEl.textContent;
+                } else { 
+                    const progressBarTextEl = areaWrapperEl.parentElement.querySelector('.dev-progress-bar-text');
+                    if(progressBarTextEl) progressText = progressBarTextEl.textContent;
+                }
+
+                if(progressText) {
+                    const progressMatch = progressText.match(/(\d+)\/(\d+)/);
+                    if (progressMatch) {
+                        areaData.current_progress = parseInt(progressMatch[1], 10);
+                    } else {
+                        console.warn(`Не удалось распознать прогресс для области ${areaData.id} из текста: "${progressText}"`);
+                    }
+                } else {
+                     console.warn(`Текст прогресса для области ${areaData.id} не найден.`);
+                }
+            } else {
+                console.warn(`Слот для области развития ${areaData.id} не найден или не имеет currentId.`);
+            }
+        });
+        downloadJSON(areasToSave, 'development_areas_updated.json');
+    } else {
+        console.warn("Данные об областях развития не загружены или нет оригинальной структуры для сохранения.");
+    }
+
+    // 3. Вывод состояния слотов советников и корпораций в консоль
+    console.log("\n--- Текущие ID для слотов (обновите index.html вручную) ---");
+    
+    const advisorSlotsData = {};
+    document.querySelectorAll('#government-advisors-container .advisor-portrait-slot[data-slot-type][data-current-id]').forEach(slot => {
+        advisorSlotsData[slot.dataset.slotType] = slot.dataset.currentId;
+    });
+    console.log("Советники (data-slot-type: data-current-id):");
+    console.log(JSON.stringify(advisorSlotsData, null, 2));
+
+    const corporationSlotsData = {};
+    document.querySelectorAll('#corporations-container .corporation-slot[data-slot-type][data-current-id]').forEach(slot => {
+         corporationSlotsData[slot.dataset.slotType] = slot.dataset.currentId;
+    });
+    console.log("\nКорпорации (data-slot-type: data-current-id):");
+    console.log(JSON.stringify(corporationSlotsData, null, 2));
+
+    alert("JSON файлы для 'Конституционных основ' и 'Областей развития' подготовлены к скачиванию.\nДанные по советникам и корпорациям выведены в консоль разработчика (F12 -> Console) для ручного обновления index.html.");
+}
+
 
 // --- Tooltip Functions ---
 function positionTooltip(event) {
@@ -567,106 +661,6 @@ function initializeUI() {
              el.setAttribute('listenerAttached', 'true');
         }
     });
-	// --- Вспомогательная функция для скачивания JSON ---
-function downloadJSON(data, filename) {
-    const jsonDataStr = JSON.stringify(data, null, 4); // null, 4 для красивого форматирования
-    const blob = new Blob([jsonDataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    console.log(`Файл ${filename} готов для скачивания.`);
-}
-
-// --- Функция сохранения изменений ---
-function handleSaveChanges() {
-    console.log("Начало сохранения изменений...");
-
-    // 1. Конституционные принципы
-    if (GAME_DATA.constitutional_principles && GAME_DATA.constitutional_principles_original_structure) {
-        const principlesToSave = JSON.parse(JSON.stringify(GAME_DATA.constitutional_principles_original_structure)); // Глубокая копия оригинальной структуры
-        
-        principlesToSave.principles.forEach(principle => {
-            const slotEl = document.querySelector(`.constitutional-principle[data-slot-type="constitutional_principle_${principle.id}"]`);
-            if (slotEl && slotEl.dataset.currentId) {
-                const selectedOptionId = slotEl.dataset.currentId;
-                principle.options.forEach(opt => {
-                    opt.is_current = (opt.id === selectedOptionId);
-                });
-            } else {
-                 console.warn(`Слот для принципа ${principle.id} не найден или не имеет currentId.`);
-            }
-        });
-        downloadJSON(principlesToSave, 'constitutional_principles_updated.json');
-    } else {
-        console.warn("Данные о конституционных принципах не загружены или нет оригинальной структуры для сохранения.");
-    }
-
-    // 2. Области развития
-    if (GAME_DATA.development_areas && GAME_DATA.development_areas_original_structure) {
-        const areasToSave = JSON.parse(JSON.stringify(GAME_DATA.development_areas_original_structure)); // Глубокая копия
-
-        areasToSave.areas.forEach(areaData => {
-            const areaWrapperEl = document.querySelector(`.development-area-wrapper .item-slot.development-area[data-slot-type="development_area_${areaData.id}"]`);
-            if (areaWrapperEl && areaWrapperEl.dataset.currentId) {
-                areaData.current_level_id = areaWrapperEl.dataset.currentId;
-                
-                // Парсинг прогресса. Он может быть в подписи или в отдельном прогресс-баре
-                // Сначала ищем текст в подписи
-                let progressText = "";
-                const labelEl = areaWrapperEl.querySelector('.item-slot-label-small .progress-text');
-                if (labelEl) {
-                    progressText = labelEl.textContent;
-                } else { // Если нет, ищем в отдельном прогресс-баре (как в .dev-progress-bar-text)
-                    const progressBarTextEl = areaWrapperEl.parentElement.querySelector('.dev-progress-bar-text');
-                    if(progressBarTextEl) progressText = progressBarTextEl.textContent;
-                }
-
-                if(progressText) {
-                    const progressMatch = progressText.match(/(\d+)\/(\d+)/);
-                    if (progressMatch) {
-                        areaData.current_progress = parseInt(progressMatch[1], 10);
-                        // areaData.progress_per_level не меняем здесь, т.к. он обычно привязан к уровню, но убедимся, что он есть в структуре.
-                        // Исходная структура должна его содержать на верхнем уровне области или для каждого уровня.
-                    } else {
-                        console.warn(`Не удалось распознать прогресс для области ${areaData.id} из текста: "${progressText}"`);
-                    }
-                } else {
-                     console.warn(`Текст прогресса для области ${areaData.id} не найден.`);
-                }
-            } else {
-                console.warn(`Слот для области развития ${areaData.id} не найден или не имеет currentId.`);
-            }
-        });
-        downloadJSON(areasToSave, 'development_areas_updated.json');
-    } else {
-        console.warn("Данные об областях развития не загружены или нет оригинальной структуры для сохранения.");
-    }
-
-    // 3. Вывод состояния слотов советников и корпораций в консоль
-    console.log("\n--- Текущие ID для слотов (обновите index.html вручную) ---");
-    
-    const advisorSlotsData = {};
-    document.querySelectorAll('#government-advisors-container .advisor-portrait-slot[data-slot-type][data-current-id]').forEach(slot => {
-        advisorSlotsData[slot.dataset.slotType] = slot.dataset.currentId;
-    });
-    console.log("Советники (data-slot-type: data-current-id):");
-    console.log(JSON.stringify(advisorSlotsData, null, 2));
-
-    const corporationSlotsData = {};
-    document.querySelectorAll('#corporations-container .corporation-slot[data-slot-type][data-current-id]').forEach(slot => {
-         corporationSlotsData[slot.dataset.slotType] = slot.dataset.currentId;
-    });
-    console.log("\nКорпорации (data-slot-type: data-current-id):");
-    console.log(JSON.stringify(corporationSlotsData, null, 2));
-
-    alert("JSON файлы для 'Конституционных основ' и 'Областей развития' подготовлены к скачиванию.\nДанные по советникам и корпорациям выведены в консоль разработчика (F12 -> Console) для ручного обновления index.html.");
-}
-
 }
 
 // --- National Focus Modal Logic ---
