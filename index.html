@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Демонстрация Политики</title>
+    <title>Политический интерфейс</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +11,10 @@
 <div class="hoi4-politics-screen">
     <div class="window-title-bar">
         <span>Политика</span>
-        <span class="close-button" onclick="alert('Окно закрыто (симуляция)')">X</span>
+        <div>
+            <button id="saveChangesButton" class="save-button" style="margin-right: 10px;">Сохранить изменения</button>
+            <span class="close-button" onclick="alert('Окно закрыто (симуляция)')">X</span>
+        </div>
     </div>
 
     <div class="main-content">
