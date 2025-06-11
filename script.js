@@ -116,9 +116,9 @@ const GAME_DATA = {
     leaders: {}, constitutional_principles: {}, development_areas: {}, corporations: {}, 
     ideologies: {}, parties: {}, national_spirits: {}, currentNationalFocus: null,
     currentState: { 
-        display_leader_id: "putin_vladimir", display_ideology_id: "sovereign_democracy",
-        ruling_party_id: "united_russia", active_national_focus_id: "autumn_2003_h23_main",
-        active_national_spirit_ids: ["fortress_state", "near_abroad_policy", "national_projects_infrastructure", "reindustrialization_opk_tech_sovereignty", "divided_society", "systemic_corruption", "oil_gas_rent_stabilization_fund", "sovereign_economy", "social_initiatives_family_support", "russian_dream_culture_identity", "soft_power_russia_abroad"],
+        display_leader_id: null, display_ideology_id: null,
+        ruling_party_id: null, active_national_focus_id: null,
+        active_national_spirit_ids: [],
         balance_value: 0,
         advisors_selected: {}, corporations_selected: {}, constitutional_principles_selected_options: {}, development_areas_state: {}
     } 
@@ -314,7 +314,7 @@ function selectOptionInSidePanel(selectedOptionId, targetSlotType) {
         chosenData = parentCategoryData?.levels?.find(lvl => lvl.id === selectedOptionId);
         if (GAME_DATA.currentState.development_areas_state && GAME_DATA.currentState.development_areas_state[developmentAreaIdForState]) {
             GAME_DATA.currentState.development_areas_state[developmentAreaIdForState].current_level_id = selectedOptionId;
-            if (chosenData) GAME_DATA.currentState.development_areas_state[developmentAreaIdForState].current_progress = 0; 
+            // if (chosenData) GAME_DATA.currentState.development_areas_state[developmentAreaIdForState].current_progress = 0; 
         }
     } else if (targetSlotType.startsWith("corporation_slot_")) {
         chosenData = GAME_DATA.corporations[selectedOptionId];
