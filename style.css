@@ -160,7 +160,7 @@ body {
 }
 .pol-sys-upper { display: flex; align-items: center; margin-bottom: 10px; width: 100%;}
 .pol-sys-icon-wrapper { flex-basis: 40%; flex-shrink: 0; padding-right: 8px; box-sizing: border-box; display: flex; justify-content: center; align-items: center;}
-.pol-sys-icon-wrapper img.flag { width: 100%; max-width: 45px; height: auto; border: 1px solid #777; display: block; } 
+.pol-sys-icon-wrapper img.flag { width: 100%; max-width: 75px; height: auto; border: 1px solid #777; display: block; } 
 .pol-sys-text-wrapper { flex-basis: 60%; text-align: left; font-size: 0.95em; line-height: 1.3; color: #e0e0e0;}
 .balance-btn {
     background-color: #5a5a5a; color: #e0e0e0; border: 1px solid #777;
