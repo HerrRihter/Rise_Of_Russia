@@ -574,9 +574,9 @@ body {
     .national-spirits { gap: 4px; padding: 5px; min-height: 30px; justify-content: center; }
     .spirit-icon { width: 50px; height: 50px; }
     .political-details { flex-direction: column; gap: 10px; }
-    .ruling-party-info, .political-system-info-container, .party-popularity { flex-basis: auto; width: 280px; }
+    .ruling-party-info, .political-system-info-container, .party-popularity { flex-basis: auto; width:; }
     .party-popularity { flex-direction: column; align-items: stretch; }
-    .pie-chart { width: 90px; height: 90px; margin-right: 0; margin-bottom: 10px; align-self: center;}
+    .pie-chart { width: 90%; height: 90px; margin-right: 0; margin-bottom: 10px; align-self: center;}
     #partyPieChartCanvas { width: 90px; height: 90px; }
     .party-list { max-height: 90px; }
     .lower-section { padding-right: 0; max-height: none; overflow-y:visible;}
@@ -624,11 +624,11 @@ body {
     .item-slot.development-area img { padding: 0; }
     .dev-progress-bar-container { height: 12px; width: 90px; margin-top: 0px;}
     .dev-progress-bar-text { font-size: 0.65em; }
-    .side-panel { width: 96%; left: 2%; right: 2%; top: 5px; max-height: calc(100vh - 10px); font-size: 0.9em;}
+    .side-panel { width: 50%; left: 2%; right: 2%; top: 5px; max-height: calc(100vh - 10px); font-size: 0.9em;}
     .side-panel-header { padding: 8px 10px; }
     .side-panel-header h4 { font-size: 1em; }
     .side-panel-option { padding: 8px; margin-bottom: 4px; }
-    .side-panel-option-icon { width: 30px; height: 30px; min-width: 30px; margin-right: 8px;}
+    .side-panel-option-icon { width: 25%; height: 25%; margin-right: 8px;}
     .side-panel-option-name { font-size: 0.9em; }
     .tooltip { font-size: 0.8em; max-width: 90vw; padding: 8px 10px; }
     .focus-modal-content { max-width: 95%; padding: 15px; }
