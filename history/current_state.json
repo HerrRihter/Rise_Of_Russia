@@ -2,7 +2,7 @@
     "display_leader_id": "putin_vladimir",
     "display_ideology_id": "sovereign_democracy",
     "ruling_party_id": "united_russia",
-    "active_national_focus_id": "autumn_2003_h23_main",
+    "active_national_focus_id": "winter_2003/2004_h24_main",
     "active_national_spirit_ids": [
         "fortress_state", "near_abroad_policy", "national_projects_infrastructure",
         "reindustrialization_opk_tech_sovereignty", "divided_society", "systemic_corruption",
@@ -73,13 +73,13 @@
         "constitution_amendment_core": "high_complexity_core_amendment"
     },
     "development_areas_state": {
-        "education": { "current_level_id": "edu_level_2", "current_progress": 65 },
-        "healthcare": { "current_level_id": "hc_level_2", "current_progress": 49 },
-        "welfare": { "current_level_id": "wel_level_2", "current_progress": 23 },
-        "agriculture": { "current_level_id": "agr_level_1", "current_progress": 90 },
-        "industry": { "current_level_id": "ind_level_2", "current_progress": 73 },
+        "education": { "current_level_id": "edu_level_2", "current_progress": 66 },
+        "healthcare": { "current_level_id": "hc_level_2", "current_progress": 50 },
+        "welfare": { "current_level_id": "wel_level_2", "current_progress": 25 },
+        "agriculture": { "current_level_id": "agr_level_1", "current_progress": 89 },
+        "industry": { "current_level_id": "ind_level_2", "current_progress": 79 },
         "internal_security": { "current_level_id": "isec_level_2", "current_progress": 12 },
-        "military_might": { "current_level_id": "mil_level_2", "current_progress": 90 },
-        "social_development": { "current_level_id": "soc_dev_level_1", "current_progress": 25 }
+        "military_might": { "current_level_id": "mil_level_2", "current_progress": 93 },
+        "social_development": { "current_level_id": "soc_dev_level_1", "current_progress": 24 }
     }
 }
