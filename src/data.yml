@@ -520,12 +520,12 @@ definitions:
       description: "Леонид Рейман — эксперт в сфере связи и передовых информационных технологий, играющий заметную роль в формировании современного телекоммуникационного ландшафта страны. Он является последовательным сторонником скорейшей информатизации всех сфер жизни, рассматривая это как необходимое условие для экономического роста и социального развития. Его деятельность сосредоточена на создании условий для повсеместного внедрения новых технологий связи и обработки информации, а также на формировании соответствующей нормативной среды."
   # --- СПРАВОЧНИК: ИДЕОЛОГИИ ---
   ideologies:
-    sovereign_democracy: { id: "sovereign_democracy", name: "Суверенная Демократия", name_multiline: "Суверенная<br>Демократия", icon_path: "/history/ideologies_icons/sovereign_democracy.png", effects_summary: "Стабильность +1" }
-    liberal_democracy: { id: "liberal_democracy", name: "Либеральная Демократия", name_multiline: "Либеральная<br>Демократия", icon_path: "/history/ideologies_icons/liberal_democracy.png" }
+    sovereign_democracy: { id: "sovereign_democracy", name: "Суверенная Демократия", name_multiline: "Суверенная<br>Демократия", icon_path: "history/ideologies_icons/sovereign_democracy.png", effects_summary: "Стабильность +1" }
+    liberal_democracy: { id: "liberal_democracy", name: "Либеральная Демократия", name_multiline: "Либеральная<br>Демократия", icon_path: "history/ideologies_icons/liberal_democracy.png" }
 
   # --- СПРАВОЧНИК: ПАРТИИ ---
   parties:
-    united_russia: { id: "united_russia", name: "Единая Россия", icon_path: "/history/parties_emblems/united_russia.png", popularity: 42, color: "#0D47A1", ideology_tags_rus: [ "центризм", "консерватизм" ] }
+    united_russia: { id: "united_russia", name: "Единая Россия", icon_path: "history/parties_emblems/united_russia.png", popularity: 42, color: "#0D47A1", ideology_tags_rus: [ "центризм", "консерватизм" ] }
     ldpr: { id: "ldpr", name: "ЛДПР", popularity: 15, color: "#BDB76B", ideology_tags_rus: [ "национализм" ] }
     rodina: { id: "rodina", name: "Родина", popularity: 14, color: "#781f19", ideology_tags_rus: [ "национал-консерватизм" ] }
     kprf: { id: "kprf", name: "КПРФ", popularity: 9, color: "#CC0000", ideology_tags_rus: [ "коммунизм" ] }
@@ -540,7 +540,7 @@ definitions:
     start_economic_reforms:
       id: "start_economic_reforms"
       title: "Начало экономических реформ"
-      icon_path: "/history/focus_icons/economy.png"
+      icon_path: "history/focus_icons/economy.png"
       duration: 30
       description: "Фундаментальный фокус, открывающий путь к либерализации или государственному капитализму."
       x: 1.5 # Координата X (колонка)
@@ -550,7 +550,7 @@ definitions:
     liberalization:
       id: "liberalization"
       title: "Либерализация"
-      icon_path: "/history/focus_icons/liberal.png"
+      icon_path: "history/focus_icons/liberal.png"
       duration: 30
       description: "Снижение налогов и барьеров для бизнеса."
       prerequisites: [ "start_economic_reforms" ] # Зависит от стартового фокуса
@@ -560,7 +560,7 @@ definitions:
     Nationalisation:
       id: "nationalisation"
       title: "Национализация"
-      icon_path: "/history/focus_icons/privatize.png"
+      icon_path: "history/focus_icons/privatize.png"
       duration: 30
       description: "GThtlfxf xfcnys[ frnbdjd gjl rjynhjjkm ujcelfhcndf."
       prerequisites: [ "start_economic_reforms" ] # Зависит от либерализации
@@ -714,13 +714,13 @@ definitions:
     form_of_government:
       id: "form_of_government"
       name: "Форма правления"
-      icon_path: "/history/constitutional_principles_icons/form_of_government.png"
+      icon_path: "history/constitutional_principles_icons/form_of_government.png"
       options:
         super_presidential_republic: { id: "super_presidential_republic", name_display: "Парламентско-президентская республика (Формально)", description: "Государственное устройство, при котором президент является главой государства и формирует правительство, ответственное перед парламентом, но фактически обладает доминирующим влиянием на все ветви власти."  }
     human_rights:
       id: "human_rights"
       name: "Права человека"
-      icon_path: "/history/constitutional_principles_icons/human_rights.png"
+      icon_path: "history/constitutional_principles_icons/human_rights.png"
       options:
         formal_observance: { id: "formal_observance", name_display: "Формальное соблюдение"}
 
@@ -823,27 +823,27 @@ definitions:
         soc_dev_level_5: { id: "soc_dev_level_5", "icon_path": "history/development_areas_icons/soc_dev_level_5.png", "name_display": "Цивилизационный гегемон и культурный идеал", "description": "Культура, наука, правовые и этические нормы нации определяют мировые тренды и стандарты. Непререкаемый авторитет и самодостаточность национальной идентичности, основанной на принципах справедливости, гуманизма и прогресса. Язык, культурные коды и модели общественного развития нации доминируют в международном пространстве. Полное и гармоничное единство общества на основе общих цивилизационных ценностей и верховенства права." }
   # --- СПРАВОЧНИК: КОРПОРАЦИИ ---
   corporations:
-    gazprom: { id: "gazprom", name: "Газпром", name_display: "Газпром", icon_path: "/history/corporations_icons/gazprom.png", effects_summary: "Контроль экспорта газа: +++" }
-    lukoil: { id: "lukoil", name: "Лукойл", name_display: "Лукойл", icon_path: "/history/corporations_icons/lukoil.png", effects_summary: "Добыча нефти: ++" }
-    yukos: { id: "yukos", name: "ЮКОС", name_display: "ЮКОС", icon_path: "/history/corporations_icons/yukos.png", effects_summary: "Политические риски: Высокие" }
-    surgutneftegaz: { id: "surgutneftegaz", name: "Сургутнефтегаз", name_display: "Сургутнефтегаз", icon_path: "/history/corporations_icons/surgutneftegaz.png", effects_summary: "Финансовая стабильность: +++" }
-    rao_ees: { id: "rao_ees", name: "РАО \"ЕЭС России\"", name_display: "РАО \"ЕЭС России\"", icon_path: "/history/corporations_icons/rao_ees.png", effects_summary: "Контроль электроэнергетики: +++" }
-    norilsk_nickel: { id: "norilsk_nickel", name: "Норильский Никель", name_display: "Норильский Никель", icon_path: "/history/corporations_icons/norilsk_nickel.png", effects_summary: "Производство цветных металлов: +++" }
-    rusal: { id: "rusal", name: "РусАл", name_display: "РусАл", icon_path: "/history/corporations_icons/rusal.png", effects_summary: "Производство алюминия: +++" }
-    severstal: { id: "severstal", name: "Северсталь", name_display: "Северсталь", icon_path: "/history/corporations_icons/severstal.png", effects_summary: "Производство стали: +++" }
-    avtovaz: { id: "avtovaz", name: "АвтоВАЗ", name_display: "АвтоВАЗ", icon_path: "/history/corporations_icons/avtovaz.png", effects_summary: "Внутренний авторынок: +++" }
-    rostech_concept: { id: "rostech_concept", name: "РосТех", name_display: "РосТех", icon_path: "/history/corporations_icons/rostech.png", effects_summary: "Консолидация хайтека и ОПК" }
-    rosoboronprom_concept: { id: "rosoboronprom_concept", name: "РосОборонПром", name_display: "РосОборонПром", icon_path: "/history/corporations_icons/rosoboronprom.png", effects_summary: "Государственный оборонный мега-холдинг" }
-    rosoboronexport: { id: "rosoboronexport", name: "Рособоронэкспорт", name_display: "Рособоронэкспорт", icon_path: "/history/corporations_icons/rosoboronexport.png", effects_summary: "Госмонополия на экспорт вооружений" }
-    sberbank: { id: "sberbank", name: "Сбербанк", name_display: "Сбербанк России", icon_path: "/history/corporations_icons/sberbank.png", effects_summary: "Контроль банковского сектора: +++" }
-    alpha_bank: { id: "alpha_bank", name: "Альфа-Банк", name_display: "Альфа-Банк", icon_path: "/history/corporations_icons/alpha_bank.png", effects_summary: "Конкуренция в банковском секторе: +" }
-    vtb: { id: "vtb", name: "ВТБ", name_display: "Внешторгбанк (ВТБ)", icon_path: "/history/corporations_icons/vtb.png", effects_summary: "Обслуживание госкорпораций: ++" }
-    ingosstrakh: { id: "ingosstrakh", name: "Ингосстрах", name_display: "Ингосстрах", icon_path: "/history/corporations_icons/ingosstrakh.png", effects_summary: "Лидер корпоративного страхования" }
-    mts: { id: "mts", name: "МТС", name_display: "МТС", icon_path: "/history/corporations_icons/mts.png", effects_summary: "Лидер сотовой связи" }
-    vympelcom: { id: "vympelcom", name: "ВымпелКом", name_display: "ВымпелКом (\"Билайн\")", icon_path: "/history/corporations_icons/vympelcom.png", effects_summary: "Конкуренция на рынке связи: +" }
-    svyazinvest: { id: "svyazinvest", name: "Связьинвест", name_display: "Связьинвест", icon_path: "/history/corporations_icons/svyazinvest.png", effects_summary: "Гостелеком-холдинг, инфраструктура" }
-    channel_one_ort: { id: "channel_one_ort", name: "Первый канал", name_display: "Первый канал (ОРТ)", icon_path: "/history/corporations_icons/channel_one_ort.png", effects_summary: "Информационное влияние: +++" }
-    rzd_oao: { id: "rzd_oao", name: "ОАО \"РЖД\"", name_display: "ОАО \"РЖД\"", icon_path: "/history/corporations_icons/rzd_oao.png", effects_summary: "Национальный железнодорожный оператор" }
-    aeroflot: { id: "aeroflot", name: "Аэрофлот", name_display: "Аэрофлот", icon_path: "/history/corporations_icons/aeroflot.png", effects_summary: "Национальный авиаперевозчик" }
-    magnit: { id: "magnit", name: "Магнит", name_display: "Магнит", icon_path: "/history/corporations_icons/magnit.png", effects_summary: "Быстрорастущая розничная сеть" }
-    wimm_bill_dann: { id: "wimm_bill_dann", name: "Вимм-Билль-Данн", name_display: "Вимм-Билль-Данн", icon_path: "/history/corporations_icons/wimm_bill_dann.png", effects_summary: "Крупный производитель продуктов питания" }
+    gazprom: { id: "gazprom", name: "Газпром", name_display: "Газпром", icon_path: "history/corporations_icons/gazprom.png", effects_summary: "Контроль экспорта газа: +++" }
+    lukoil: { id: "lukoil", name: "Лукойл", name_display: "Лукойл", icon_path: "history/corporations_icons/lukoil.png", effects_summary: "Добыча нефти: ++" }
+    yukos: { id: "yukos", name: "ЮКОС", name_display: "ЮКОС", icon_path: "history/corporations_icons/yukos.png", effects_summary: "Политические риски: Высокие" }
+    surgutneftegaz: { id: "surgutneftegaz", name: "Сургутнефтегаз", name_display: "Сургутнефтегаз", icon_path: "history/corporations_icons/surgutneftegaz.png", effects_summary: "Финансовая стабильность: +++" }
+    rao_ees: { id: "rao_ees", name: "РАО \"ЕЭС России\"", name_display: "РАО \"ЕЭС России\"", icon_path: "history/corporations_icons/rao_ees.png", effects_summary: "Контроль электроэнергетики: +++" }
+    norilsk_nickel: { id: "norilsk_nickel", name: "Норильский Никель", name_display: "Норильский Никель", icon_path: "history/corporations_icons/norilsk_nickel.png", effects_summary: "Производство цветных металлов: +++" }
+    rusal: { id: "rusal", name: "РусАл", name_display: "РусАл", icon_path: "history/corporations_icons/rusal.png", effects_summary: "Производство алюминия: +++" }
+    severstal: { id: "severstal", name: "Северсталь", name_display: "Северсталь", icon_path: "history/corporations_icons/severstal.png", effects_summary: "Производство стали: +++" }
+    avtovaz: { id: "avtovaz", name: "АвтоВАЗ", name_display: "АвтоВАЗ", icon_path: "history/corporations_icons/avtovaz.png", effects_summary: "Внутренний авторынок: +++" }
+    rostech_concept: { id: "rostech_concept", name: "РосТех", name_display: "РосТех", icon_path: "history/corporations_icons/rostech.png", effects_summary: "Консолидация хайтека и ОПК" }
+    rosoboronprom_concept: { id: "rosoboronprom_concept", name: "РосОборонПром", name_display: "РосОборонПром", icon_path: "history/corporations_icons/rosoboronprom.png", effects_summary: "Государственный оборонный мега-холдинг" }
+    rosoboronexport: { id: "rosoboronexport", name: "Рособоронэкспорт", name_display: "Рособоронэкспорт", icon_path: "history/corporations_icons/rosoboronexport.png", effects_summary: "Госмонополия на экспорт вооружений" }
+    sberbank: { id: "sberbank", name: "Сбербанк", name_display: "Сбербанк России", icon_path: "history/corporations_icons/sberbank.png", effects_summary: "Контроль банковского сектора: +++" }
+    alpha_bank: { id: "alpha_bank", name: "Альфа-Банк", name_display: "Альфа-Банк", icon_path: "history/corporations_icons/alpha_bank.png", effects_summary: "Конкуренция в банковском секторе: +" }
+    vtb: { id: "vtb", name: "ВТБ", name_display: "Внешторгбанк (ВТБ)", icon_path: "history/corporations_icons/vtb.png", effects_summary: "Обслуживание госкорпораций: ++" }
+    ingosstrakh: { id: "ingosstrakh", name: "Ингосстрах", name_display: "Ингосстрах", icon_path: "history/corporations_icons/ingosstrakh.png", effects_summary: "Лидер корпоративного страхования" }
+    mts: { id: "mts", name: "МТС", name_display: "МТС", icon_path: "history/corporations_icons/mts.png", effects_summary: "Лидер сотовой связи" }
+    vympelcom: { id: "vympelcom", name: "ВымпелКом", name_display: "ВымпелКом (\"Билайн\")", icon_path: "history/corporations_icons/vympelcom.png", effects_summary: "Конкуренция на рынке связи: +" }
+    svyazinvest: { id: "svyazinvest", name: "Связьинвест", name_display: "Связьинвест", icon_path: "history/corporations_icons/svyazinvest.png", effects_summary: "Гостелеком-холдинг, инфраструктура" }
+    channel_one_ort: { id: "channel_one_ort", name: "Первый канал", name_display: "Первый канал (ОРТ)", icon_path: "history/corporations_icons/channel_one_ort.png", effects_summary: "Информационное влияние: +++" }
+    rzd_oao: { id: "rzd_oao", name: "ОАО \"РЖД\"", name_display: "ОАО \"РЖД\"", icon_path: "history/corporations_icons/rzd_oao.png", effects_summary: "Национальный железнодорожный оператор" }
+    aeroflot: { id: "aeroflot", name: "Аэрофлот", name_display: "Аэрофлот", icon_path: "history/corporations_icons/aeroflot.png", effects_summary: "Национальный авиаперевозчик" }
+    magnit: { id: "magnit", name: "Магнит", name_display: "Магнит", icon_path: "history/corporations_icons/magnit.png", effects_summary: "Быстрорастущая розничная сеть" }
+    wimm_bill_dann: { id: "wimm_bill_dann", name: "Вимм-Билль-Данн", name_display: "Вимм-Билль-Данн", icon_path: "history/corporations_icons/wimm_bill_dann.png", effects_summary: "Крупный производитель продуктов питания" }
