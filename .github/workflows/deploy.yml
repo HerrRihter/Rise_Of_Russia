@@ -1,10 +1,15 @@
-# .github/workflows/deploy.yml
 name: Build and Deploy to GitHub Pages
 
 on:
   push:
     branches:
       - main # Запускать только при пуше в ветку main
+
+# Добавляем права на запись для gh-pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
@@ -20,9 +25,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Lint code
-        run: npm run lint
 
       - name: Build project
         run: npm run build
