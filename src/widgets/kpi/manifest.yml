@@ -1,0 +1,6 @@
+# src/widgets/Kpi/manifest.yml
+name: kpi
+title: KPI Counter
+props:
+  label: string
+  value: number

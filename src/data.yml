@@ -1,0 +1,849 @@
+# ===================================================================
+# Rise of Russia - ЕДИНЫЙ ИСТОЧНИК ДАННЫХ
+# ===================================================================
+# Этот файл заменяет все JSON-файлы.
+# Любые изменения в интерфейсе, состоянии и справочниках делаются только здесь.
+
+# --- Секция 1: ТЕКУЩЕЕ СОСТОЯНИЕ И СТРУКТУРА ИНТЕРФЕЙСА ---
+# Этот блок описывает, *что* и *как* отображается на экране прямо сейчас.
+
+dashboardTitle: "Политический интерфейс"
+
+leader_pane_state:
+  leader_id: "putin_vladimir"
+  ideology_id: "sovereign_democracy"
+  party_id: "united_russia"
+
+national_info_state:
+  completed_focuses:
+    - "start_economic_reforms"
+    - "state_capitalism"
+  active_national_spirit_ids:
+    - "fortress_state"
+    - "near_abroad_policy"
+    - "national_projects_infrastructure"
+    - "reindustrialization_opk_tech_sovereignty"
+    - "divided_society"
+    - "systemic_corruption"
+    - "oil_gas_rent_stabilization_fund"
+    - "sovereign_economy"
+    - "social_initiatives_family_support"
+    - "russian_dream_culture_identity"
+    - "soft_power_russia_abroad"
+    - "development_pace_aggregator"
+
+# Главный макет интерфейса, состоящий из категорий и их дочерних слотов
+layout:
+  - $ref: '@category-container'
+    title: 'Правительство'
+    children:
+      - { $ref: '@advisor-slot', type: 'advisor_prime_minister', assigned_id: 'kasyanov_mikhail', slot_title: 'Председатель Правительства' }
+      - { $ref: '@advisor-slot', type: 'advisor_foreign_affairs', assigned_id: 'ivanov_igor_s', slot_title: 'Министр иностранных дел' }
+      - { $ref: '@advisor-slot', type: 'advisor_finance', assigned_id: 'kudrin_alexey', slot_title: 'Министр финансов' }
+      - { $ref: '@advisor-slot', type: 'advisor_defense', assigned_id: 'ivanov_sergey_b', slot_title: 'Министр обороны' }
+      - { $ref: '@advisor-slot', type: 'advisor_internal_affairs', assigned_id: 'gryzlov_boris', slot_title: 'Министр внутренних дел' }
+      - { $ref: '@advisor-slot', type: 'advisor_fsb_director', assigned_id: 'kovalev_oleg', slot_title: 'Директор ФСБ' }
+      - { $ref: '@advisor-slot', type: 'advisor_svr_director', assigned_id: 'lebedev_sergey_n', slot_title: 'Директор СВР' }
+      - { $ref: '@advisor-slot', type: 'advisor_justice', assigned_id: 'chaika_yuri', slot_title: 'Министр юстиции' }
+      - { $ref: '@advisor-slot', type: 'advisor_economic_development', assigned_id: 'gref_german', slot_title: 'Министр эконом. развития' }
+      - { $ref: '@advisor-slot', type: 'advisor_industry_trade', assigned_id: 'klebanov_ilya', slot_title: 'Министр пром. и торговли' }
+      - { $ref: '@advisor-slot', type: 'advisor_energy', assigned_id: 'yusufov_igor', slot_title: 'Министр энергетики' }
+      - { $ref: '@advisor-slot', type: 'advisor_health', assigned_id: 'shevchenko_yuri_l', slot_title: 'Министр здравоохранения' }
+      - { $ref: '@advisor-slot', type: 'advisor_labor_social', assigned_id: 'pochinok_alexander', slot_title: 'Министр труда и соц.' }
+      - { $ref: '@advisor-slot', type: 'advisor_education', assigned_id: 'filippov_vladimir_m', slot_title: 'Министр просвещения' }
+      - { $ref: '@advisor-slot', type: 'advisor_culture', assigned_id: 'shvydkoy_mikhail', slot_title: 'Министр культуры' }
+      - { $ref: '@advisor-slot', type: 'advisor_digital_media', assigned_id: 'lesin_mikhail_y', slot_title: 'Министр цифр. развития' }
+
+  - $ref: '@category-container'
+    title: 'Конституционные Основы'
+    children:
+      - { $ref: '@constitutional-principle-slot', type: 'form_of_government', assigned_id: 'super_presidential_republic' }
+      - { $ref: '@constitutional-principle-slot', type: 'human_rights', assigned_id: 'formal_observance' }
+      - { $ref: '@constitutional-principle-slot', type: 'voting_system', assigned_id: 'universal_referendums_allowed' }
+      - { $ref: '@constitutional-principle-slot', type: 'state_sovereignty', assigned_id: 'integrity_no_secession' }
+      - { $ref: '@constitutional-principle-slot', type: 'administrative_structure', assigned_id: 'pseudo_federation' }
+      - { $ref: '@constitutional-principle-slot', type: 'citizenship', assigned_id: 'jus_soli_inalienable_native' }
+      - { $ref: '@constitutional-principle-slot', type: 'social_model', assigned_id: 'social_state_declared' }
+      - { $ref: '@constitutional-principle-slot', type: 'economic_freedoms', assigned_id: 'free_market_regulated' }
+      - { $ref: '@constitutional-principle-slot', type: 'natural_resources_management', assigned_id: 'mixed_ownership_resources' }
+      - { $ref: '@constitutional-principle-slot', type: 'separation_of_powers', assigned_id: 'formal_separation_executive_dominance' }
+      - { $ref: '@constitutional-principle-slot', type: 'governing_bodies', assigned_id: 'president_bicameral_gov_courts' }
+      - { $ref: '@constitutional-principle-slot', type: 'local_self_government', assigned_id: 'allowed_limited_autonomy' }
+      - { $ref: '@constitutional-principle-slot', type: 'political_system', assigned_id: 'multi_party_dominant' }
+      - { $ref: '@constitutional-principle-slot', type: 'status_of_religion', assigned_id: 'secular_state' }
+      - { $ref: '@constitutional-principle-slot', type: 'international_law_priority', assigned_id: 'constitution_priority' }
+      - { $ref: '@constitutional-principle-slot', type: 'constitution_amendment_core', assigned_id: 'high_complexity_core_amendment' }
+
+  - $ref: '@category-container'
+    title: 'Развитие Страны'
+    children:
+      - { $ref: '@development-area-slot', type: 'education', current_level_id: 'edu_level_2', current_progress: 65 }
+      - { $ref: '@development-area-slot', type: 'healthcare', current_level_id: 'hc_level_2', current_progress: 49 }
+      - { $ref: '@development-area-slot', type: 'welfare', current_level_id: 'wel_level_2', current_progress: 23 }
+      - { $ref: '@development-area-slot', type: 'agriculture', current_level_id: 'agr_level_1', current_progress: 90 }
+      - { $ref: '@development-area-slot', type: 'industry', current_level_id: 'ind_level_2', current_progress: 73 }
+      - { $ref: '@development-area-slot', type: 'internal_security', current_level_id: 'isec_level_2', current_progress: 12 }
+      - { $ref: '@development-area-slot', type: 'military_might', current_level_id: 'mil_level_2', current_progress: 90 }
+      - { $ref: '@development-area-slot', type: 'social_development', current_level_id: 'soc_dev_level_1', current_progress: 25 }
+
+  - $ref: '@category-container'
+    title: 'Корпорации и ОПК'
+    children:
+      - { $ref: '@corporation-slot', assigned_id: 'gazprom' }
+      - { $ref: '@corporation-slot', assigned_id: 'lukoil' }
+      - { $ref: '@corporation-slot', assigned_id: 'yukos' }
+      - { $ref: '@corporation-slot', assigned_id: 'surgutneftegaz' }
+      - { $ref: '@corporation-slot', assigned_id: 'rao_ees' }
+      - { $ref: '@corporation-slot', assigned_id: 'norilsk_nickel' }
+      - { $ref: '@corporation-slot', assigned_id: 'rusal' }
+      - { $ref: '@corporation-slot', assigned_id: 'severstal' }
+      - { $ref: '@corporation-slot', assigned_id: 'avtovaz' }
+      - { $ref: '@corporation-slot', assigned_id: 'rostech_concept' }
+      - { $ref: '@corporation-slot', assigned_id: 'rosoboronprom_concept' }
+      - { $ref: '@corporation-slot', assigned_id: 'rosoboronexport' }
+      - { $ref: '@corporation-slot', assigned_id: 'sberbank' }
+      - { $ref: '@corporation-slot', assigned_id: 'alpha_bank' }
+      - { $ref: '@corporation-slot', assigned_id: 'vtb' }
+      - { $ref: '@corporation-slot', assigned_id: 'ingosstrakh' }
+      - { $ref: '@corporation-slot', assigned_id: 'mts' }
+      - { $ref: '@corporation-slot', assigned_id: 'vympelcom' }
+      - { $ref: '@corporation-slot', assigned_id: 'svyazinvest' }
+      - { $ref: '@corporation-slot', assigned_id: 'channel_one_ort' }
+      - { $ref: '@corporation-slot', assigned_id: 'rzd_oao' }
+      - { $ref: '@corporation-slot', assigned_id: 'aeroflot' }
+      - { $ref: '@corporation-slot', assigned_id: 'magnit' }
+      - { $ref: '@corporation-slot', assigned_id: 'wimm_bill_dann' }
+
+
+# --- Секция 2: СПРАВОЧНИКИ ---
+# Этот блок содержит "библиотеку" всех возможных опций, которые могут быть выбраны.
+# Он заменяет собой все .json файлы.
+
+definitions:
+  # --- СПРАВОЧНИК: ЛИДЕРЫ ---
+  leaders:
+    putin_vladimir:
+      id: "putin_vladimir"
+      name: "Владимир Путин"
+      portrait_path: "history/leaders_portraits/young_putin.png"
+      tooltip_summary: "Государственник\nЦентрализатор власти."
+      description: "Владимир Путин — ключевая политическая фигура, известная своим курсом на укрепление государственной власти, обеспечение национальной безопасности и отстаивание суверенных интересов страны на международной арене. Наблюдается централизация управления, борьба с усилившимся влиянием крупного бизнеса и акцент на патриотические ценности."
+    kasyanov_mikhail:
+      id: "kasyanov_mikhail"
+      name: "Михаил Касьянов"
+      portrait_path: "history/leaders_portraits/kasyanov_mikhail.png"
+      tooltip_summary: "Либерал-Рыночник\nЭкономический управленец."
+      description: "Михаил Касьянов ассоциируется с курсом либеральных экономических реформ и стремлением к интеграции с западными экономиками. Обладает опытом проведения рыночных преобразований. Его взгляды и подходы временами вызывают дискуссии в высших эшелонах власти."
+    kovalev_oleg:
+      id: "kovalev_oleg"
+      name: "Олег Ковалев"
+      portrait_path: "history/leaders_portraits/kovalev_oleg.png"
+      tooltip_summary: "Силовик-Государственник\nЖелезный кулак\nВетеран спецслужб."
+      description: "Олег Ковалев — представитель силовых структур, чья карьера неразрывно связана со службой государственной безопасности. Он известен своей жесткой позицией в вопросах правопорядка и бескомпромиссностью в отстаивании интересов государства. Его методы и взгляды основываются на убеждении в необходимости сильной централизованной власти и строгой дисциплины для обеспечения стабильности и безопасности страны. В решении сложных задач предпочитает опираться на проверенные кадры из своего круга и не склонен к либеральным экспериментам, рассматривая их как потенциальную угрозу."
+    kozyrev_fedor:
+      id: "kozyrev_fedor"
+      name: "Федор Иванович Козырев"
+      portrait_path: "history/leaders_portraits/kozyrev_fedor_trump_alt.png"
+      tooltip_summary: "Эксцентричный Девелопер\nСекретный Агент Лубянки."
+      description: "Федор Козырев, известный на Западе под оперативным псевдонимом 'Дональд Джон Трамп', — яркий и весьма медийный американский бизнесмен, сделавший состояние на амбициозных строительных проектах и игорном бизнесе. Его показная расточительность и постоянное стремление быть в центре внимания создают идеальное прикрытие. Козырев является глубоко законспирированным сотрудником ФСБ, использующим свои международные деловые связи и имидж для проведения операций по сбору ценной информации, а также для деликатного влияния на экономические и политические процессы за рубежом в интересах Российской Федерации. Его частые визиты в Москву под предлогом поиска инвестиций вызывают вопросы у немногих посвященных."
+    khantsev_alexander:
+      id: "khantsev_alexander"
+      name: "Александр Ханцев"
+      portrait_path: "history/leaders_portraits/khantsev_alexander.png"
+      tooltip_summary: "Технократ-Предприниматель\nОппортунист\nКуратор 'МАРС'."
+      description: "Александр Ханцев – фигура, умело сочетающая предпринимательский талант в сфере высоких технологий с опытом управления сложными проектами. Обладает обширными связями и умением находить нестандартные решения, что позволяет ему успешно действовать в быстро меняющейся экономической и политической среде. Его подход характеризуется прагматизмом и ставкой на технологическое превосходство. Известен также своей причастностью к курированию частных структур, выполняющих деликатные задачи в интересах государства за рубежом, в частности, структуры 'МАРС'. Это демонстрирует его способность оперировать на стыке бизнеса и специфических государственных интересов."
+    lavrov_sergey:
+      id: "lavrov_sergey"
+      name: "Сергей Лавров"
+      portrait_path: "history/leaders_portraits/lavrov_sergey.png"
+      tooltip_summary: "Прагматик-Дипломат\nМастер международной арены."
+      description: "Сергей Лавров — заметная фигура в российской дипломатии, активно участвующий в работе на международных площадках, включая ООН. Демонстрирует твердость в отстаивании российских внешнеполитических интересов, особенно в контексте сложных международных кризисов, и высокий профессионализм в многосторонней дипломатии."
+    kudrin_alexey:
+      id: "kudrin_alexey"
+      name: "Алексей Кудрин"
+      portrait_path: "history/leaders_portraits/kudrin_alexey.png"
+      tooltip_summary: "Либерал-Финансист\nАрхитектор бюджетной стабильности."
+      description: "Алексей Кудрин — ключевая фигура экономической политики, ответственная за бюджетную дисциплину и финансовую стабилизацию. Известен как последовательный сторонник либеральных рыночных реформ, играет важную роль в управлении государственными финансами, включая погашение внешнего долга и создание резервных фондов."
+    mishustin_mikhail:
+      id: "mishustin_mikhail"
+      name: "Михаил Мишустин"
+      portrait_path: "history/leaders_portraits/mishustin_mikhail.png"
+      tooltip_summary: "Технократ-Администратор\nСпециалист по налоговой системе."
+      description: "Михаил Мишустин известен как эффективный администратор в сфере государственных финансов, активно участвующий в модернизации налоговой службы. Признанный специалист по внедрению информационных технологий для улучшения сбора налогов и администрирования."
+    zurabov_mikhail:
+      id: "zurabov_mikhail"
+      name: "Михаил Зурабов"
+      portrait_path: "history/leaders_portraits/zurabov_mikhail.png"
+      tooltip_summary: "Социальный Реформатор\nЭксперт по пенсионным вопросам."
+      description: "Михаил Зурабов — ключевая фигура в проведении реформ в социальной сфере, особенно в области пенсионного обеспечения, включая переход к смешанной системе с накопительными элементами. Его деятельность и предлагаемые изменения вызывают активные общественные дискуссии."
+    ivanov_sergey_b:
+      id: "ivanov_sergey_b"
+      name: "Сергей Б. Иванов"
+      portrait_path: "history/leaders_portraits/ivanov_sergey_b.png"
+      tooltip_summary: "Государственник-Силовик\nЭксперт по вопросам обороны."
+      description: "Сергей Борисович Иванов — один из влиятельных представителей силового блока, обладающий опытом в сфере обороны. Проводит курс на реформирование Вооруженных Сил, уделяя внимание повышению их боеготовности, модернизации и профессионализации. Придерживается консервативных взглядов на безопасность."
+    surkov_vladislav:
+      id: "surkov_vladislav"
+      name: "Владислав Сурков"
+      portrait_path: "history/leaders_portraits/surkov_vladislav.png"
+      tooltip_summary: "Политтехнолог-Идеолог\nАрхитектор 'суверенной демократии'."
+      description: "Владислав Сурков является одним из главных стратегов внутренней политики и идеологической линии. Ему приписывают формирование актуальных идеологических концепций, влияние на информационное поле и активное участие в партийном строительстве, особенно в усилении ведущей пропрезидентской силы."
+    gref_german:
+      id: "gref_german"
+      name: "Герман Греф"
+      portrait_path: "history/leaders_portraits/gref_german.png"
+      tooltip_summary: "Либерал-Реформатор\nДвигатель экономических преобразований."
+      description: "Герман Греф — ключевой идеолог и проводник широкого спектра рыночных реформ. Его программа нацелена на дерегулирование экономики, улучшение инвестиционного климата, административную реформу и подготовку к интеграции в мировую экономическую систему, включая вступление в ВТО."
+    ivanov_igor_s:
+      id: "ivanov_igor_s"
+      name: "Игорь С. Иванов"
+      portrait_path: "history/leaders_portraits/ivanov_igor_s.png"
+      tooltip_summary: "Опытный Дипломат\nПроводник внешнеполитического курса."
+      description: "Игорь Сергеевич Иванов руководит российской дипломатией в сложный период международных отношений, включая ситуации вокруг глобальных конфликтов и расширение военных блоков. Отстаивает принципы многополярного мира и прагматичного сотрудничества, сохраняя при этом жесткость по ключевым вопросам национальной безопасности."
+    gryzlov_boris:
+      id: "gryzlov_boris"
+      name: "Борис Грызлов"
+      portrait_path: "history/leaders_portraits/gryzlov_boris.png"
+      tooltip_summary: "Центрист-Государственник\nОрганизатор партийной власти."
+      description: "Борис Грызлов — влиятельная фигура, имеющая опыт руководства правоохранительными органами и являющаяся лидером партии 'Единая Россия'. Обеспечивает доминирование пропрезидентских сил в парламенте и укрепление вертикали власти. Известен как ключевой организатор партийной структуры власти."
+    chaika_yuri:
+      id: "chaika_yuri"
+      name: "Юрий Чайка"
+      portrait_path: "history/leaders_portraits/chaika_yuri.png"
+      tooltip_summary: "Государственник-Юрист\nСтраж правопорядка."
+      description: "Юрий Чайка отвечает за правовое обеспечение деятельности государства, работу пенитенциарной системы и регистрацию нормативных актов. Участвует в реформировании судебной системы, направленном на повышение ее независимости и эффективности, а также в укреплении единства правового пространства страны."
+    yusufov_igor:
+      id: "yusufov_igor"
+      name: "Игорь Юсуфов"
+      portrait_path: "history/leaders_portraits/yusufov_igor.png"
+      tooltip_summary: "Прагматик-Энергетик\nМенеджер топливно-энергетического комплекса."
+      description: "Игорь Юсуфов курирует одну из стратегических отраслей экономики — энергетику. Его работа связана с регулированием нефтегазового сектора, электроэнергетики (в условиях реформы отрасли) и обеспечением энергетической безопасности страны на фоне меняющихся мировых цен на энергоносители."
+    shevchenko_yuri_l:
+      id: "shevchenko_yuri_l"
+      name: "Юрий Шевченко"
+      portrait_path: "history/leaders_portraits/shevchenko_yuri_l.png"
+      tooltip_summary: "Профессионал-Медик\nОрганизатор здравоохранения."
+      description: "Юрий Леонидович Шевченко, известный кардиохирург, отвечает за вопросы модернизации системы здравоохранения. В его ведении находятся обеспечение населения лекарственными средствами и борьба с социально значимыми заболеваниями."
+    pochinok_alexander:
+      id: "pochinok_alexander"
+      name: "Александр Починок"
+      portrait_path: "history/leaders_portraits/pochinok_alexander.png"
+      tooltip_summary: "Экономист-Социальщик\nСпециалист по налогам и труду."
+      description: "Александр Починок, имеющий опыт руководства налоговыми органами, занимается вопросами социальной защиты, реформирования трудового законодательства и проблемами бедности. Является заметной фигурой в обсуждении социальных реформ."
+    dolgov_boris:
+      id: "dolgov_boris"
+      name: "Борис Долгов"
+      portrait_path: "history/leaders_portraits/dolgov_boris.png"
+      tooltip_summary: "Эксцентрик-Технократ\nНовый рынок, твердый курс."
+      description: "Борис Долгов — фигура, известная своей кипучей энергией и порой неожиданными, но технологически выверенными подходами к развитию крупнейшего мегаполиса страны. Убежденный технократ, он видит в широком внедрении инноваций и информационных технологий практически панацею от многих застарелых проблем, активно продвигая самые смелые и передовые решения. Его экономические воззрения однозначно рыночные, с четким акцентом на привлечение инвестиций, поддержку частной инициативы и создание конкурентной среды. Одновременно с этим, Долгов является последовательным сторонником сильной и решительной исполнительной власти, способной гарантировать реализацию амбициозных планов и поддерживать должный порядок. Его недавняя инициатива по созданию политического движения 'Новые Люди' воспринимается как попытка предложить свежий, технологичный и прагматичный взгляд на дальнейшее развитие, ориентированный на обновление и эффективность."
+    filippov_vladimir_m:
+      id: "filippov_vladimir_m"
+      name: "Владимир Филиппов"
+      portrait_path: "history/leaders_portraits/filippov_vladimir_m.png"
+      tooltip_summary: "Реформатор-Образованец\nМодернизатор системы образования."
+      description: "Владимир Михайлович Филиппов является инициатором и проводником реформы российского образования, включая широкомасштабное внедрение Единого государственного экзамена (ЕГЭ) и обсуждение интеграции в европейское образовательное пространство. Его деятельность вызывает как поддержку, так и активную критику."
+    shvydkoy_mikhail:
+      id: "shvydkoy_mikhail"
+      name: "Михаил Швыдкой"
+      portrait_path: "history/leaders_portraits/shvydkoy_mikhail.png"
+      tooltip_summary: "Либерал-Культуролог\nПроводник культурной политики."
+      description: "Михаил Швыдкой отвечает за государственную политику в сфере культуры и искусства. Известен своими либеральными взглядами, поддержкой культурного разнообразия и международных культурных обменов. Занимается вопросами сохранения культурного наследия и реституции культурных ценностей."
+    lesin_mikhail_y:
+      id: "lesin_mikhail_y"
+      name: "Михаил Лесин"
+      portrait_path: "history/leaders_portraits/lesin_mikhail_y.png"
+      tooltip_summary: "Медиа-Стратег\nКонструктор информационного поля."
+      description: "Михаил Юрьевич Лесин является влиятельной фигурой в формировании государственной информационной политики и медийной сферы. Ему приписывают ключевую роль в перестройке медиарынка и усилении государственного влияния на крупнейшие телеканалы. Имеет опыт работы советником на высшем уровне."
+    voloshin_alexander:
+      id: "voloshin_alexander"
+      name: "Александр Волошин"
+      portrait_path: "history/leaders_portraits/voloshin_alexander.png"
+      tooltip_summary: "Влиятельный Аппаратчик\nМастер политических комбинаций."
+      description: "Александр Волошин — крайне влиятельный политик, до недавнего времени игравший ключевую роль в Администрации Президента и обеспечивавший баланс сил. Его недавний уход связывают с изменением политического курса и громкими делами против представителей крупного бизнеса. Известен как искусный аппаратчик и переговорщик."
+    medvedev_dmitry:
+      id: "medvedev_dmitry"
+      name: "Дмитрий Медведев"
+      portrait_path: "history/leaders_portraits/medvedev_dmitry.png"
+      tooltip_summary: "Юрист-Технократ\nВосходящая фигура Кремля."
+      description: "Дмитрий Медведев — доверенное лицо Владимира Путина из Санкт-Петербурга, занявший недавно высокий пост в Администрации Президента. До этого курировал юридические вопросы и реформу государственной службы. Его назначение рассматривается как усиление новой группы влияния в высших эшелонах власти."
+    sechin_igor:
+      id: "sechin_igor"
+      name: "Игорь Сечин"
+      portrait_path: "history/leaders_portraits/sechin_igor.png"
+      tooltip_summary: "Силовик-Аппаратчик\nМастер теневого влияния."
+      description: "Игорь Сечин, занимающий влиятельную позицию в Администрации Президента, постепенно наращивает свое влияние, особенно в вопросах, связанных с топливно-энергетическим комплексом и кадровой политикой в силовых структурах. Считается одним из наиболее непубличных, но могущественных деятелей 'питерской' команды."
+    kozak_dmitry:
+      id: "kozak_dmitry"
+      name: "Дмитрий Козак"
+      portrait_path: "history/leaders_portraits/kozak_dmitry.png"
+      tooltip_summary: "Реформатор-Администратор\nСпециалист по федеративным отношениям."
+      description: "Дмитрий Козак курирует административную реформу, реформу местного самоуправления и вопросы федеративных отношений, включая урегулирование ситуаций в сложных регионах. Ему приписывают важные инициативы по урегулированию замороженных конфликтов на постсоветском пространстве. Известен как жесткий и эффективный переговорщик и администратор, занимающий ключевую позицию в президентской администрации."
+    khristenko_viktor:
+      id: "khristenko_viktor"
+      name: "Виктор Христенко"
+      portrait_path: "history/leaders_portraits/khristenko_viktor.png"
+      tooltip_summary: "Технократ-Переговорщик\nЭксперт по промышленности и торговле."
+      description: "Виктор Христенко является одной из ключевых фигур в правительстве, курирующих промышленность, энергетику и торговлю, а также вопросы интеграции в мировую экономику, включая ВТО. Участвует в реформировании естественных монополий и разработке промышленной политики. Известен как компетентный технократ и переговорщик."
+    patrushev_nikolai:
+      id: "patrushev_nikolai"
+      name: "Николай Патрушев"
+      portrait_path: "history/leaders_portraits/patrushev_nikolai.png"
+      tooltip_summary: "Государственник-Контрразведчик\nЭксперт по внутренней безопасности."
+      description: "Николай Патрушев — выходец из органов государственной безопасности, в настоящее время занимает высокую должность в Администрации Президента. Курирует вопросы безопасности и взаимодействия с силовыми структурами, сохраняя тесные связи с ключевыми спецслужбами."
+    lebedev_sergey_n:
+      id: "lebedev_sergey_n"
+      name: "Сергей Н. Лебедев"
+      portrait_path: "history/leaders_portraits/lebedev_sergey_n.png"
+      tooltip_summary: "Профессионал-Разведчик\nЭксперт по внешним угрозам."
+      description: "Сергей Николаевич Лебедев отвечает за сбор и анализ информации за рубежом в интересах национальной безопасности России. Непубличная фигура, кадровый разведчик, его ведомство активно работает в условиях меняющейся международной обстановки."
+    stepashin_sergey_v:
+      id: "stepashin_sergey_v"
+      name: "Сергей Степашин"
+      portrait_path: "history/leaders_portraits/stepashin_sergey_v.png"
+      tooltip_summary: "Государственник-Ревизор\nКонтролер государственных финансов."
+      description: "Сергей Вадимович Степашин, имеющий опыт руководства правительством, руководит высшим органом государственного финансового контроля. Занимается проверками эффективности расходования бюджетных средств и борьбой с коррупцией. Обладает значительным политическим весом и независимостью суждений."
+    kvashnin_anatoly_v:
+      id: "kvashnin_anatoly_v"
+      name: "Анатолий Квашнин"
+      portrait_path: "history/leaders_portraits/kvashnin_anatoly_v.png"
+      tooltip_summary: "Военный Профессионал\nСтратег вооруженных сил."
+      description: "Анатолий Васильевич Квашнин отвечает за оперативное управление войсками и планирование военных операций, включая контртеррористические действия в проблемных регионах. Участвует в разработке военной реформы, являясь ключевой фигурой в военном командовании."
+    seleznyov_gennady_n:
+      id: "seleznyov_gennady_n"
+      name: "Геннадий Селезнёв"
+      portrait_path: "history/leaders_portraits/seleznyov_gennady_n.png"
+      tooltip_summary: "Левый Центрист\nОпытный парламентарий."
+      description: "Геннадий Николаевич Селезнёв, до недавнего времени возглавлявший Государственную Думу. Избранный изначально от КПРФ, но позже создавший собственное политическое движение. Стремился к конструктивному диалогу между различными фракциями и исполнительной властью. Его роль в парламенте заметно изменилась после последних выборов."
+    mironov_sergey_m:
+      id: "mironov_sergey_m"
+      name: "Сергей Миронов"
+      portrait_path: "history/leaders_portraits/mironov_sergey_m.png"
+      tooltip_summary: "Социал-Патриот\nПредставитель регионов."
+      description: "Сергей Михайлович Миронов, возглавляющий верхнюю палату парламента, позиционирует себя как политик левоцентристских и патриотических взглядов, поддерживающий курс президента. Инициатор создания политической силы (Российская партия Жизни), которая становится одной из опор для будущих политических конструкций."
+    zyuganov_gennady_a:
+      id: "zyuganov_gennady_a"
+      name: "Геннадий Зюганов"
+      portrait_path: "history/leaders_portraits/zyuganov_gennady_a.png"
+      tooltip_summary: "Коммунист-Патриот\nЛидер левой оппозиции."
+      description: "Геннадий Андреевич Зюганов, бессменный лидер Коммунистической партии Российской Федерации (КПРФ), крупнейшей оппозиционной силы. Критикует экономический курс правительства, выступает за социальную справедливость, национализацию ключевых отраслей и восстановление влияния России на постсоветском пространстве. Его партия сохраняет значительное представительство в парламенте."
+    zhirinovsky_vladimir_v:
+      id: "zhirinovsky_vladimir_v"
+      name: "Владимир Жириновский"
+      portrait_path: "history/leaders_portraits/zhirinovsky_vladimir_v.png"
+      tooltip_summary: "Национал-Популист\nЭпатажный шоумен-политик."
+      description: "Владимир Вольфович Жириновский, лидер Либерально-демократической партии России (ЛДПР). Известен своей яркой, часто скандальной риторикой, националистическими и популистскими лозунгами. Стабильно обеспечивает своей партии прохождение в Государственную Думу, и на последних выборах его партия вновь преодолела барьер."
+    yavlinsky_grigory_a:
+      id: "yavlinsky_grigory_a"
+      name: "Григорий Явлинский"
+      portrait_path: "history/leaders_portraits/yavlinsky_grigory_a.png"
+      tooltip_summary: "Социал-Либерал\nИнтеллектуал-оппозиционер."
+      description: "Григорий Алексеевич Явлинский, лидер демократической партии 'Яблоко'. Последовательно критикует политику властей с либеральных и демократических позиций, выступает против силовых методов решения конфликтов. Его партия столкнулась с трудностями на последних парламентских выборах, не преодолев избирательный барьер."
+    nemtsov_boris_e:
+      id: "nemtsov_boris_e"
+      name: "Борис Немцов"
+      portrait_path: "history/leaders_portraits/nemtsov_boris_e.png"
+      tooltip_summary: "Либерал-Демократ\nЯркий оппозиционный политик."
+      description: "Борис Ефимович Немцов является одним из лидеров Союза Правых Сил (СПС). Активно участвует в политической жизни, выступая с критикой Кремля, программой либеральных реформ и антивоенными лозунгами. СПС не удалось пройти в Думу по итогам недавних выборов."
+    khakamada_irina_m:
+      id: "khakamada_irina_m"
+      name: "Ирина Хакамада"
+      portrait_path: "history/leaders_portraits/khakamada_irina_m.png"
+      tooltip_summary: "Либерал-Прагматик\nСторонница свободного рынка."
+      description: "Ирина Муцуовна Хакамада, один из руководителей Союза Правых Сил (СПС). Яркий политик, экономист, последовательно отстаивающий принципы либерализма, свободного рынка и демократии. Активно участвует в парламентской жизни и политических дебатах. После неудачи СПС на выборах, рассматривает возможность участия в президентской кампании."
+    chubais_anatoly_b:
+      id: "chubais_anatoly_b"
+      name: "Анатолий Чубайс"
+      portrait_path: "history/leaders_portraits/chubais_anatoly_b.png"
+      tooltip_summary: "Либерал-Технократ\nРеформатор электроэнергетики."
+      description: "Анатолий Борисович Чубайс руководит РАО 'ЕЭС России' и проводит масштабную, вызывающую споры, реформу электроэнергетической отрасли. Остается влиятельной фигурой в либеральном крыле российской политики и неформальным лидером правых сил, активно комментируя политические события, но сам не стремится к парламентским мандатам."
+    rogozin_dmitry_o:
+      id: "rogozin_dmitry_o"
+      name: "Дмитрий Рогозин"
+      portrait_path: "history/leaders_portraits/rogozin_dmitry_o.png"
+      tooltip_summary: "Национал-Патриот\nВосходящая звезда патриотического фланга."
+      description: "Дмитрий Олегович Рогозин стал одним из лидеров и публичным лицом новообразованного избирательного блока 'Родина'. Блок неожиданно успешно выступил на думских выборах, Рогозин получил депутатский мандат и занял видный пост в руководстве парламента, став заметной фигурой патриотического крыла."
+    glazyev_sergey_y:
+      id: "glazyev_sergey_y"
+      name: "Сергей Глазьев"
+      portrait_path: "history/leaders_portraits/glazyev_sergey_y.png"
+      tooltip_summary: "Экономист-Государственник\nСторонник дирижизма."
+      description: "Сергей Юрьевич Глазьев, известный экономист, также стал одним из лидеров блока 'Родина'. Выступает за активную государственную промышленную политику, протекционизм и усиление роли государства в экономике, критикуя либеральный курс. Избран депутатом Госдумы и активно продвигает свои экономические воззрения."
+    shoigu_sergey_k:
+      id: "shoigu_sergey_k"
+      name: "Сергей Шойгу"
+      portrait_path: "history/leaders_portraits/shoigu_sergey_k.png"
+      tooltip_summary: "Государственник-Прагматик\nЭффективный кризисный менеджер."
+      description: "Сергей Кужугетович Шойгу известен как эффективный руководитель ведомства, отвечающего за гражданскую оборону, чрезвычайные ситуации и ликвидацию последствий стихийных бедствий. Один из самых популярных управленцев в стране, является также одним из высших руководителей партии 'Единая Россия'. Пользуется высоким доверием населения благодаря результативной работе."
+    luzhkov_yuri_m:
+      id: "luzhkov_yuri_m"
+      name: "Юрий Лужков"
+      portrait_path: "history/leaders_portraits/luzhkov_yuri_m.png"
+      tooltip_summary: "Хозяйственник-Патриот\nВлиятельный столичный руководитель."
+      description: "Юрий Михайлович Лужков — бывший мэр Москвы, ныне независимый депутат Государственной Думы. Потеряв основную часть прежнего влияния, старается сохранить остатки политического веса. Находится в умеренно лояльных отношениях с партией власти, но испытывает явную антипатию к нынешнему градоначальнику Москвы Борису Долгову."
+    shaimiev_mintimer_s:
+      id: "shaimiev_mintimer_s"
+      name: "Минтимер Шаймиев"
+      portrait_path: "history/leaders_portraits/shaimiev_mintimer_s.png"
+      tooltip_summary: "Региональный Лидер\nГарант стабильности в Татарстане."
+      description: "Минтимер Шарипович Шаймиев, лидер Республики Татарстан. Опытный и влиятельный региональный руководитель, сумевший добиться значительной автономии для своей республики. Является одним из высших руководителей 'Единой России', играя важную роль в выстраивании федеративных отношений и сохранении стабильности."
+    rakhimov_murtaza_g:
+      id: "rakhimov_murtaza_g"
+      name: "Муртаза Рахимов"
+      portrait_path: "history/leaders_portraits/rakhimov_murtaza_g.png"
+      tooltip_summary: "Региональный Авторитет\nХозяин Башкортостана."
+      description: "Муртаза Губайдуллович Рахимов, лидер Республики Башкортостан. Один из наиболее 'долгоиграющих' и независимых региональных руководителей, жестко контролирующий экономику и политическую жизнь в своей республике. Недавно прошел через напряженную избирательную кампанию, отмеченную определенной критикой со стороны федерального центра."
+    khloponin_alexander_g:
+      id: "khloponin_alexander_g"
+      name: "Александр Хлопонин"
+      portrait_path: "history/leaders_portraits/khloponin_alexander_g.png"
+      tooltip_summary: "Молодой Технократ\nУправленец ресурсного региона."
+      description: "Александр Геннадиевич Хлопонин руководит Красноярским краем. Ранее топ-менеджер крупной металлургической компании. Считается представителем нового поколения управленцев, пришедших в региональную политику из крупного бизнеса, и управляет одним из крупнейших и богатых ресурсами регионов России."
+    tuleyev_aman_g:
+      id: "tuleyev_aman_g"
+      name: "Аман Тулеев"
+      portrait_path: "history/leaders_portraits/tuleyev_aman_g.png"
+      tooltip_summary: "Народный Региональный Лидер\nЗащитник интересов Кузбасса."
+      description: "Аман-гельды Гумирович Тулеев, руководитель Кемеровской области. Популистский политик, пользующийся очень высокой и стабильной поддержкой в своем регионе. Известен своей социальной риторикой, активным вмешательством в экономику региона и жестким отстаиванием интересов шахтерского края."
+    matviyenko_valentina_i:
+      id: "matviyenko_valentina_i"
+      name: "Валентина Матвиенко"
+      portrait_path: "history/leaders_portraits/matviyenko_valentina_i.png"
+      tooltip_summary: "Государственник-Управленец\nРуководитель Санкт-Петербурга."
+      description: "Валентина Ивановна Матвиенко, недавно занявшая пост руководителя Санкт-Петербурга, до этого работала полномочным представителем Президента в федеральном округе. Считается доверенным лицом Владимира Путина, с большим опытом государственной службы. Ее приход в северную столицу знаменует усиление федерального влияния."
+    kadyrov_akhmad_a:
+      id: "kadyrov_akhmad_a"
+      name: "Ахмад Кадыров"
+      portrait_path: "history/leaders_portraits/kadyrov_akhmad_a.png"
+      tooltip_summary: "Чеченский Лидер\nПроводник федерального влияния."
+      description: "Ахмад-Хаджи Абдулхамидович Кадыров, недавно избранный руководитель Чеченской Республики, является ключевой фигурой в процессе установления мира и федерального контроля в регионе. Пользуется полной поддержкой Кремля, но его деятельность по нормализации обстановки вызывает неоднозначные оценки правозащитников."
+    khodorkovsky_mikhail_b:
+      id: "khodorkovsky_mikhail_b"
+      name: "Михаил Ходорковский"
+      portrait_path: "history/leaders_portraits/khodorkovsky_mikhail_b.png"
+      tooltip_summary: "Олигарх-Меценат (в опале)\nПромышленный магнат."
+      description: "Михаил Борисович Ходорковский, бывший глава нефтяной компании ЮКОС, до своего недавнего ареста был одним из богатейших и влиятельных бизнесменов России. Активно финансировал оппозиционные партии и проекты гражданского общества, что, по мнению многих, стало главной причиной его преследования. Его арест и 'дело' против его компании стали рубежным событием в отношениях власти и бизнеса."
+    abramovich_roman_a:
+      id: "abramovich_roman_a"
+      name: "Роман Абрамович"
+      portrait_path: "history/leaders_portraits/abramovich_roman_a.png"
+      tooltip_summary: "Непубличный Олигарх\nРегиональный Инвестор."
+      description: "Роман Аркадьевич Абрамович, помимо управления Чукотским автономным округом, является крупным бизнесменом, в частности, акционером 'Сибнефти'. Известен своими крупными инвестициями в регион своего управления и непубличным стилем ведения дел. Недавно приобрел английский футбольный клуб 'Челси', что вызвало широкий резонанс."
+    deripaska_oleg_v:
+      id: "deripaska_oleg_v"
+      name: "Олег Дерипаска"
+      portrait_path: "history/leaders_portraits/deripaska_oleg_v.png"
+      tooltip_summary: "Промышленный Магнат\nКонсолидатор активов."
+      description: "Олег Владимирович Дерипаска, владелец крупной промышленной группы 'Базовый элемент', активно расширяет свою бизнес-империю, особенно в алюминиевой промышленности, автомобилестроении и авиастроении. Считается одним из наиболее влиятельных и амбициозных молодых олигархов, успешно адаптировавшихся к новым правилам игры."
+    fridman_mikhail_m:
+      id: "fridman_mikhail_m"
+      name: "Михаил Фридман"
+      portrait_path: "history/leaders_portraits/fridman_mikhail_m.png"
+      tooltip_summary: "Финансовый Стратег\nСоздатель 'Альфа-Групп'."
+      description: "Михаил Маратович Фридман, основной владелец и руководитель консорциума 'Альфа-Групп' (включая крупный банк, нефтегазовые активы, телекоммуникации). Его компания ТНК недавно объединилась с британской BP, создав одну из крупнейших нефтяных компаний России. Известен как один из наиболее системных и влиятельных бизнесменов."
+    potanin_vladimir_o:
+      id: "potanin_vladimir_o"
+      name: "Владимир Потанин"
+      portrait_path: "history/leaders_portraits/potanin_vladimir_o.png"
+      tooltip_summary: "Олигарх-Меценат\nВладелец 'Интерроса'."
+      description: "Владимир Олегович Потанин, президент и владелец холдинговой компании 'Интеррос' (ключевой актив – 'Норильский никель'). Активно занимается реструктуризацией своего бизнеса, делая упор на металлургию, а также благотворительными проектами. Считается одним из олигархов 'старой гвардии', сохранившим свое влияние."
+    primakov_yevgeny_m:
+      id: "primakov_yevgeny_m"
+      name: "Евгений Примаков"
+      portrait_path: "history/leaders_portraits/primakov_yevgeny_m.png"
+      tooltip_summary: "Государственник-Патриарх\nАвторитетный международник."
+      description: "Евгений Максимович Примаков, имеющий опыт руководства правительством и внешнеполитическим ведомством, возглавляет Торгово-промышленную палату РФ. Пользуется огромным авторитетом как внутри страны, так и за рубежом, особенно как эксперт по Ближнему Востоку и международным отношениям. Его мнение часто учитывается властью при принятии важных решений."
+    chernomyrdin_viktor_s:
+      id: "chernomyrdin_viktor_s"
+      name: "Виктор Черномырдин"
+      portrait_path: "history/leaders_portraits/chernomyrdin_viktor_s.png"
+      tooltip_summary: "Опытный Политик\nДипломат и бывший премьер."
+      description: "Виктор Степанович Черномырдин, бывший многолетний глава Правительства России, в настоящее время занимается дипломатической работой на украинском направлении и является специальным представителем Президента по развитию торгово-экономических связей с Украиной. Его неформальный стиль, политический вес и богатый опыт делают его важной фигурой в непростых российско-украинских отношениях."
+    illarionov_andrei_n:
+      id: "illarionov_andrei_n"
+      name: "Андрей Илларионов"
+      portrait_path: "history/leaders_portraits/illarionov_andrei_n.png"
+      tooltip_summary: "Либертарианец-Экономист\nКритичный советник президента."
+      description: "Андрей Николаевич Илларионов известен как экономический эксперт, консультирующий высшее руководство страны. Известен своими последовательно либеральными и порой радикальными (либертарианскими) взглядами на экономическую политику, часто публично критикуя действия правительства за недостаточную рыночность и избыточное госрегулирование."
+    zubkov_viktor_a:
+      id: "zubkov_viktor_a"
+      name: "Виктор Зубков"
+      portrait_path: "history/leaders_portraits/zubkov_viktor_a.png"
+      tooltip_summary: "Финансист-Контролер\nСпециалист по финмониторингу."
+      description: "Виктор Алексеевич Зубков, высокопоставленный чиновник в финансовом блоке правительства, руководит структурой, отвечающей за финансовый мониторинг (финансовая разведка). Занимается борьбой с отмыванием денег и финансированием терроризма. Его роль в финансовой системе страны и в силовом блоке правительства усиливается."
+    ryzhkov_vladimir_a:
+      id: "ryzhkov_vladimir_a"
+      name: "Владимир Рыжков"
+      portrait_path: "history/leaders_portraits/ryzhkov_vladimir_a.png"
+      tooltip_summary: "Либерал-Независимый\nДепутат-демократ."
+      description: "Владимир Александрович Рыжков, независимый парламентарий, представляющий один из сибирских округов. Один из немногих либеральных политиков, успешно переизбравшихся в Думу на последних выборах. Известен своей последовательной критической позицией по отношению к усилению авторитаризма и ограничению демократических свобод."
+    sliska_lyubov_k:
+      id: "sliska_lyubov_k"
+      name: "Любовь Слиска"
+      portrait_path: "history/leaders_portraits/sliska_lyubov_k.png"
+      tooltip_summary: "Центристка-Парламентарий\nВидный деятель Думы."
+      description: "Любовь Константиновна Слиска, представляющая 'Единую Россию', занимает одну из руководящих позиций в Государственной Думе. Влиятельный парламентарий, известна своими прямолинейными, порой резкими высказываниями и активным участием в законотворческом процессе, часто выступая рупором своей партии."
+    shokhin_alexander_n:
+      id: "shokhin_alexander_n"
+      name: "Александр Шохин"
+      portrait_path: "history/leaders_portraits/shokhin_alexander_n.png"
+      tooltip_summary: "Либерал-Лоббист\nПредставитель крупного бизнеса."
+      description: "Александр Николаевич Шохин, имеющий опыт работы на высших правительственных постах, возглавляет Координационный совет объединений предпринимателей России и крупный экономический университет. Недавно избран депутатом Государственной Думы от 'Единой России', где играет заметную роль в работе над финансовым законодательством."
+    yakunin_vladimir_i:
+      id: "yakunin_vladimir_i"
+      name: "Владимир Якунин"
+      portrait_path: "history/leaders_portraits/yakunin_vladimir_i.png"
+      tooltip_summary: "Транспортник-Государственник\nУправленец из президентского круга."
+      description: "Владимир Иванович Якунин — влиятельный управленец в транспортной сфере, ранее работавший в структурах госбезопасности и администрации президента. Считается человеком из близкого круга Владимира Путина. Занимает ключевую руководящую позицию во вновь созданной ОАО 'Российские железные дороги'."
+    ustinov_vladimir_v:
+      id: "ustinov_vladimir_v"
+      name: "Владимир Устинов"
+      portrait_path: "history/leaders_portraits/ustinov_vladimir_v.png"
+      tooltip_summary: "Государственник-Правовед\nГлавный обвинитель."
+      description: "Владимир Васильевич Устинов — ключевая фигура в правоохранительной системе, отвечающая за надзор за исполнением законов и поддержание обвинения в судах. Его ведомство активно участвует в громких делах, включая резонансные расследования против представителей крупного бизнеса и борьбу с коррупцией."
+    alexy_ii:
+      id: "alexy_ii"
+      name: "Алексий II"
+      portrait_path: "history/leaders_portraits/alexy_ii.png"
+      tooltip_summary: "Духовный Лидер\nПредстоятель Православной Церкви."
+      description: "Алексий II (Алексей Михайлович Ридигер) является предстоятелем Русской Православной Церкви. Пользуется огромным моральным авторитетом в обществе и оказывает значительное влияние на духовную жизнь страны, а также на отношения государства и церкви. Его позиция по многим общественно-политическим вопросам имеет большой вес."
+    klebanov_ilya:
+      id: "klebanov_ilya"
+      name: "Илья Клебанов"
+      portrait_path: "history/leaders_portraits/klebanov_ilya.png"
+      tooltip_summary: "Технократ-Промышленник\nСторонник господдержки науки и ВПК."
+      description: "Илья Клебанов обладает значительным опытом работы со сложными, наукоемкими производственными комплексами и глубоко разбирается в вопросах технологического развития. Он является сторонником усиления отечественного промышленного потенциала и внедрения передовых технологий, видя в этом основу для укрепления позиций страны. Его взгляды предполагают значимую роль государства в поддержке и стимулировании инновационной деятельности и стратегических отраслей, включая оборонный сектор."
+    reyman_leonid:
+      id: "reyman_leonid"
+      name: "Леонид Рейман"
+      portrait_path: "history/leaders_portraits/reyman_leonid.png"
+      tooltip_summary: "Визионер Связи\nАрхитектор информационного общества."
+      description: "Леонид Рейман — эксперт в сфере связи и передовых информационных технологий, играющий заметную роль в формировании современного телекоммуникационного ландшафта страны. Он является последовательным сторонником скорейшей информатизации всех сфер жизни, рассматривая это как необходимое условие для экономического роста и социального развития. Его деятельность сосредоточена на создании условий для повсеместного внедрения новых технологий связи и обработки информации, а также на формировании соответствующей нормативной среды."
+  # --- СПРАВОЧНИК: ИДЕОЛОГИИ ---
+  ideologies:
+    sovereign_democracy: { id: "sovereign_democracy", name: "Суверенная Демократия", name_multiline: "Суверенная<br>Демократия", icon_path: "/history/ideologies_icons/sovereign_democracy.png", effects_summary: "Стабильность +1" }
+    liberal_democracy: { id: "liberal_democracy", name: "Либеральная Демократия", name_multiline: "Либеральная<br>Демократия", icon_path: "/history/ideologies_icons/liberal_democracy.png" }
+
+  # --- СПРАВОЧНИК: ПАРТИИ ---
+  parties:
+    united_russia: { id: "united_russia", name: "Единая Россия", icon_path: "/history/parties_emblems/united_russia.png", popularity: 42, color: "#0D47A1", ideology_tags_rus: [ "центризм", "консерватизм" ] }
+    ldpr: { id: "ldpr", name: "ЛДПР", popularity: 15, color: "#BDB76B", ideology_tags_rus: [ "национализм" ] }
+    rodina: { id: "rodina", name: "Родина", popularity: 14, color: "#781f19", ideology_tags_rus: [ "национал-консерватизм" ] }
+    kprf: { id: "kprf", name: "КПРФ", popularity: 9, color: "#CC0000", ideology_tags_rus: [ "коммунизм" ] }
+    rpzh_new_socdem: { id: "rpzh_new_socdem", name: "РПЖ/Новые социал-демократы", popularity: 8, color: "#e66761", ideology_tags_rus: [ "социал-демократия" ] }
+    yabloko_sps: { id: "yabloko_sps", name: "Яблоко/СПС", popularity: 3, color: "#008000", ideology_tags_rus: [ "либерализм" ] }
+    new_people: { id: "new_people", name: "Новые люди", popularity: 6, color: "#ADD8E6", ideology_tags_rus: [ "центризм" ] }
+    others: { id: "others", name: "Остальные партии", popularity: 3, color: "#808080", ideology_tags_rus: [ "разные" ] }
+
+  # --- СПРАВОЧНИК: НАЦИОНАЛЬНЫЕ ФОКУСЫ ---
+  national_focus_tree:
+    # Стартовый фокус, не имеет зависимостей
+    start_economic_reforms:
+      id: "start_economic_reforms"
+      title: "Начало экономических реформ"
+      icon_path: "/history/focus_icons/economy.png"
+      duration: 30
+      description: "Фундаментальный фокус, открывающий путь к либерализации или государственному капитализму."
+      x: 1.5 # Координата X (колонка)
+      y: 0 # Координата Y (строка)
+
+    # Ветка 1
+    liberalization:
+      id: "liberalization"
+      title: "Либерализация"
+      icon_path: "/history/focus_icons/liberal.png"
+      duration: 30
+      description: "Снижение налогов и барьеров для бизнеса."
+      prerequisites: [ "start_economic_reforms" ] # Зависит от стартового фокуса
+      x: 2.5
+      y: 1
+
+    Nationalisation:
+      id: "nationalisation"
+      title: "Национализация"
+      icon_path: "/history/focus_icons/privatize.png"
+      duration: 30
+      description: "GThtlfxf xfcnys[ frnbdjd gjl rjynhjjkm ujcelfhcndf."
+      prerequisites: [ "start_economic_reforms" ] # Зависит от либерализации
+      x: 0.5
+      y: 1
+
+  # --- СПРАВОЧНИК: НАЦИОНАЛЬНЫЕ ДУХИ ---
+  national_spirits:
+    fortress_state:
+      id: "fortress_state"
+      name: "Государство-Крепость: Тотальный Контроль Усиливается"
+      icon_path: "history/national_spirits_icons/fortress_state.png"
+      description: "Государство демонстрирует решимость в установлении контроля над всеми сферами, включая крупный бизнес и политический процесс (мод.). Снижение прямой террористической угрозы делает продолжающееся ужесточение контроля фактором растущего латентного напряжения."
+      effects_summary: "Модификаторы бросков:\n  Действия силовых структур (внутри): +3\n  Формирование инфоповестки: +2\n  Контроль границ и инфопространства: +2\n  Либерализация: -2"
+      development_impulses:
+        education: -1
+        military_might: 2
+        internal_security: 1
+        welfare: -1
+        social_development: -2
+
+    near_abroad_policy:
+      id: "near_abroad_policy"
+      name: "Активная Политика в Ближнем Зарубежье: Фокус на Соседях"
+      icon_path: "history/national_spirits_icons/near_abroad_policy.png"
+      description: "На фоне глобальной нестабильности Россия активизирует свои усилия в СНГ и прилегающих регионах, используя как неформальные (ЧВК, спецслужбы), так и официальные каналы (мод.). Непредсказуемость результатов сохраняется, как показывают ситуации в ОАЭ и на Украине."
+      effects_summary: "Модификаторы бросков:\n  Операции спецслужб/ЧВК в СНГ: +2\n  Ресурсы от «дружественных» режимов: +1\n  Официальная дипломатия (Запад): -1"
+      development_impulses:
+        military_might: 1
+        internal_security: 1
+
+    national_projects_infrastructure:
+      id: "national_projects_infrastructure"
+      name: "Национальные Проекты: Локомотив и Бремя"
+      icon_path: "history/national_spirits_icons/national_projects_infrastructure.png"
+      description: "Реализация масштабных инфраструктурных проектов (ВСМ, ОЭР, ФЦКУМ) становится ключевым инструментом экономического развития и консолидации элит. Однако их амбициозность и затратность создают долгосрочные риски для экономики, даже при высоких ценах на нефть (мод.)."
+      effects_summary: "Модификаторы бросков:\n  Крупные инфраструктурные проекты: +2\n  Привлечение инвестиций в проекты: +1"
+      development_impulses:
+        education: 1
+        industry: 2
+        welfare: 1
+
+    reindustrialization_opk_tech_sovereignty:
+      id: "reindustrialization_opk_tech_sovereignty"
+      name: "Реиндустриализация ОПК: Формирование Госкорпораций"
+      icon_path: "history/national_spirits_icons/reindustrialization_opk.png"
+      description: "Государство форсирует создание крупных оборонных холдингов через «Большой Передел» активов ОПК (мод.). Достигнуты значительные успехи в разработке новых вооружений (БПЛА), но процесс интеграции и достижения полного технологического суверенитета сопряжен с трудностями (мод.)."
+      effects_summary: "Модификаторы бросков:\n  Выполнение оборонных заказов: +2\n  Финансирование/кадры для ОПК: +1\n  Развитие смежных гражданских производств: +1"
+      development_impulses:
+        education: 1
+        industry: 2
+        military_might: 1
+
+    divided_society:
+      id: "divided_society"
+      name: "Расколотое Общество: Обострение Противоречий"
+      icon_path: "history/national_spirits_icons/divided_society.png"
+      description: "Громкие политические и экономические события (дело ЮКОСа, управляемые выборы, конфликт в «Единой России») углубляют существующие линии разлома в обществе, несмотря на усилия по патриотической мобилизации. Растет апатия или скрытое недовольство (мод.)."
+      effects_summary: "Модификаторы бросков:\n  Действия, требующие консенсуса: -1\n  Патриотическая/антитеррористическая риторика: +1\n  Либеральная риторика: -1"
+      development_impulses:
+        welfare: -1
+        social_development: -3
+        internal_security: -1
+
+    systemic_corruption:
+      id: "systemic_corruption"
+      name: "Системная Коррупция: «Управляемый» Недуг"
+      icon_path: "history/national_spirits_icons/systemic_corruption.png"
+      description: "Коррупция не только остается системной проблемой, но и начинает рассматриваться как элемент неформального управления и контроля элит. Борьба с ней становится крайне избирательной и политически мотивированной, как показала блокировка антикоррупционных инициатив в ФСБ (мод.)."
+      effects_summary: "Модификаторы бросков:\n  Все действия с гос. средствами или требующие честного исполнения: -1"
+      development_impulses:
+        education: -1
+        healthcare: -1
+        welfare: -1
+        agriculture: -1
+        industry: -1
+        internal_security: -1
+        military_might: -1
+        social_development: -1
+
+    oil_gas_rent_stabilization_fund:
+      id: "oil_gas_rent_stabilization_fund"
+      name: "Нефтегазовая Рента: Фундамент и Уязвимость"
+      icon_path: "history/national_spirits_icons/oil_gas_rent.png"
+      description: "Высокие доходы от экспорта энергоресурсов остаются основой финансирования госпрограмм. Однако зависимость от них на фоне амбициозных госпроектов и возможных экономических шоков (связанных с делом ЮКОСа) становится еще более критичной (мод.)."
+      effects_summary: "Модификаторы бросков:\n  Действия, требующие крупных финансовых вливаний: +2"
+      development_impulses:
+        education: -1
+        healthcare: 1
+        welfare: 3
+        agriculture: -1
+        industry: 1
+        internal_security: 0
+        military_might: 0
+        social_development: -1
+
+    sovereign_economy:
+      id: "sovereign_economy"
+      name: "Суверенная Экономика: Государственный Капитализм"
+      icon_path: "history/national_spirits_icons/sovereign_economy.png"
+      description: "Курс на снижение зависимости от Запада и укрепление госсектора в экономике становится доминирующим. «Дело ЮКОСа» интерпретируется как шаг к восстановлению 'экономического суверенитета'. Продолжается поддержка отечественных разработок и НИОКР (мод.)."
+      effects_summary: "Модификаторы бросков:\n  Проекты нац. промышленности и импортозамещения: +1\n  Поддержка отечественного несырьевого бизнеса: +1\n  Проекты с высокой зависимостью от иностранных технологий/инвестиций: -1"
+      development_impulses:
+        education: 1
+        industry: 2
+        agriculture: 1
+        welfare: 0
+        social_development: 1
+
+    social_initiatives_family_support:
+      id: "social_initiatives_family_support"
+      name: "Социальные Инициативы и Поддержка Семьи"
+      icon_path: "history/national_spirits_icons/social_initiatives.png"
+      description: "Продолжают действовать как важный, но фоновый элемент государственной политики, обеспечивая социальную стабильность в условиях перемен (мод.)."
+      effects_summary: "Модификаторы бросков:\n  Реализация социальных программ, поддержка материнства и детства: +1"
+      development_impulses:
+        healthcare: 1
+        welfare: 1
+        social_development: 2
+
+    russian_dream_culture_identity:
+      id: "russian_dream_culture_identity"
+      name: "Русская Мечта: Культура на Службе Государства"
+      icon_path: "history/national_spirits_icons/russian_dream_culture.png"
+      description: "Государство продолжает активно использовать культурные и идеологические инструменты для консолидации общества и продвижения национальных ценностей, в том числе через успешные международные проекты («Русские сезоны») (мод.)."
+      effects_summary: "Модификаторы бросков:\n  Поддержка национальной культуры, искусства, реставрации: +2"
+      development_impulses:
+        education: 1
+        social_development: 2
+
+    soft_power_russia_abroad:
+      id: "soft_power_russia_abroad"
+      name: "Мягкая Сила: Диалог под Давлением"
+      icon_path: "history/national_spirits_icons/soft_power.png"
+      description: "Россия наращивает усилия по формированию своего международного имиджа через культурные проекты и информационное влияние. Однако эти усилия наталкиваются на растущую критику Запада в связи с внутриполитическими процессами (дело ЮКОСа, управляемые выборы) (мод.)."
+      effects_summary: "Модификаторы бросков:\n  Действия по улучшению международного имиджа: +1\n  Проекты культурного влияния: +1\n  Работа с соотечественниками: +1"
+      development_impulses:
+        social_development: 1
+
+    development_pace_aggregator:
+      id: "development_pace_aggregator"
+      name: "Темпы Развития"
+      icon_path: "history/national_spirits_icons/development_pace.png"
+      description: "Этот дух агрегирует общие тенденции развития страны, суммируя импульсы от всех активных национальных идей и событий. Он отражает, насколько быстро или медленно страна прогрессирует в ключевых сферах."
+      effects_summary: "Суммарные импульсы к развитию:\n  Образование: ±X\n  Здравоохранение: ±X\n  Достаток: ±X\n  Сельское хозяйство: ±X\n  Промышленность: ±X\n  Внутренняя Безопасность: ±X\n  Военная Мощь: ±X\n  Общественное развитие: ±X"
+      is_aggregator: true
+      development_impulses: { }
+
+  # --- СПРАВОЧНИК: КОНСТИТУЦИОННЫЕ ПРИНЦИПЫ ---
+  constitutional_principles:
+    form_of_government:
+      id: "form_of_government"
+      name: "Форма правления"
+      icon_path: "/history/constitutional_principles_icons/form_of_government.png"
+      options:
+        super_presidential_republic: { id: "super_presidential_republic", name_display: "Парламентско-президентская республика (Формально)", description: "Государственное устройство, при котором президент является главой государства и формирует правительство, ответственное перед парламентом, но фактически обладает доминирующим влиянием на все ветви власти."  }
+    human_rights:
+      id: "human_rights"
+      name: "Права человека"
+      icon_path: "/history/constitutional_principles_icons/human_rights.png"
+      options:
+        formal_observance: { id: "formal_observance", name_display: "Формальное соблюдение"}
+
+  # --- СПРАВОЧНИК: ОБЛАСТИ РАЗВИТИЯ ---
+  development_areas:
+    education:
+      id: "education"
+      name: "Образование"
+      progress_per_level: 100
+      levels:
+        edu_level_0: { id: "edu_level_0", "icon_path": "history/development_areas_icons/edu_level_0.png", "name_display": "Эпоха безграмотности", "description": "Система формального образования практически отсутствует или недоступна для подавляющего большинства. Массовая неграмотность препятствует любому социальному и экономическому прогрессу." }
+        edu_level_1: { id: "edu_level_1", "icon_path": "history/development_areas_icons/edu_level_1.png", "name_display": "Ликвидация неграмотности", "description": "Государство реализует программы по обеспечению базовой грамотности (чтение, письмо, счет). Начальные школы становятся более доступными, но качество образования остается низким." }
+        edu_level_2: { id: "edu_level_2", "icon_path": "history/development_areas_icons/edu_level_2.png", "name_display": "Всеобщее базовое образование", "description": "Большинство населения обладает навыками, достаточными для повседневной жизни и неквалифицированного труда. Среднее (полное) школьное образование становится нормой, но доступ к качественному высшему образованию ограничен." }
+        edu_level_3: { id: "edu_level_3", "icon_path": "history/development_areas_icons/edu_level_3.png", "name_display": "Качественное высшее образование и научные кадры", "description": "Сеть университетов и научных институтов обеспечивает подготовку квалифицированных специалистов для ключевых отраслей. Поддерживаются фундаментальные и прикладные исследования. Появляются очаги критического мышления." }
+        edu_level_4: { id: "edu_level_4", "icon_path": "history/development_areas_icons/edu_level_4.png", "name_display": "Инновационная образовательная среда", "description": "Образовательная система ориентирована на развитие творческого потенциала, инноваций и междисциплинарных исследований. Россия активно участвует в международном научном обмене, привлекая и удерживая таланты." }
+        edu_level_5: { id: "edu_level_5", "icon_path": "history/development_areas_icons/edu_level_5.png", "name_display": "Мировой лидер в науке и образовании", "description": "Российские университеты и научные школы находятся на вершине мировых рейтингов, страна является центром генерации передовых знаний и подготовки элитных кадров для всего мира." }
+
+    healthcare:
+      id: "healthcare"
+      name: "Здравоохранение"
+      progress_per_level: 100
+      levels:
+        hc_level_0: { id: "hc_level_0", "icon_path": "history/development_areas_icons/hc_level_0.png", "name_display": "Кризис здравоохранения", "description": "Система здравоохранения разрушена или крайне неэффективна. Высокая смертность от излечимых болезней, низкая продолжительность жизни. Доступ к медицине крайне ограничен." }
+        hc_level_1: { id: "hc_level_1", "icon_path": "history/development_areas_icons/hc_level_1.png", "name_display": "Базовая медпомощь", "description": "Государство обеспечивает минимальный уровень экстренной и первичной медицинской помощи. Фокус на борьбе с эпидемиями и детской смертностью." }
+        hc_level_2: { id: "hc_level_2", "icon_path": "history/development_areas_icons/hc_level_2.png", "name_display": "Всеобщий доступ к медицине", "description": "Развитая сеть поликлиник и больниц обеспечивает доступность основных медицинских услуг для большинства населения. Государственное страхование или финансирование." }
+        hc_level_3: { id: "hc_level_3", "icon_path": "history/development_areas_icons/hc_level_3.png", "name_display": "Качественная и специализированная помощь", "description": "Повышается качество медицинских услуг, доступны сложные операции и лечение редких заболеваний. Инвестиции в медицинское оборудование и кадры." }
+        hc_level_4: { id: "hc_level_4", "icon_path": "history/development_areas_icons/hc_level_4.png", "name_display": "Фокус на профилактике и инновациях", "description": "Система здравоохранения активно занимается профилактикой заболеваний, здоровым образом жизни и внедрением передовых медицинских технологий и исследований." }
+        hc_level_5: { id: "hc_level_5", "icon_path": "history/development_areas_icons/hc_level_5.png", "name_display": "Мировой лидер в медицине", "description": "Страна является центром медицинских инноваций, привлекает пациентов и специалистов со всего мира. Высочайший уровень здоровья нации." }
+
+    welfare:
+      id: "welfare"
+      name: "Достаток Населения"
+      progress_per_level: 100
+      levels:
+        wel_level_0: { id: "wel_level_0", "icon_path": "history/development_areas_icons/welfare_level_0.png", "name_display": "Массовая нищета", "description": "Более половины населения живет за чертой бедности. Доходы не обеспечивают даже минимальных физиологических потребностей. Социальные услуги деградировали." }
+        wel_level_1: { id: "wel_level_1", "icon_path": "history/development_areas_icons/welfare_level_1.png", "name_display": "Повсеместные финансовые трудности", "description": "Большая часть граждан испытывает постоянные финансовые трудности. Социальное неравенство достигает критических отметок. Небольшая прослойка сверхбогатых контрастирует с общей бедностью." }
+        wel_level_2: { id: "wel_level_2", "icon_path": "history/development_areas_icons/welfare_level_2.png", "name_display": "Снижение бедности и формирование нижнего среднего слоя", "description": "Уровень абсолютной бедности снижается. Появляется заметный слой населения со стабильными, хотя и невысокими доходами. Потребление базовых товаров и услуг растет." }
+        wel_level_3: { id: "wel_level_3", "icon_path": "history/development_areas_icons/welfare_level_3.png", "name_display": "Рост среднего класса и потребительского спроса", "description": "Формируется устойчивый средний класс, составляющий значительную часть населения. Растет доступность качественного образования, медицины, жилья. Увеличивается внутренний спрос." }
+        wel_level_4: { id: "wel_level_4", "icon_path": "history/development_areas_icons/welfare_level_4.png", "name_display": "Высокий уровень жизни и социальная мобильность", "description": "Большинство граждан имеет высокий достаток и уверенность в будущем. Эффективно работают социальные лифты." }
+        wel_level_5: { id: "wel_level_5", "icon_path": "history/development_areas_icons/welfare_level_5.png", "name_display": "Общество всеобщего благосостояния", "description": "Россия характеризуется высоким уровнем и качеством жизни для всех слоев населения и широким доступом к социальным благам, низким неравенством." }
+
+    agriculture:
+      id: "agriculture"
+      name: "Сельское хозяйство"
+      progress_per_level: 100
+      levels:
+        agr_level_0: { id: "agr_level_0", "icon_path": "history/development_areas_icons/agr_level_0.png", "name_display": "Упадок сельского хозяйства", "description": "Аграрный сектор деградировал. Преобладает мелкотоварное, низкоэффективное производство. Значительные территории заброшены, продовольственная зависимость от импорта критична." }
+        agr_level_1: { id: "agr_level_1", "icon_path": "history/development_areas_icons/agr_level_1.png", "name_display": "Достижение продовольственной безопасности по основным продуктам", "description": "Государственная поддержка и частные инвестиции позволяют остановить упадок. Восстанавливается производство основных видов сельхозпродукции. Страна обеспечивает себя по ключевым позициям." }
+        agr_level_2: { id: "agr_level_2", "icon_path": "history/development_areas_icons/agr_level_2.png", "name_display": "Развитие АПК и импортозамещение", "description": "Формируется современный агропромышленный комплекс. Внедряются умеренно-продвинутые технологии, развивается переработка. Растет самообеспеченность по широкому спектру продовольствия." }
+        agr_level_3: { id: "agr_level_3", "icon_path": "history/development_areas_icons/agr_level_3.png", "name_display": "Экспортно-ориентированное сельское хозяйство", "description": "Россия становится заметным игроком на мировом продовольственном рынке. Высокая продуктивность, диверсификация, развитая логистика. Сельское хозяйство – прибыльная отрасль." }
+        agr_level_4: { id: "agr_level_4", "icon_path": "history/development_areas_icons/agr_level_4.png", "name_display": "Высокотехнологичный АПК и органическое земледелие", "description": "Широкое применение биотехнологий, точного земледелия, робототехники. Развивается производство высококачественной органической продукции." }
+        agr_level_5: { id: "agr_level_5", "icon_path": "history/development_areas_icons/agr_level_5.png", "name_display": "Глобальное лидерство в агротехнологиях и продовольствии", "description": "Российский АПК – эталон эффективности, инноваций и экологической устойчивости, вносящий решающий вклад в мировую продовольственную безопасность." }
+
+    industry:
+      id: "industry"
+      name: "Промышленность"
+      progress_per_level: 100
+      levels:
+        ind_level_0: { id: "ind_level_0", "icon_path": "history/development_areas_icons/ind_level_0.png", "name_display": "Деиндустриализация", "description": "Закрытие большинства крупных предприятий. Утрата технологических компетенций. Экономика критически зависит от импорта промышленных товаров и экспорта сырья." }
+        ind_level_1: { id: "ind_level_1", "icon_path": "history/development_areas_icons/ind_level_1.png", "name_display": "Восстановление базовых производств", "description": "Возобновление работы некоторых ключевых предприятий, ориентированных на внутренний рынок или первичную переработку сырья. Низкая производительность и устаревшие технологии." }
+        ind_level_2: { id: "ind_level_2", "icon_path": "history/development_areas_icons/ind_level_2.png", "name_display": "Модернизация и рост в традиционных отраслях", "description": "Инвестиции в модернизацию существующих производств (металлургия, тяжелое машиностроение, химия). Развитие ВПК как локомотива. Появление первых конкурентоспособных гражданских предприятий." }
+        ind_level_3: { id: "ind_level_3", "icon_path": "history/development_areas_icons/ind_level_3.png", "name_display": "Диверсификация и развитие высокотехнологичных секторов", "description": "Активное развитие новых отраслей: IT, телекоммуникации, авиакосмическая промышленность, фармацевтика. Увеличивается доля несырьевого экспорта. Растут инвестиции в НИОКР." }
+        ind_level_4: { id: "ind_level_4", "icon_path": "history/development_areas_icons/ind_level_4.png", "name_display": "Инновационная экономика и технологическое лидерство", "description": "Россия – один из мировых лидеров в разработке и производстве высокотехнологичной продукции. Промышленность основана на инновациях, цифровизации и высокой производительности труда." }
+        ind_level_5: { id: "ind_level_5", "icon_path": "history/development_areas_icons/ind_level_5.png", "name_display": "Глобальный центр промышленных инноваций", "description": "Российская промышленность задает мировые технологические тренды, является пионером в новых индустриях (например, искусственный интеллект в производстве, новые материалы, биотехнологии)." }
+
+    internal_security:
+      id: "internal_security"
+      name: "Внутренняя Безопасность"
+      progress_per_level: 100
+      levels:
+        isec_level_0: { id: "isec_level_0", "icon_path": "history/development_areas_icons/isec_level_0.png", "name_display": "Правовой коллапс", "description": "Правоохранительные органы не функционируют, повсеместный бандитизм и беззаконие. Граждане не защищены." }
+        isec_level_1: { id: "isec_level_1", "icon_path": "history/development_areas_icons/isec_level_1.png", "name_display": "Восстановление порядка", "description": "Создание или реорганизация полиции, борьба с оргпреступностью. Первые шаги к правопорядку." }
+        isec_level_2: { id: "isec_level_2", "icon_path": "history/development_areas_icons/isec_level_2.png", "name_display": "Эффективная полиция", "description": "Полиция профессиональна, эффективно расследует преступления и поддерживает общественный порядок." }
+        isec_level_3: { id: "isec_level_3", "icon_path": "history/development_areas_icons/isec_level_3.png", "name_display": "Развитые спецслужбы", "description": "Сильные и эффективные спецслужбы борются с терроризмом, экстремизмом и внешними угрозами внутренней стабильности." }
+        isec_level_4: { id: "isec_level_4", "icon_path": "history/development_areas_icons/isec_level_4.png", "name_display": "Высокий уровень общественной безопасности", "description": "Низкий уровень преступности, граждане чувствуют себя в безопасности. Развиты системы профилактики правонарушений." }
+        isec_level_5: { id: "isec_level_5", "icon_path": "history/development_areas_icons/isec_level_5.png", "name_display": "Образцовый правопорядок", "description": "Система внутренней безопасности является примером для других стран, обеспечивая почти полное отсутствие преступности и высокий уровень гражданских свобод при соблюдении закона." }
+
+    military_might:
+      id: "military_might"
+      name: "Военная Мощь"
+      progress_per_level: 100
+      levels:
+        mil_level_0: { id: "mil_level_0", "icon_path": "history/development_areas_icons/military_might_level_0.png", "name_display": "Армия в упадке", "description": "Вооруженные силы практически отсутствуют или полностью небоеспособны. Низкая дисциплина, устаревшее вооружение. Оборонная промышленность разрушена." }
+        mil_level_1: { id: "mil_level_1", "icon_path": "history/development_areas_icons/military_might_level_1.png", "name_display": "Силы самообороны", "description": "Формирование базовых оборонительных подразделений, способных защитить ключевые объекты и противостоять локальным угрозам. Начало восстановления ВПК." }
+        mil_level_2: { id: "mil_level_2", "icon_path": "history/development_areas_icons/military_might_level_2.png", "name_display": "Регулярная армия", "description": "Хорошо организованная армия, способная вести оборонительные войны и ограниченные наступательные операции на своей территории и в ближнем зарубежье." }
+        mil_level_3: { id: "mil_level_3", "icon_path": "history/development_areas_icons/military_might_level_3.png", "name_display": "Современные вооруженные силы", "description": "Армия оснащена современным вооружением, профессионально подготовлена, способна к комплексным операциям и участию в коалиционных силах." }
+        mil_level_4: { id: "mil_level_4", "icon_path": "history/development_areas_icons/military_might_level_4.png", "name_display": "Проекция глобальной силы", "description": "Высокомобильные, технологически продвинутые силы, способные действовать в любой точке мира для защиты национальных интересов и выполнения союзнических обязательств." }
+        mil_level_5: { id: "mil_level_5", "icon_path": "history/development_areas_icons/military_might_level_5.png", "name_display": "Доминирующая военная сверхдержава", "description": "Вооруженные силы страны являются непревзойденными по своей мощи и технологиям, обладая потенциалом глобального стратегического сдерживания и способностью определять исход любого конфликта." }
+
+    social_development:
+      id: "social_development"
+      name: "Общественное развитие"
+      progress_per_level: 100
+      levels:
+        soc_dev_level_0: { id: "soc_dev_level_0", "icon_path": "history/development_areas_icons/soc_dev_level_0.png", "name_display": "Социально-правовой коллапс и культурная деградация", "description": "Глубокий кризис идентичности, утрата традиционных ценностей и культурной самобытности. Правовой нигилизм, коррупция, недоверие к институтам власти и судам. Низкая гражданская активность, социальная апатия и упадок образования. Размывание общественной морали, подверженность внешнему деструктивному влиянию." }
+        soc_dev_level_1: { id: "soc_dev_level_1", "icon_path": "history/development_areas_icons/soc_dev_level_1.png", "name_display": "Становление основ правосознания и защита культурного кода", "description": "Начало осознания ценности собственного наследия и необходимости построения справедливого общества. Попытки сохранения уникальных традиций и укрепления правопорядка. Формирование основ культурной и гражданской идентичности, первые шаги к консолидации общества вокруг общих ценностей и запроса на честные суды и работающие институты." }
+        soc_dev_level_2: { id: "soc_dev_level_2", "icon_path": "history/development_areas_icons/soc_dev_level_2.png", "name_display": "Национально-культурное возрождение и гражданская зрелость", "description": "Активное развитие национальной культуры, искусства, науки и образования. Укрепление национального самосознания и гражданской ответственности. Рост популярности национальной культуры и доверия к общественным институтам, включая независимые суды. Формирование этических стандартов в обществе и управлении, развитие гражданского общества." }
+        soc_dev_level_3: { id: "soc_dev_level_3", "icon_path": "history/development_areas_icons/soc_dev_level_3.png", "name_display": "Развитое правовое государство и богатое наследие", "description": "Накоплен значительный пласт культурных и научных достижений, являющихся предметом национальной гордости. Сформированное правовое государство с независимой судебной системой, высоким уровнем гражданских свобод и активным гражданским обществом. Национальная культура и модель общественного развития становятся узнаваемыми и ценятся за рубежом, способствуя положительному имиджу страны." }
+        soc_dev_level_4: { id: "soc_dev_level_4", "icon_path": "history/development_areas_icons/soc_dev_level_4.png", "name_display": "Мировое цивилизационное и культурное лидерство", "description": "Культурные продукты, научные достижения и модели общественного устройства (включая правовую систему и стандарты управления) активно экспортируются и служат примером для других. Национальная культура и цивилизационные достижения становятся источником вдохновения, усиливая 'мягкую силу' и международные позиции. Глубокое национальное самосознание, основанное на справедливости, инновациях и высоком уровне развития." }
+        soc_dev_level_5: { id: "soc_dev_level_5", "icon_path": "history/development_areas_icons/soc_dev_level_5.png", "name_display": "Цивилизационный гегемон и культурный идеал", "description": "Культура, наука, правовые и этические нормы нации определяют мировые тренды и стандарты. Непререкаемый авторитет и самодостаточность национальной идентичности, основанной на принципах справедливости, гуманизма и прогресса. Язык, культурные коды и модели общественного развития нации доминируют в международном пространстве. Полное и гармоничное единство общества на основе общих цивилизационных ценностей и верховенства права." }
+  # --- СПРАВОЧНИК: КОРПОРАЦИИ ---
+  corporations:
+    gazprom: { id: "gazprom", name: "Газпром", name_display: "Газпром", icon_path: "/history/corporations_icons/gazprom.png", effects_summary: "Контроль экспорта газа: +++" }
+    lukoil: { id: "lukoil", name: "Лукойл", name_display: "Лукойл", icon_path: "/history/corporations_icons/lukoil.png", effects_summary: "Добыча нефти: ++" }
+    yukos: { id: "yukos", name: "ЮКОС", name_display: "ЮКОС", icon_path: "/history/corporations_icons/yukos.png", effects_summary: "Политические риски: Высокие" }
+    surgutneftegaz: { id: "surgutneftegaz", name: "Сургутнефтегаз", name_display: "Сургутнефтегаз", icon_path: "/history/corporations_icons/surgutneftegaz.png", effects_summary: "Финансовая стабильность: +++" }
+    rao_ees: { id: "rao_ees", name: "РАО \"ЕЭС России\"", name_display: "РАО \"ЕЭС России\"", icon_path: "/history/corporations_icons/rao_ees.png", effects_summary: "Контроль электроэнергетики: +++" }
+    norilsk_nickel: { id: "norilsk_nickel", name: "Норильский Никель", name_display: "Норильский Никель", icon_path: "/history/corporations_icons/norilsk_nickel.png", effects_summary: "Производство цветных металлов: +++" }
+    rusal: { id: "rusal", name: "РусАл", name_display: "РусАл", icon_path: "/history/corporations_icons/rusal.png", effects_summary: "Производство алюминия: +++" }
+    severstal: { id: "severstal", name: "Северсталь", name_display: "Северсталь", icon_path: "/history/corporations_icons/severstal.png", effects_summary: "Производство стали: +++" }
+    avtovaz: { id: "avtovaz", name: "АвтоВАЗ", name_display: "АвтоВАЗ", icon_path: "/history/corporations_icons/avtovaz.png", effects_summary: "Внутренний авторынок: +++" }
+    rostech_concept: { id: "rostech_concept", name: "РосТех", name_display: "РосТех", icon_path: "/history/corporations_icons/rostech.png", effects_summary: "Консолидация хайтека и ОПК" }
+    rosoboronprom_concept: { id: "rosoboronprom_concept", name: "РосОборонПром", name_display: "РосОборонПром", icon_path: "/history/corporations_icons/rosoboronprom.png", effects_summary: "Государственный оборонный мега-холдинг" }
+    rosoboronexport: { id: "rosoboronexport", name: "Рособоронэкспорт", name_display: "Рособоронэкспорт", icon_path: "/history/corporations_icons/rosoboronexport.png", effects_summary: "Госмонополия на экспорт вооружений" }
+    sberbank: { id: "sberbank", name: "Сбербанк", name_display: "Сбербанк России", icon_path: "/history/corporations_icons/sberbank.png", effects_summary: "Контроль банковского сектора: +++" }
+    alpha_bank: { id: "alpha_bank", name: "Альфа-Банк", name_display: "Альфа-Банк", icon_path: "/history/corporations_icons/alpha_bank.png", effects_summary: "Конкуренция в банковском секторе: +" }
+    vtb: { id: "vtb", name: "ВТБ", name_display: "Внешторгбанк (ВТБ)", icon_path: "/history/corporations_icons/vtb.png", effects_summary: "Обслуживание госкорпораций: ++" }
+    ingosstrakh: { id: "ingosstrakh", name: "Ингосстрах", name_display: "Ингосстрах", icon_path: "/history/corporations_icons/ingosstrakh.png", effects_summary: "Лидер корпоративного страхования" }
+    mts: { id: "mts", name: "МТС", name_display: "МТС", icon_path: "/history/corporations_icons/mts.png", effects_summary: "Лидер сотовой связи" }
+    vympelcom: { id: "vympelcom", name: "ВымпелКом", name_display: "ВымпелКом (\"Билайн\")", icon_path: "/history/corporations_icons/vympelcom.png", effects_summary: "Конкуренция на рынке связи: +" }
+    svyazinvest: { id: "svyazinvest", name: "Связьинвест", name_display: "Связьинвест", icon_path: "/history/corporations_icons/svyazinvest.png", effects_summary: "Гостелеком-холдинг, инфраструктура" }
+    channel_one_ort: { id: "channel_one_ort", name: "Первый канал", name_display: "Первый канал (ОРТ)", icon_path: "/history/corporations_icons/channel_one_ort.png", effects_summary: "Информационное влияние: +++" }
+    rzd_oao: { id: "rzd_oao", name: "ОАО \"РЖД\"", name_display: "ОАО \"РЖД\"", icon_path: "/history/corporations_icons/rzd_oao.png", effects_summary: "Национальный железнодорожный оператор" }
+    aeroflot: { id: "aeroflot", name: "Аэрофлот", name_display: "Аэрофлот", icon_path: "/history/corporations_icons/aeroflot.png", effects_summary: "Национальный авиаперевозчик" }
+    magnit: { id: "magnit", name: "Магнит", name_display: "Магнит", icon_path: "/history/corporations_icons/magnit.png", effects_summary: "Быстрорастущая розничная сеть" }
+    wimm_bill_dann: { id: "wimm_bill_dann", name: "Вимм-Билль-Данн", name_display: "Вимм-Билль-Данн", icon_path: "/history/corporations_icons/wimm_bill_dann.png", effects_summary: "Крупный производитель продуктов питания" }

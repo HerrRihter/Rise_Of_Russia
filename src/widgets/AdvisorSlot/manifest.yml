@@ -1,0 +1,4 @@
+name: advisor-slot
+title: AdvisorSlotWidget
+props:
+  label: string

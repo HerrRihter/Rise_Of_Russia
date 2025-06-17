@@ -1,0 +1,22 @@
+{
+  "countries": [
+    {
+      "id": "china",
+      "name": "Китай",
+      "flag_path": "history/flags/china.png",
+      "relations": 25,
+      "has_trade_agreement": true,
+      "is_ally": false,
+      "is_enemy": false
+    },
+    {
+      "id": "usa",
+      "name": "США",
+      "flag_path": "history/flags/usa.png",
+      "relations": -30,
+      "has_trade_agreement": false,
+      "is_ally": false,
+      "is_enemy": true
+    }
+  ]
+}

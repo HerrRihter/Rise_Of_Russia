@@ -1,0 +1,4 @@
+name: development-area-slot
+title: DevelopmentAreaSlotWidget
+props:
+  label: string

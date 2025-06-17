@@ -1,0 +1,4 @@
+name: national-info-pane
+title: NationalInfoPaneWidget
+props:
+  label: string

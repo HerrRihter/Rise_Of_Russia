@@ -1,0 +1,4 @@
+name: category-container
+title: CategoryContainerWidget
+props:
+  label: string

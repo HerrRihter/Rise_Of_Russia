@@ -1,0 +1,4 @@
+name: focus-tree
+title: FocusTreeWidget
+props:
+  label: string

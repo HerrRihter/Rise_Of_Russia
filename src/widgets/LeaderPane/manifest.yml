@@ -1,0 +1,4 @@
+name: leader-pane
+title: LeaderPaneWidget
+props:
+  label: string

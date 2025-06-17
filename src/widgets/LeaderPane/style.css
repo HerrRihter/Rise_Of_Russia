@@ -1,0 +1,43 @@
+/* src/widgets/LeaderPane/style.css */
+.upper-section {
+    display: flex;
+    border-bottom: 1px solid #555;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+.leader-pane {
+    flex-basis: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
+}
+.leader-portrait {
+    width: 156px; height: 210px; background-color: #555;
+    border: 1px solid #777; margin-bottom: 8px;
+}
+.leader-portrait img { width: 100%; height: 100%; object-fit: cover; }
+.leader-name {
+    background-color: #223e22; color: #ffd700; padding: 6px 12px;
+    text-align: center; font-size: 1em; border: 1px solid #335e33;
+    border-radius: 3px; width: 95%; margin-bottom: 8px;
+}
+.ideology-info {
+    display: flex; align-items: stretch; width: 100%;
+    max-width: 230px; margin-top: 10px; gap: 8px;
+}
+.ideology-icon {
+    width: 75px; height: 75px; background-color: #333;
+    border: 1px solid #555; border-radius: 4px;
+}
+.ideology-icon img { width: 90%; height: 90%; object-fit: contain; }
+.ideology-name {
+    background-color: #4a3b2a; color: #ffd700; padding: 8px;
+    font-size: 0.9em; border: 1px solid #5a4b3a; border-radius: 4px;
+    text-align: center; flex-grow: 1;
+}
+.party-emblem {
+    width: 75px; height: 75px; background-color: #333;
+    border: 1px solid #555; margin-top: 10px; border-radius: 4px;
+}
+.party-emblem img { width: 90%; height: 90%; object-fit: contain; }

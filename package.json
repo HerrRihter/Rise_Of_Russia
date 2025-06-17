@@ -1,0 +1,20 @@
+{
+  "name": "rise-of-russia",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/build-widgets.mjs && vite",
+    "build": "node scripts/build-widgets.mjs && vite build",
+    "deploy": "gh-pages -d dist",
+    "new-widget": "node scripts/new-widget.mjs",
+    "lint": "eslint . --ext .js,.mjs",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "yaml": "^2.8.0"
+  }
+}
