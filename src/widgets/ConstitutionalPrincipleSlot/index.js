@@ -3,21 +3,17 @@ import { addTooltipEvents } from '../../tooltip.js';
 import { openSidePanel } from '../../sidePanel.js';
 
 export default function ConstitutionalPrincipleSlotWidget(props) {
-  const { definitions, type, assigned_id } = props;
+  const { definitions, state, type } = props;
+  const principleDef = definitions.constitutional_principles[type];
+  const assigned_id = state.constitutional_principles_selected_options[type]?.selected_option_id;
+
   const slot = document.createElement('div');
   slot.className = 'constitutional-principle-slot';
 
-  const principleDef = definitions.constitutional_principles[type];
-
   function updateView(optionId) {
-    // ИСПРАВЛЕНИЕ: Находим опцию напрямую по ключу в объекте, а не через .find()
     const selectedOption = principleDef?.options?.[optionId];
-
     if (principleDef && selectedOption) {
-      slot.innerHTML = `
-        <img src="${principleDef.icon_path}" alt="${principleDef.name}">
-        <span class="item-slot-label-small">${selectedOption.name_display || selectedOption.name}</span>
-      `;
+      slot.innerHTML = `<img src="${principleDef.icon_path}" alt="${principleDef.name}"><span class="item-slot-label-small">${selectedOption.name_display || selectedOption.name}</span>`;
       slot.classList.remove('empty');
       addTooltipEvents(slot, selectedOption.name, null, selectedOption.description);
     } else {
@@ -30,13 +26,11 @@ export default function ConstitutionalPrincipleSlotWidget(props) {
 
   slot.addEventListener('click', () => {
     if (!principleDef || !principleDef.options) return;
-
     const title = `Выбор: ${principleDef.name}`;
-    // ИСПРАВЛЕНИЕ: Превращаем объект опций в массив для отображения в панели
     const options = Object.values(principleDef.options);
-
     const onSelect = (selectedId) => {
-      props.assigned_id = selectedId;
+      console.log(`Для принципа '${type}' выбрана опция: ${selectedId}`);
+      state.constitutional_principles_selected_options[type] = { principle_id: type, selected_option_id: selectedId };
       updateView(selectedId);
     };
     openSidePanel(title, options, onSelect, 'icon-style');

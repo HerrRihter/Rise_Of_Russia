@@ -24,8 +24,9 @@ export function openSidePanel(title, options, onSelect, styleClass = 'icon-style
   emptyOption.className = 'side-panel-option';
   emptyOption.innerHTML = `<span class="side-panel-option-name" style="color: #ff8a8a;">-- Очистить слот --</span>`;
   emptyOption.addEventListener('click', () => {
-    if (currentOnSelectCallback) currentOnSelectCallback(null);
-    closeSidePanel();
+     if (currentOnSelectCallback) currentOnSelectCallback(null);
+         // Убираем подсветку со всех опций
+         contentEl.querySelector('.side-panel-option.active')?.classList.remove('active');
   });
   contentEl.appendChild(emptyOption);
 
@@ -51,8 +52,14 @@ export function openSidePanel(title, options, onSelect, styleClass = 'icon-style
     // ---------------------------------------------
 
     optionEl.addEventListener('click', () => {
-      if (currentOnSelectCallback) currentOnSelectCallback(option.id);
-      closeSidePanel();
+      if (currentOnSelectCallback) currentOnSelectCallback(option.id); // Вызываем колбэк с ID
+      // closeSidePanel(); // <-- БОЛЬШЕ НЕ ЗАКРЫВАЕМ ПАНЕЛЬ
+
+      // Дополнительно: можно добавить визуальное подтверждение выбора
+      // Убираем класс 'active' со старой активной опции
+      contentEl.querySelector('.side-panel-option.active')?.classList.remove('active');
+      // Добавляем класс 'active' новой выбранной опции
+      optionEl.classList.add('active');
     });
 
     contentEl.appendChild(optionEl);

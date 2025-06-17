@@ -3,7 +3,8 @@ import { addTooltipEvents } from '../../tooltip.js';
 import { openSidePanel } from '../../sidePanel.js';
 
 export default function AdvisorSlotWidget(props) {
-  const { definitions, assigned_id, slot_title } = props;
+  const { definitions, state, type, slot_title } = props;
+
   const slot = document.createElement('div');
   slot.className = 'advisor-portrait-slot';
 
@@ -25,13 +26,18 @@ export default function AdvisorSlotWidget(props) {
     const title = `Выбор: ${slot_title || 'Советник'}`;
     const options = Object.values(definitions.leaders);
     const onSelect = (selectedId) => {
-      console.log(`Для слота '${slot_title}' выбран ID: ${selectedId}`);
-      props.assigned_id = selectedId;
+      console.log(`Для слота '${type}' выбран ID: ${selectedId}`);
+      // Здесь в будущем будет запрос UPDATE в БД:
+      // supabase.from('state_advisors').update({ assigned_id: selectedId }).eq('slot_type', type);
+
+      // А пока обновляем состояние в памяти для мгновенной реакции интерфейса
+      state.advisors_selected[type] = { slot_type: type, assigned_id: selectedId };
       updateView(selectedId);
     };
     openSidePanel(title, options, onSelect, 'advisor-style');
   });
 
+  const assigned_id = state.advisors_selected[type]?.assigned_id;
   updateView(assigned_id);
   return slot;
 }

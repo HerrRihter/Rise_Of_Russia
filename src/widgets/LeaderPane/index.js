@@ -1,84 +1,67 @@
 import './style.css';
 import { addTooltipEvents } from '../../tooltip.js';
 
-// Эта функция создает пустой плейсхолдер для картинки
-function createPlaceholder(width, height) {
-  const img = document.createElement('img');
-  img.src = `https://via.placeholder.com/${width}x${height}/3a3a3a/666?text=?`;
-  return img;
-}
-
 export default function LeaderPaneWidget(props) {
-  // props.state будет содержать { leader_id, ideology_id, party_id }
-  // props.definitions будет содержать все наши справочники (лидеры, партии и т.д.)
-  const { state, definitions } = props;
+  const { definitions, state } = props;
 
-  // Находим полные данные по ID
-  const leader = definitions.leaders[state.leader_id];
-  const ideology = definitions.ideologies[state.ideology_id];
-  const party = definitions.parties[state.party_id];
+  // Получаем все нужные ID напрямую из game_variables
+  const leader_id = state.game_variables?.display_leader_id?.value;
+  const ideology_id = state.game_variables?.display_ideology_id?.value;
+  const party_id = state.game_variables?.ruling_party_id?.value;
 
-  // --- Создаем HTML-структуру ---
+  // Если ключевых данных нет, не рисуем ничего
+  if (!leader_id || !party_id) {
+    console.warn(`LeaderPane: Не найден leader_id или party_id в game_variables.`);
+    return document.createElement('div');
+  }
+
+  const leader = definitions.leaders[leader_id];
+  const ideology = definitions.ideologies[ideology_id];
+  const party = definitions.parties[party_id];
+
   const mainPane = document.createElement('div');
   mainPane.className = 'leader-pane';
 
-  // Портрет
   const portraitDiv = document.createElement('div');
   portraitDiv.className = 'leader-portrait';
-  if (leader && leader.portrait_path) {
-    const img = document.createElement('img');
-    img.src = leader.portrait_path;
-    portraitDiv.appendChild(img);
-  } else {
-    portraitDiv.appendChild(createPlaceholder(156, 210));
+  if (leader?.portrait_path) {
+    portraitDiv.innerHTML = `<img src="${leader.portrait_path}" alt="${leader.name}">`;
+    addTooltipEvents(portraitDiv, leader.name, leader.tooltip_summary, leader.description);
   }
-  
-  // Имя
+
   const nameDiv = document.createElement('div');
   nameDiv.className = 'leader-name';
   nameDiv.textContent = leader ? leader.name : '...';
 
-  // Информация об идеологии
   const ideologyInfoDiv = document.createElement('div');
   ideologyInfoDiv.className = 'ideology-info';
   const ideologyIconDiv = document.createElement('div');
   ideologyIconDiv.className = 'ideology-icon';
-  if (ideology && ideology.icon_path) {
-    const img = document.createElement('img');
-    img.src = ideology.icon_path;
-    ideologyIconDiv.appendChild(img);
+  if (ideology?.icon_path) {
+    ideologyIconDiv.innerHTML = `<img src="${ideology.icon_path}" alt="${ideology.name}">`;
+    addTooltipEvents(ideologyIconDiv, ideology.name, ideology.effects_summary, ideology.description);
   }
   const ideologyNameDiv = document.createElement('div');
   ideologyNameDiv.className = 'ideology-name';
-  ideologyNameDiv.textContent = ideology ? ideology.name : '...';
+  ideologyNameDiv.innerHTML = ideology ? (ideology.name_multiline || ideology.name) : '...';
   ideologyInfoDiv.appendChild(ideologyIconDiv);
   ideologyInfoDiv.appendChild(ideologyNameDiv);
 
-  // Эмблема партии
   const partyEmblemDiv = document.createElement('div');
   partyEmblemDiv.className = 'party-emblem';
-  if (party && party.icon_path) {
-    const img = document.createElement('img');
-    img.src = party.icon_path;
-    partyEmblemDiv.appendChild(img);
+  if (party?.icon_path) {
+    partyEmblemDiv.innerHTML = `<img src="${party.icon_path}" alt="${party.name}">`;
+    let partyEffects = `Популярность: ${party.popularity}%`;
+    if (party.ideology_tags_rus?.length > 0) {
+        partyEffects += `\nИдеологии: ${party.ideology_tags_rus.join(', ')}`;
+    }
+    addTooltipEvents(partyEmblemDiv, party.name, partyEffects, party.short_description);
   }
 
-  // Собираем все вместе
   mainPane.appendChild(portraitDiv);
   mainPane.appendChild(nameDiv);
   mainPane.appendChild(ideologyInfoDiv);
   mainPane.appendChild(partyEmblemDiv);
-
-    if (leader) {
-      addTooltipEvents(portraitDiv, leader.name, leader.tooltip_summary, leader.description);
-    }
-    if (ideology) {
-      addTooltipEvents(ideologyIconDiv, ideology.name, ideology.effects_summary, ideology.description);
-    }
-    if (party) {
-      let partyEffects = `Популярность: ${party.popularity}%\nИдеологии: ${party.ideology_tags_rus.join(', ')}`;
-      addTooltipEvents(partyEmblemDiv, party.name, partyEffects, party.short_description);
-    }
 
   return mainPane;
 }

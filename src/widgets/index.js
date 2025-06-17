@@ -2,6 +2,7 @@
 // Не редактируйте его вручную. Все изменения будут потеряны.
 
 import AdvisorSlotWidget from './AdvisorSlot/index.js';
+import AuthWidget from './Auth/index.js';
 import CategoryContainerWidget from './CategoryContainer/index.js';
 import ConstitutionalPrincipleSlotWidget from './ConstitutionalPrincipleSlot/index.js';
 import CorporationSlotWidget from './CorporationSlot/index.js';
@@ -11,9 +12,11 @@ import FocusTreeWidget from './FocusTree/index.js';
 import KpiWidget from './kpi/index.js';
 import LeaderPaneWidget from './LeaderPane/index.js';
 import NationalInfoPaneWidget from './NationalInfoPane/index.js';
+import UpperSectionContainerWidget from './UpperSectionContainer/index.js';
 
 const widgets = {
   'advisor-slot': AdvisorSlotWidget,
+  'auth': AuthWidget,
   'category-container': CategoryContainerWidget,
   'constitutional-principle-slot': ConstitutionalPrincipleSlotWidget,
   'corporation-slot': CorporationSlotWidget,
@@ -23,6 +26,7 @@ const widgets = {
   'kpi': KpiWidget,
   'leader-pane': LeaderPaneWidget,
   'national-info-pane': NationalInfoPaneWidget,
+  'upper-section-container': UpperSectionContainerWidget,
 };
 
 export default widgets;

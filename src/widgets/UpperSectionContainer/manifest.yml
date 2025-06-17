@@ -1,0 +1,4 @@
+name: upper-section-container
+title: UpperSectionContainerWidget
+props:
+  label: string

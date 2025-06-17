@@ -1,31 +1,30 @@
 import './style.css';
-import widgets from '../index.js'; // Импортируем реестр, чтобы вызывать дочерние виджеты
+import widgets from '../index.js';
 
 export default function CategoryContainerWidget(props) {
-  const { definitions } = props;
+  const { definitions, state, title, children } = props;
 
   const container = document.createElement('div');
   container.className = 'category-block';
 
-  container.innerHTML = `
-    <div class="category-header">${props.title || 'Категория'}</div>
-    <div class="category-items"></div>
-  `;
+  const header = document.createElement('div');
+  header.className = 'category-header';
+  header.textContent = title || 'Категория';
+  container.appendChild(header);
 
-  const itemsContainer = container.querySelector('.category-items');
+  const itemsContainer = document.createElement('div');
+  itemsContainer.className = 'category-items';
+  container.appendChild(itemsContainer);
 
-  if (props.children && itemsContainer) {
-    props.children.forEach(childProps => {
+  if (children && Array.isArray(children)) {
+    children.forEach(childProps => {
       const widgetName = childProps.$ref?.substring(1);
       const WidgetComponent = widgets[widgetName];
-
       if (WidgetComponent) {
-        // Передаем дочернему виджету все его свойства И общие справочники
-        const childWidgetEl = WidgetComponent({ ...childProps, definitions });
+        const childWidgetEl = WidgetComponent({ ...childProps, definitions, state });
         itemsContainer.appendChild(childWidgetEl);
       }
     });
   }
-
   return container;
 }

@@ -1,0 +1,4 @@
+name: auth
+title: AuthWidget
+props:
+  label: string

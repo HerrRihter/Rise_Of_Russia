@@ -3,19 +3,20 @@ import { addTooltipEvents } from '../../tooltip.js';
 import { openSidePanel } from '../../sidePanel.js';
 
 export default function DevelopmentAreaSlotWidget(props) {
-    const { definitions, type, current_level_id, current_progress } = props;
+    const { definitions, state, type } = props;
+    const areaDef = definitions.development_areas[type];
+    const areaState = state.development_areas_state[type];
+
     const wrapper = document.createElement('div');
     wrapper.className = 'development-area-wrapper';
-    const areaDef = definitions.development_areas[type];
 
     function updateView(levelId) {
-        // ИЗМЕНЕНИЕ: Находим уровень напрямую по ключу в объекте
         const currentLevel = areaDef?.levels?.[levelId];
-
         if (!areaDef || !currentLevel) {
             wrapper.textContent = `Ошибка: область ${type} не найдена`;
             return;
         }
+        const current_progress = areaState?.current_progress || 0;
         const progressPerLevel = areaDef.progress_per_level || 100;
         const progressPercentage = (current_progress / progressPerLevel) * 100;
         wrapper.innerHTML = `
@@ -35,16 +36,17 @@ export default function DevelopmentAreaSlotWidget(props) {
     wrapper.addEventListener('click', () => {
         if (!areaDef || !areaDef.levels) return;
         const title = `Выбор уровня: ${areaDef.name}`;
-        // ИЗМЕНЕНИЕ: Превращаем объект уровней в массив
         const options = Object.values(areaDef.levels);
-
         const onSelect = (selectedId) => {
-            props.current_level_id = selectedId;
+            console.log(`Для области '${type}' выбран уровень: ${selectedId}`);
+            if(state.development_areas_state[type]) {
+                state.development_areas_state[type].current_level_id = selectedId;
+            }
             updateView(selectedId);
         };
         openSidePanel(title, options, onSelect, 'icon-style');
     });
 
-    updateView(current_level_id);
+    updateView(areaState?.current_level_id);
     return wrapper;
 }
