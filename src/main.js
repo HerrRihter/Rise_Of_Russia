@@ -10,25 +10,18 @@ function arrayToIdObject(array, key = 'id') {
   return Object.fromEntries(array.map(item => [item[key], item]));
 }
 
-// --- Глобальные переменные ---
 let definitions = {};
 let state = {};
 let currentUser = null;
 const appContainer = document.getElementById('app');
-let realtimeChannel = null; // Переменная для хранения нашего real-time канала
+let realtimeChannel = null;
 
-/**
- * Функция для полной перерисовки интерфейса.
- */
 function reRenderApp() {
   if (appContainer) {
     renderDashboard(appContainer, state, definitions, currentUser);
   }
 }
 
-/**
- * Загружает все справочники и все данные о состоянии из Supabase.
- */
 async function fetchAllData() {
   console.log("Загрузка всех данных из Supabase...");
   const [
@@ -51,9 +44,19 @@ async function fetchAllData() {
   ]);
 
   const principles = arrayToIdObject(principlesData);
-  principleOptionsData.forEach(opt => { if (principles[opt.principle_id]) { if (!principles[opt.principle_id].options) principles[opt.principle_id].options = {}; principles[opt.principle_id].options[opt.id] = opt; } });
+  principleOptionsData.forEach(opt => {
+    if (principles[opt.principle_id]) {
+      if (!principles[opt.principle_id].options) principles[opt.principle_id].options = {};
+      principles[opt.principle_id].options[opt.id] = opt;
+    }
+  });
   const devAreas = arrayToIdObject(devAreasData);
-  devAreaLevelsData.forEach(level => { if (devAreas[level.area_id]) { if (!devAreas[level.area_id].levels) devAreas[level.area_id].levels = {}; devAreas[level.area_id].levels[level.id] = level; } });
+  devAreaLevelsData.forEach(level => {
+    if (devAreas[level.area_id]) {
+      if (!devAreas[level.area_id].levels) devAreas[level.area_id].levels = {};
+      devAreas[level.area_id].levels[level.id] = level;
+    }
+  });
 
   definitions = {
     leaders: arrayToIdObject(leadersData), ideologies: arrayToIdObject(ideologiesData),
@@ -70,39 +73,41 @@ async function fetchAllData() {
     corporations_selected: arrayToIdObject(corpsState, 'slot_type'),
     constitutional_principles_selected_options: arrayToIdObject(principlesState, 'principle_id'),
     development_areas_state: arrayToIdObject(devAreasState, 'area_id'),
-    leader_pane_state: { leader_id: gameVars.display_leader_id?.value, ideology_id: gameVars.display_ideology_id?.value, party_id: gameVars.ruling_party_id?.value },
-    national_info_state: { completed_focuses: focusStateResult?.completed_focuses || [], active_national_spirit_ids: activeSpiritsData.map(s => s.spirit_id) }
+    leader_pane_state: {
+      leader_id: gameVars.display_leader_id?.value,
+      ideology_id: gameVars.display_ideology_id?.value,
+      party_id: gameVars.ruling_party_id?.value
+    },
+    national_info_state: {
+      completed_focuses: focusStateResult?.completed_focuses || [],
+      active_national_spirit_ids: activeSpiritsData.map(s => s.spirit_id)
+    }
   };
 }
 
-/**
- * Функция, которая подписывается на все real-time обновления
- */
 function subscribeToRealtimeUpdates() {
-    const handleUpdate = async (payload) => {
-        console.log('Обнаружено изменение в БД, перезагружаем все данные...', payload);
-        await fetchAllData();
-        reRenderApp();
-    };
+  const handleUpdate = async (payload) => {
+    console.log('Обнаружено изменение в БД, перезагружаем все данные...', payload);
+    await fetchAllData();
+    reRenderApp();
+  };
 
-    // Если канал уже есть, отписываемся от старого, чтобы избежать дублей
-    if (realtimeChannel) {
-        supabase.removeChannel(realtimeChannel);
-    }
+  if (realtimeChannel) {
+    supabase.removeChannel(realtimeChannel);
+  }
 
-    // Создаем новый канал и подписки
-    realtimeChannel = supabase.channel('realtime-updates');
-    realtimeChannel
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'game_variables' }, handleUpdate)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'state_advisors' }, handleUpdate)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'state_corporations' }, handleUpdate)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'state_constitutional_principles' }, handleUpdate)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'state_development_areas' }, handleUpdate)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'state_focus_tree' }, handleUpdate)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'state_national_spirits' }, handleUpdate)
-      .subscribe();
+  realtimeChannel = supabase.channel('realtime-updates');
+  realtimeChannel
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'game_variables' }, handleUpdate)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'state_advisors' }, handleUpdate)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'state_corporations' }, handleUpdate)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'state_constitutional_principles' }, handleUpdate)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'state_development_areas' }, handleUpdate)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'state_focus_tree' }, handleUpdate)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'state_national_spirits' }, handleUpdate)
+    .subscribe();
 
-    console.log("Приложение подписано на real-time обновления.");
+  console.log("Приложение подписано на real-time обновления.");
 }
 
 async function main() {
@@ -111,22 +116,35 @@ async function main() {
   initSidePanel();
   if (!appContainer) return;
 
-  // --- ГЛАВНЫЙ СЛУШАТЕЛЬ АУТЕНТИФИКАЦИИ ---
+  appContainer.innerHTML = `<div style="color:gray;padding:20px;">Загрузка...</div>`;
+
+  const { data } = await supabase.auth.getSession();
+  currentUser = data.session?.user || null;
+
+  if (currentUser) {
+    try {
+      await fetchAllData();
+      subscribeToRealtimeUpdates();
+    } catch (err) {
+      console.error('Ошибка при загрузке данных:', err);
+      appContainer.innerHTML = `<h1 style="color:red;">Ошибка: ${err.message}</h1>`;
+    }
+  }
+
+  reRenderApp();
+
   supabase.auth.onAuthStateChange(async (_event, session) => {
     currentUser = session?.user || null;
 
     if (currentUser) {
-      // Пользователь ЗАЛОГИНЕН
       try {
-        await fetchAllData(); // Загружаем все данные
-        subscribeToRealtimeUpdates(); // И подписываемся на обновления
+        await fetchAllData();
+        subscribeToRealtimeUpdates();
       } catch (error) {
         console.error('Ошибка при загрузке данных после входа:', error);
         appContainer.innerHTML = `<h1 style="color:red;">Ошибка: ${error.message}</h1>`;
       }
     } else {
-      // Пользователь НЕ залогинен
-      // Очищаем данные и отписываемся от обновлений
       state = {};
       definitions = {};
       if (realtimeChannel) {
@@ -135,10 +153,8 @@ async function main() {
       }
     }
 
-    // В любом случае (вход, выход, первая загрузка) перерисовываем интерфейс
     reRenderApp();
   });
 }
 
-// Запускаем всё
 main();
