@@ -1,0 +1,4 @@
+name: political-actions
+title: PoliticalActionsWidget
+props:
+  label: string

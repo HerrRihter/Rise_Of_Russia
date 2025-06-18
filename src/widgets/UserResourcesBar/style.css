@@ -1,0 +1,38 @@
+.user-resources-bar {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  background-color: #111; /* Темнее, чем основной фон */
+  border-bottom: 1px solid #333;
+  gap: 20px; /* Расстояние между иконками ресурсов */
+  height: 32px; /* Фиксированная высота для панели */
+  box-sizing: border-box;
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  color: #ccc;
+  cursor: help;
+}
+
+.resource-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Иконка для Политических Очков */
+.pp-icon {
+  background-image: url('/history/icons/political_power.png');
+}
+
+.resource-value {
+  font-size: 1em;
+  font-weight: bold;
+  color: #f0e68c; /* Золотистый цвет для значения PP */
+}

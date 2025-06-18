@@ -1,4 +1,0 @@
-name: demo-chart
-title: DemoChartWidget
-props:
-  label: string

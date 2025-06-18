@@ -1,0 +1,4 @@
+name: political-power
+title: PoliticalPowerWidget
+props:
+  label: string

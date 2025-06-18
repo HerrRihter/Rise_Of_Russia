@@ -1,0 +1,2 @@
+[functions.perform-political-action]
+verify_jwt = false

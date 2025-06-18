@@ -1,4 +1,6 @@
 .upper-section-container-widget {
   /* Стили для вашего нового виджета */
+  display: flex;
+  position: relative;
   border: 2px dashed limegreen;
 }

@@ -1,5 +1,6 @@
 import widgets from './widgets/index.js';
 import { supabase } from './supabaseClient.js';
+import UserResourcesBarWidget from './widgets/UserResourcesBar/index.js'; // <-- Импортируем виджет напрямую
 
 /**
  * Главная функция отрисовки всего приложения.
@@ -17,18 +18,15 @@ export function renderDashboard(container, state, definitions, user) {
   topBar.style.cssText = 'display: flex; justify-content: space-between; padding: 10px; background-color: #1e1e1e; align-items: center;';
 
   if (user) {
-    // Если пользователь есть, показываем его email и кнопку "Выйти"
     topBar.innerHTML = `<span style="color: #ccc;">Вы вошли как: ${user.email}</span>`;
     const logoutButton = document.createElement('button');
     logoutButton.textContent = 'Выйти';
     logoutButton.style.cssText = 'padding: 5px 10px; cursor: pointer;';
     logoutButton.onclick = () => {
-        // Вызываем функцию выхода из Supabase
         supabase.auth.signOut();
     };
     topBar.appendChild(logoutButton);
   } else {
-    // Если пользователя нет
     topBar.innerHTML = `<span>Вы не авторизованы</span>`;
   }
   container.appendChild(topBar);
@@ -37,14 +35,23 @@ export function renderDashboard(container, state, definitions, user) {
   if (user) {
     // --- ПОЛЬЗОВАТЕЛЬ АВТОРИЗОВАН: РИСУЕМ ПОЛНОЦЕННЫЙ ИНТЕРФЕЙС ---
 
-    // Отрисовываем заголовок
+    // --- НОВОЕ: ПАНЕЛЬ РЕСУРСОВ ПОЛЬЗОВАТЕЛЯ ---
+    // Проверяем, есть ли данные профиля в состоянии
+    if (state.profile) {
+      const resourcesBar = UserResourcesBarWidget({ state }); // <-- ВЫЗЫВАЕМ НАШ ВИДЖЕТ
+      container.appendChild(resourcesBar);
+    }
+    // --- КОНЕЦ НОВОГО БЛОКА ---
+
+
+    // Отрисовываем заголовок (можно оставить, если нужен)
     const header = document.createElement('header');
-    if (state?.dashboardTitle) { // Добавлена проверка на существование state
+    if (state?.dashboardTitle) {
         header.innerHTML = `<h1>${state.dashboardTitle}</h1>`;
         container.appendChild(header);
     }
 
-    // Проверяем и отрисовываем layout
+    // Проверяем и отрисовываем layout (основные виджеты)
     if (state?.layout && Array.isArray(state.layout)) {
       state.layout.forEach(layoutItem => {
         const widgetName = layoutItem.widget_ref?.substring(1);

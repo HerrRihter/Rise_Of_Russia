@@ -1,86 +1,169 @@
-.national-info-pane { flex-grow: 1; display: flex; flex-direction: column; }
-.national-focus-banner {
-    height: 100px; background-color: #555; border: 1px solid #777; margin-bottom: 10px;
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-    position: relative; padding: 8px; cursor: pointer;
+/* --- 1. Основной контейнер виджета --- */
+.national-info-pane {
+  display: flex;
+  flex-direction: column;
+  /* --- КЛЮЧЕВЫЕ ИЗМЕНЕНИЯ --- */
+  flex-grow: 1;         /* Позволяет виджету занимать все доступное пространство по горизонтали */
+  flex-shrink: 1;       /* Позволяет сжиматься, если нужно, но flex-grow важнее */
+  min-width: 600px;     /* Минимальная ширина, чтобы виджет не сжимался слишком сильно */
+  padding: 10px;        /* Добавим немного общего отступа для воздуха */
+  background-color: #333; /* Легкий фон для визуального выделения блока */
+  border-radius: 5px;
 }
-.national-focus-banner img.focus-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-.focus-title-bar {
-    background-color: rgba(40, 40, 40, 0.85); color: white; padding: 4px 10px;
-    font-size: 1em; text-align: center; border-radius: 3px; width: 180px;
-    margin-bottom: 4px; z-index: 2;
-}
-.focus-progress-bar {
-    width: 85%; height: 10px; background-color: #222; border: 1px solid #444;
-    border-radius: 3px; overflow: hidden; z-index: 2;
-}
-.focus-progress { height: 100%; background-color: #1b4d22; }
 
+/* --- 2. Баннер национальных фокусов --- */
+.national-focus-banner {
+    height: 100px;
+    background-color: #555;
+    border: 1px solid #777;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end; /* Прижимаем контент к низу */
+    position: relative;
+    padding: 8px;
+    cursor: pointer;
+    overflow: hidden; /* Скрываем части фонового изображения, которые выходят за рамки */
+    border-radius: 4px;
+}
+.national-focus-banner img.focus-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    transition: transform 0.3s ease; /* Эффект при наведении */
+}
+.national-focus-banner:hover img.focus-bg {
+    transform: scale(1.05); /* Легкое увеличение фона при наведении */
+}
+.focus-title-bar {
+    background-color: rgba(40, 40, 40, 0.85);
+    color: white;
+    padding: 4px 12px; /* Немного увеличим отступ */
+    font-size: 1.1em; /* Сделаем текст чуть крупнее */
+    text-align: center;
+    border-radius: 3px;
+    width: auto; /* Ширина по контенту */
+    min-width: 200px;
+    margin-bottom: 4px;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+/* Прогресс-бар убран, так как его не было в коде, но если он нужен - стили можно вернуть */
+
+
+/* --- 3. Национальные духи --- */
 .national-spirits {
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 15px;
-    background-color: transparent;
-    padding: 0;
-    min-height: 100px;
+    background-color: rgba(0, 0, 0, 0.2); /* Легкий фон для контейнера духов */
+    padding: 10px;
+    border-radius: 4px;
+    min-height: 110px; /* Фиксированная высота для стабильности верстки */
 }
 .spirit-icon {
     width: 90px;
     height: 90px;
     cursor: help;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    transition: transform 0.2s ease;
+}
+.spirit-icon:hover {
+    transform: scale(1.1); /* Эффект увеличения при наведении */
 }
 .spirit-icon img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    /* Добавим легкую тень для глубины */
+    filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.5));
 }
 
-.political-details { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px;}
-.ruling-party-info, .political-system-info-container {
-    background-color: #2a2a2a; padding: 10px; font-size: 0.85em;
-    border: 1px solid #444; border-radius: 3px;
+/* --- 4. Нижняя детальная секция --- */
+.political-details {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px; /* Немного увеличим разрыв */
+    margin-top: auto; /* Прижимает этот блок к низу, если есть свободное место */
 }
-.ruling-party-info { flex-basis: 38%; }
-.ruling-party-info strong { display: block; margin-bottom: 5px; color: #fff; }
+
+/* --- 5. Блоки внутри .political-details --- */
+.ruling-party-info,
+.political-system-info-container,
+.party-popularity {
+    background-color: #2a2a2a;
+    padding: 10px;
+    font-size: 0.85em;
+    border: 1px solid #444;
+    border-radius: 3px;
+    display: flex; /* Сделаем все эти блоки flex-контейнерами для лучшего контроля */
+    flex-direction: column;
+}
+
+.ruling-party-info {
+    flex-basis: 25%; /* Уменьшим долю, чтобы дать больше места диаграмме */
+    justify-content: center; /* Выровняем текст по центру */
+}
+.ruling-party-info strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #fff;
+    font-size: 1.1em;
+}
 
 .political-system-info-container {
-    display: flex; flex-direction: column; justify-content: space-between;
-    text-align: center; flex-basis: 28%;
+    justify-content: space-between;
+    text-align: center;
+    flex-basis: 25%; /* Уменьшим долю */
 }
 .pol-sys-upper { display: flex; align-items: center; margin-bottom: 10px; width: 100%;}
-.pol-sys-icon-wrapper { flex-basis: 40%; flex-shrink: 0; padding-right: 8px; box-sizing: border-box; display: flex; justify-content: center; align-items: center;}
-.pol-sys-icon-wrapper img.flag { width: 100%; max-width: 75px; height: auto; border: 1px solid #777; display: block; }
-.pol-sys-text-wrapper { flex-basis: 60%; text-align: left; font-size: 0.95em; line-height: 1.3; color: #e0e0e0;}
+.pol-sys-icon-wrapper { flex-basis: 40%; }
+.pol-sys-icon-wrapper img.flag { width: 100%; max-width: 60px; height: auto; border: 1px solid #777; }
+.pol-sys-text-wrapper { flex-basis: 60%; text-align: left; font-size: 0.9em; line-height: 1.3; color: #e0e0e0; padding-left: 5px; }
+
 .balance-btn {
-    background-color: #5a5a5a; color: #e0e0e0; border: 1px solid #777;
-    padding: 6px 12px; font-size: 0.9em; border-radius: 3px; cursor: pointer;
-    margin-top: auto; display: block; width: 100%;
+    background-color: #5a5a5a;
+    color: #e0e0e0;
+    border: 1px solid #777;
+    padding: 6px 12px;
+    font-size: 0.9em;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: auto; /* Прижимает кнопку к низу блока */
 }
 .balance-btn:hover { background-color: #6a6a6a; }
 
-
 .party-popularity {
-    flex-grow: 1; display: flex; align-items: center; background-color: #2a2a2a;
-    padding: 10px; border: 1px solid #444; border-radius: 3px;
+    flex-direction: row; /* Этот блок будет строкой */
+    align-items: center;
+    flex-grow: 1; /* Позволим этому блоку занять оставшееся место */
 }
 .pie-chart {
-    width: 110px; height: 110px; border-radius: 50%;
-    margin-right: 15px; display: flex;
-    justify-content: center; align-items: center; position: relative;
-    cursor: help;
+    width: 110px;
+    height: 110px;
+    margin-right: 15px;
+    flex-shrink: 0; /* Запрещаем диаграмме сжиматься */
 }
 #partyPieChartCanvas { display: block; }
+
 .party-list {
-    font-size: 0.8em; list-style: none; padding: 0; margin: 0;
-    max-height: 110px; overflow-y: auto; flex-grow: 1;
+    font-size: 0.85em; /* Чуть крупнее для читаемости */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 110px;
+    overflow-y: auto;
+    flex-grow: 1;
+    text-align: left;
 }
-.party-list li { display: flex; align-items: center; margin-bottom: 3px; padding: 2px 3px; border-radius: 2px; cursor: help;}
+.party-list li { display: flex; align-items: center; margin-bottom: 4px; padding: 3px; border-radius: 2px; cursor: help; transition: background-color 0.2s; }
 .party-list li:hover { background-color: #444; }
 .party-list li.highlighted { background-color: #D4AF37; color: #1e1e1e; font-weight: bold; }
 .party-list li.highlighted .party-color-box { border-color: #1e1e1e; }
-.party-color-box { width: 10px; height: 10px; margin-right: 6px; border: 1px solid #888; flex-shrink: 0;}
+.party-color-box { width: 12px; height: 12px; margin-right: 8px; border: 1px solid #888; flex-shrink: 0;}
