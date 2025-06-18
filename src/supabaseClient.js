@@ -1,12 +1,11 @@
+// src/supabaseClient.js
 import { createClient } from '@supabase/supabase-js'
 
-// Получаем переменные из окружения
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Используем уникальные плейсхолдеры
+const supabaseUrl = '__VITE_SUPABASE_URL__';
+const supabaseAnonKey = '__VITE_SUPABASE_ANON_KEY__';
 
-// Проверка, что переменные загрузились
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Supabase URL and Anon Key are not defined. Make sure you have a .env file set up.");
-}
+// Убираем проверку, так как она будет срабатывать во время сборки
+// if (!supabaseUrl || !supabaseAnonKey) { ... }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

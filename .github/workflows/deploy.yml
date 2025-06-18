@@ -1,6 +1,6 @@
 # .github/workflows/deploy.yml
 
-name: Deploy and Debug
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -12,35 +12,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4 # <-- Обновлено до v4
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4 # <-- Обновлено до v4
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Create .env file
-        run: |
-          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
-          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
-
-      - name: List files for debugging
-        run: ls -la
-
       - name: Build project
         run: npm run build
 
-      - name: Upload artifact for inspection
-        uses: actions/upload-artifact@v4 # <-- ГЛАВНОЕ ИЗМЕНЕНИЕ
-        with:
-          name: dist-files
-          path: dist/
+      # --- НОВЫЙ ШАГ: ЗАМЕНА ПЕРЕМЕННЫХ В ИТОГОВОМ ФАЙЛЕ ---
+      - name: Replace Supabase variables
+        run: |
+          # Находим JS файл в папке dist/assets
+          JS_FILE=$(find dist/assets -name "index-*.js")
+          # Заменяем плейсхолдеры на значения из секретов
+          sed -i "s|__VITE_SUPABASE_URL__|${{ secrets.VITE_SUPABASE_URL }}|g" $JS_FILE
+          sed -i "s|__VITE_SUPABASE_ANON_KEY__|${{ secrets.VITE_SUPABASE_ANON_KEY }}|g" $JS_FILE
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4 # <-- Обновлено до v4
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist 
