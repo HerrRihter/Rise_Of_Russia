@@ -1,25 +1,9 @@
-# .github/workflows/deploy.yml
-name: Build and Deploy to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
-
   push:
     branches:
-      - main
-
-  workflow_dispatch:
-
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
+      - main # Или ваша основная ветка
 
 jobs:
   build-and-deploy:
@@ -31,15 +15,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '11.4.2'
+          node-version: '18' # Укажите вашу версию Node.js
 
       - name: Install dependencies
         run: npm install
 
-
+      # --- ВОТ ВАЖНЫЙ ШАГ ---
       - name: Build project
         run: npm run build
-        env:
+        env: # <-- Эта секция передает секреты в процесс сборки
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
