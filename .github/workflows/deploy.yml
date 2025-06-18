@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # <-- Обновлено до v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4 # <-- Обновлено до v4
         with:
           node-version: '18'
 
@@ -27,22 +27,20 @@ jobs:
           echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
           echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
 
-      # --- ДОБАВЛЯЕМ ШАГ ДЛЯ ПРОСМОТРА ФАЙЛОВ ---
       - name: List files for debugging
         run: ls -la
 
       - name: Build project
         run: npm run build
 
-      # --- НОВЫЙ ШАГ: ЗАГРУЗКА РЕЗУЛЬТАТА СБОРКИ ---
       - name: Upload artifact for inspection
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 # <-- ГЛАВНОЕ ИЗМЕНЕНИЕ
         with:
-          name: dist-files # Имя архива
-          path: dist/      # Путь к папке, которую нужно заархивировать
+          name: dist-files
+          path: dist/
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4 # <-- Обновлено до v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist 
