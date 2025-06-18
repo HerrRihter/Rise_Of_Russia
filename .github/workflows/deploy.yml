@@ -1,6 +1,6 @@
 # .github/workflows/deploy.yml
 
-name: Deploy to GitHub Pages
+name: Deploy and Debug
 
 on:
   push:
@@ -22,15 +22,24 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # --- НОВЫЙ ШАГ: СОЗДАНИЕ .env ФАЙЛА ---
       - name: Create .env file
         run: |
           echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
           echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
 
+      # --- ДОБАВЛЯЕМ ШАГ ДЛЯ ПРОСМОТРА ФАЙЛОВ ---
+      - name: List files for debugging
+        run: ls -la
+
       - name: Build project
         run: npm run build
-        # Секция env здесь больше не нужна, так как Vite прочитает .env файл
+
+      # --- НОВЫЙ ШАГ: ЗАГРУЗКА РЕЗУЛЬТАТА СБОРКИ ---
+      - name: Upload artifact for inspection
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files # Имя архива
+          path: dist/      # Путь к папке, которую нужно заархивировать
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
