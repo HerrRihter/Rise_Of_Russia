@@ -1,5 +1,5 @@
 import './style.css';
-import { addTooltipEvents } from '../../tooltip.js';
+import { addTooltipEvents } from '../../components/Tooltip.js';
 
 export default function LeaderPaneWidget(props) {
   const { definitions, state } = props;
@@ -51,7 +51,9 @@ export default function LeaderPaneWidget(props) {
   partyEmblemDiv.className = 'party-emblem';
   if (party?.icon_path) {
     partyEmblemDiv.innerHTML = `<img src="${party.icon_path}" alt="${party.name}">`;
-    let partyEffects = `Популярность: ${party.popularity}%`;
+    const partiesPopularity = state?.parties_popularity || {};
+    const popularity = partiesPopularity[party.id] ?? 0;
+    let partyEffects = `Популярность: ${popularity}%`;
     if (party.ideology_tags_rus?.length > 0) {
         partyEffects += `\nИдеологии: ${party.ideology_tags_rus.join(', ')}`;
     }

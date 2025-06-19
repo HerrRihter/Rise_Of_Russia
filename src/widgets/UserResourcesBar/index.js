@@ -1,5 +1,5 @@
 import './style.css';
-import { addTooltipEvents } from '../../tooltip.js';
+import { addTooltipEvents } from '../../components/Tooltip.js';
 
 // Этот виджет будет создавать контейнер для всех пользовательских ресурсов
 export default function UserResourcesBarWidget(props) {

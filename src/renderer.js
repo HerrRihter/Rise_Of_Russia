@@ -1,5 +1,5 @@
 import widgets from './widgets/index.js';
-import { supabase } from './supabaseClient.js';
+import { signOut } from './auth.js';
 import UserResourcesBarWidget from './widgets/UserResourcesBar/index.js'; // <-- Импортируем виджет напрямую
 
 /**
@@ -22,8 +22,16 @@ export function renderDashboard(container, state, definitions, user) {
     const logoutButton = document.createElement('button');
     logoutButton.textContent = 'Выйти';
     logoutButton.style.cssText = 'padding: 5px 10px; cursor: pointer;';
-    logoutButton.onclick = () => {
-        supabase.auth.signOut();
+    logoutButton.onclick = async () => {
+      logoutButton.disabled = true;
+      logoutButton.textContent = 'Выход...';
+      try {
+        await signOut();
+      } catch (e) {
+        alert('Ошибка выхода: ' + e.message);
+        logoutButton.disabled = false;
+        logoutButton.textContent = 'Выйти';
+      }
     };
     topBar.appendChild(logoutButton);
   } else {
@@ -57,7 +65,7 @@ export function renderDashboard(container, state, definitions, user) {
         const widgetName = layoutItem.widget_ref?.substring(1);
         const WidgetComponent = widgets[widgetName];
         if (WidgetComponent) {
-          const widgetEl = WidgetComponent({ ...layoutItem.props, definitions, state });
+          const widgetEl = WidgetComponent({ ...layoutItem.props, definitions, state, userId: user?.uid });
           container.appendChild(widgetEl);
         } else {
           const errorEl = document.createElement('div');

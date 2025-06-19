@@ -1,10 +1,11 @@
 import './style.css';
-import { addTooltipEvents } from '../../tooltip.js';
+import { addTooltipEvents } from '../../components/Tooltip.js';
 import { openSidePanel } from '../../sidePanel.js';
 
 export default function CorporationSlotWidget(props) {
   const { definitions, state, type, slot_title } = props;
-  const assigned_id = state.corporations_selected[type]?.assigned_id;
+  const corporationsSelected = state?.corporations_selected || {};
+  const assigned_id = corporationsSelected[type]?.assigned_id;
 
   const slot = document.createElement('div');
   slot.className = 'corporation-slot';
@@ -22,11 +23,13 @@ export default function CorporationSlotWidget(props) {
     }
   }
 
-  slot.addEventListener('click', () => {
+  slot.addEventListener('click', (event) => {
+    if (!event.isTrusted) return;
     const title = `Выбор корпорации`;
     const options = Object.values(definitions.corporations);
     const onSelect = (selectedId) => {
       console.log(`Для слота корпорации '${type}' выбран ID: ${selectedId}`);
+      if (!state.corporations_selected) state.corporations_selected = {};
       state.corporations_selected[type] = { slot_type: type, assigned_id: selectedId };
       updateView(selectedId);
     };

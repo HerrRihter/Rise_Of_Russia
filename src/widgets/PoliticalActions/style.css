@@ -1,4 +1,3 @@
-
 /* ============================================== */
 /* === Стили для виджета PoliticalActionsWidget === */
 /* ============================================== */
@@ -119,6 +118,14 @@
   width: 160px; /* Немного увеличим ширину */
   box-sizing: border-box;
   margin-left: 25px; /* Отступ от цветного квадрата */
+}
+
+.party-popularity.popularity-positive {
+  background-color: #2b5a2b !important;
+  color: #b6ffb6 !important;
+  border-color: #4caf50 !important;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  box-shadow: 0 0 8px 2px #4caf50a0;
 }
 
 

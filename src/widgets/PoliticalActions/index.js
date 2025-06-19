@@ -1,129 +1,81 @@
 import './style.css';
-import { openModal } from '../../modal.js';
-import { supabase } from '../../supabaseClient.js';
+import { addTooltipEvents } from '../../components/Tooltip.js';
 
-// --- НОВАЯ ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ для обработки клика ---
-// Мы вынесли логику в отдельную функцию, чтобы не дублировать код
-async function handlePopularityChange(party, changeValue, buttonElement) {
-  const actionText = changeValue > 0 ? "повысить" : "понизить";
-  if (!confirm(`Вы уверены, что хотите потратить 25 очков, чтобы ${actionText} популярность партии "${party.name}"?`)) {
-    return;
-  }
-
-  buttonElement.disabled = true;
-  buttonElement.textContent = '...';
-
-  try {
-    const { data, error } = await supabase.functions.invoke('perform-political-action', {
-      // Тип действия остается тот же, мы просто меняем значение
-      body: { actionType: 'INFLUENCE_PARTY', params: { partyId: party.id, change: changeValue } }
-    });
-    if (error) throw new Error(error.message);
-    if (data.error) throw new Error(data.error);
-
-    alert('Успех! Изменения скоро отобразятся.');
-  } catch (e) {
-    alert(`Ошибка: ${e.message}`);
-  } finally {
-    buttonElement.disabled = false;
-    buttonElement.textContent = `${changeValue > 0 ? '+' : ''}${changeValue}%`;
-  }
-}
-
-// --- Вспомогательные функции для создания контента модального окна ---
-
-// Создает блок для взаимодействия с одной партией
-function createPartyActionElement(party, state) {
-  const element = document.createElement('div');
-  element.className = 'party-action-item';
-
-  // Левая часть: информация о партии
-  const infoContainer = document.createElement('div');
-  infoContainer.className = 'party-info-container';
-  infoContainer.innerHTML = `
-    <div class="party-header">
-      <div class="party-color-box" style="background-color: ${party.color || '#ccc'};"></div>
-      <span class="party-name">${party.name}</span>
-    </div>
-    <div class="party-popularity">Популярность: ${party.popularity}%</div>
-  `;
-
-  element.appendChild(infoContainer);
-
-  // Правая часть: кнопки действий
-  if (state.profile?.abilities?.can_influence_parties) {
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.className = 'action-buttons-container';
-
-    const increaseButton = document.createElement('button');
-    increaseButton.className = 'action-button increase';
-    increaseButton.textContent = '+1%';
-    increaseButton.title = 'Повысить популярность (Стоимость: 25 ПП)';
-    increaseButton.onclick = () => handlePopularityChange(party, 1, increaseButton);
-
-    const decreaseButton = document.createElement('button');
-    decreaseButton.className = 'action-button decrease';
-    decreaseButton.textContent = '-1%';
-    decreaseButton.title = 'Понизить популярность (Стоимость: 25 ПП)';
-    decreaseButton.onclick = () => handlePopularityChange(party, -1, decreaseButton);
-
-    buttonsContainer.appendChild(increaseButton);
-    buttonsContainer.appendChild(decreaseButton);
-    element.appendChild(buttonsContainer);
-  }
-
-  return element;
-}
-
-
-// Создает основной контент для модального окна
-function createPoliticalActionsContent(state, definitions) {
-  const content = document.createElement('div');
-  content.className = 'political-actions-content';
-
-  const partiesHeader = document.createElement('h5');
-  partiesHeader.textContent = 'Влияние на партии';
-  content.appendChild(partiesHeader);
-
-  // Создаем элементы для каждой партии
-  definitions.parties_array
-    .sort((a, b) => b.popularity - a.popularity)
-    .forEach(party => {
-      const partyElement = createPartyActionElement(party, state);
-      content.appendChild(partyElement);
-    });
-
-  // В будущем сюда можно добавить раздел для смены министров
-  // const ministersHeader = document.createElement('h5');
-  // ...
-
-  return content;
-}
-
-
-// --- Основная функция виджета ---
 export default function PoliticalActionsWidget(props) {
-  const { state, definitions } = props;
+  const { state, definitions, anchorElement } = props;
+  // anchorElement — DOM-элемент блока партий, к которому "пристыковывается" панель
 
-  const widget = document.createElement('div');
-  widget.className = 'political-actions-widget';
+  // Кнопка для открытия панели
+  const actionButton = document.createElement('button');
+  actionButton.className = 'open-actions-button';
+  actionButton.textContent = 'Политические действия';
+  actionButton.style.position = 'absolute';
+  actionButton.style.top = '10px';
+  actionButton.style.right = '10px';
+  actionButton.style.zIndex = '20';
 
-  const button = document.createElement('button');
-  button.className = 'open-actions-button';
-  button.textContent = 'Политические Действия';
+  // Панель политических действий
+  const panel = document.createElement('div');
+  panel.className = 'political-actions-panel';
+  panel.style.display = 'none';
 
-  // Кнопка будет неактивна, если у пользователя вообще нет никаких политических способностей
-  const hasAbilities = state.profile?.abilities && Object.keys(state.profile.abilities).length > 0;
-  if (!hasAbilities) {
-    button.disabled = true;
-    button.title = 'У вас нет доступных политических действий.';
-  }
+  // Кнопка закрытия панели
+  const closeBtn = document.createElement('span');
+  closeBtn.textContent = '×';
+  closeBtn.className = 'close-panel-btn';
+  closeBtn.onclick = () => { panel.style.display = 'none'; };
+  panel.appendChild(closeBtn);
 
-  button.onclick = () => {
-    const modalContent = createPoliticalActionsContent(state, definitions);
-    openModal('Центр Политических Действий', modalContent);
+  // Заголовок панели
+  const header = document.createElement('div');
+  header.className = 'panel-header';
+  header.textContent = 'Влияние на партии';
+  panel.appendChild(header);
+
+  // Список партий
+  const partiesList = document.createElement('div');
+  partiesList.className = 'parties-list';
+  (definitions.parties_array || []).forEach(party => {
+    const partyRow = document.createElement('div');
+    partyRow.className = 'party-row';
+    partyRow.innerHTML = `
+      <span class="party-color-box" style="background-color: ${party.color || '#ccc'}"></span>
+      <span class="party-name">${party.name}</span>
+      <span class="party-popularity">${state.parties_popularity?.[party.id] ?? 0}%</span>
+    `;
+    // Кнопка ↑
+    const upBtn = document.createElement('button');
+    upBtn.className = 'party-action-btn up';
+    upBtn.textContent = '↑';
+    addTooltipEvents(upBtn, 'Продвигать партию', 'Увеличить популярность на 1% (−25 очков)', null);
+    // Кнопка ↓
+    const downBtn = document.createElement('button');
+    downBtn.className = 'party-action-btn down';
+    downBtn.textContent = '↓';
+    addTooltipEvents(downBtn, 'Подавлять партию', 'Уменьшить популярность на 1% (−25 очков)', null);
+    partyRow.appendChild(upBtn);
+    partyRow.appendChild(downBtn);
+    partiesList.appendChild(partyRow);
+  });
+  panel.appendChild(partiesList);
+
+  // Открытие/закрытие панели
+  actionButton.onclick = () => {
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    // Позиционируем панель справа от anchorElement, если он есть
+    if (anchorElement) {
+      const rect = anchorElement.getBoundingClientRect();
+      panel.style.position = 'absolute';
+      panel.style.top = `${rect.top + window.scrollY}px`;
+      panel.style.left = `${rect.right + 20 + window.scrollX}px`;
+      panel.style.zIndex = '100';
+    }
   };
 
-  widget.appendChild(button);
-  return widget;
-}
+  // Возвращаем контейнер с кнопкой и панелью
+  const container = document.createElement('div');
+  container.style.position = 'relative';
+  container.appendChild(actionButton);
+  container.appendChild(panel);
+  return container;
+} 

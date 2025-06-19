@@ -1,5 +1,5 @@
 import './style.css';
-import { supabase } from '../../supabaseClient.js';
+import { signIn, signUp, onAuthStateChanged } from '../../auth.js';
 
 export default function AuthWidget() {
   let isLoginView = true; // Переключатель между входом и регистрацией
@@ -36,13 +36,11 @@ export default function AuthWidget() {
 
       try {
         if (isLoginView) {
-          const { error } = await supabase.auth.signInWithPassword({ email, password });
-          if (error) throw error;
+          await signIn(email, password);
           messageEl.textContent = 'Успешный вход!';
           messageEl.className = 'auth-message success';
         } else {
-          const { error } = await supabase.auth.signUp({ email, password });
-          if (error) throw error;
+          await signUp(email, password);
           messageEl.textContent = 'Успешная регистрация! Теперь вы можете войти.';
           messageEl.className = 'auth-message success';
         }

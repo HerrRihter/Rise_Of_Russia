@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+serviceAccountKey.json
 
 # Editor directories and files
 .vscode/*
@@ -23,3 +24,16 @@ dist-ssr
 *.sln
 .env
 *.sw?
+
+# Build output
+/dist/
+/dist-ssr/
+
+# Firebase/Firestore dumps
+public/history/state.json
+public/history/layout.json
+public/history/layout_rows.csv
+
+# Node/accidental files
+node
+{

@@ -1,11 +1,12 @@
 import './style.css';
-import { addTooltipEvents } from '../../tooltip.js';
+import { addTooltipEvents } from '../../components/Tooltip.js';
 import { openSidePanel } from '../../sidePanel.js';
 
 export default function DevelopmentAreaSlotWidget(props) {
     const { definitions, state, type } = props;
     const areaDef = definitions.development_areas[type];
-    const areaState = state.development_areas_state[type];
+    const developmentAreasState = state?.development_areas_state || {};
+    const areaState = developmentAreasState[type];
 
     const wrapper = document.createElement('div');
     wrapper.className = 'development-area-wrapper';
@@ -33,13 +34,14 @@ export default function DevelopmentAreaSlotWidget(props) {
         addTooltipEvents(wrapper.querySelector('.development-area-slot'), areaDef.name, tooltipEffects, currentLevel.description);
     }
 
-    wrapper.addEventListener('click', () => {
+    wrapper.addEventListener('click', (event) => {
+        if (!event.isTrusted) return;
         if (!areaDef || !areaDef.levels) return;
         const title = `Выбор уровня: ${areaDef.name}`;
         const options = Object.values(areaDef.levels);
         const onSelect = (selectedId) => {
             console.log(`Для области '${type}' выбран уровень: ${selectedId}`);
-            if(state.development_areas_state[type]) {
+            if (state.development_areas_state && state.development_areas_state[type]) {
                 state.development_areas_state[type].current_level_id = selectedId;
             }
             updateView(selectedId);

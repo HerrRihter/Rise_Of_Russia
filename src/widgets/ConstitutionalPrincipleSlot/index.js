@@ -1,11 +1,12 @@
 import './style.css';
-import { addTooltipEvents } from '../../tooltip.js';
+import { addTooltipEvents } from '../../components/Tooltip.js';
 import { openSidePanel } from '../../sidePanel.js';
 
 export default function ConstitutionalPrincipleSlotWidget(props) {
   const { definitions, state, type } = props;
   const principleDef = definitions.constitutional_principles[type];
-  const assigned_id = state.constitutional_principles_selected_options[type]?.selected_option_id;
+  const principlesSelected = state?.constitutional_principles_selected_options || {};
+  const assigned_id = principlesSelected[type]?.selected_option_id;
 
   const slot = document.createElement('div');
   slot.className = 'constitutional-principle-slot';
@@ -24,12 +25,14 @@ export default function ConstitutionalPrincipleSlotWidget(props) {
     }
   }
 
-  slot.addEventListener('click', () => {
+  slot.addEventListener('click', (event) => {
+    if (!event.isTrusted) return;
     if (!principleDef || !principleDef.options) return;
     const title = `Выбор: ${principleDef.name}`;
     const options = Object.values(principleDef.options);
     const onSelect = (selectedId) => {
       console.log(`Для принципа '${type}' выбрана опция: ${selectedId}`);
+      if (!state.constitutional_principles_selected_options) state.constitutional_principles_selected_options = {};
       state.constitutional_principles_selected_options[type] = { principle_id: type, selected_option_id: selectedId };
       updateView(selectedId);
     };

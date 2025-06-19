@@ -1,0 +1,41 @@
+{
+  "focus_tree_nodes": [
+    {
+      "id": "liberalization",
+      "created_at": "2025-06-17 14:53:33.634393+00",
+      "title": "Либерализация",
+      "icon_path": "history/focus_icons/liberal.png",
+      "duration": 30,
+      "description": "Снижение налогов и барьеров для бизнеса.",
+      "x": 2.5,
+      "y": 1,
+      "prerequisites": [
+        "start_economic_reforms"
+      ]
+    },
+    {
+      "id": "nationalisation",
+      "created_at": "2025-06-17 14:53:33.634393+00",
+      "title": "Национализация",
+      "icon_path": "history/focus_icons/privatize.png",
+      "duration": 30,
+      "description": "Передача частных активов под контроль государства.",
+      "x": 0.5,
+      "y": 1,
+      "prerequisites": [
+        "start_economic_reforms"
+      ]
+    },
+    {
+      "id": "start_economic_reforms",
+      "created_at": "2025-06-17 14:53:33.634393+00",
+      "title": "Начало экономических реформ",
+      "icon_path": "history/focus_icons/economy.png",
+      "duration": 30,
+      "description": "Фундаментальный фокус, открывающий путь к либерализации или государственному капитализму.",
+      "x": 1.5,
+      "y": 0,
+      "prerequisites": []
+    }
+  ]
+}

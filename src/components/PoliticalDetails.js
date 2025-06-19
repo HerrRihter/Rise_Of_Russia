@@ -1,0 +1,217 @@
+import { openModal } from '../modal.js';
+import { drawPoliticalPieChart, updatePartyList } from './politicalDetailsUtils.js';
+import { addTooltipEvents } from './Tooltip.js';
+import { getFirestore, doc, updateDoc } from 'firebase/firestore';
+import { firebaseApp } from '../firebaseClient.js';
+import { redistributePopularity } from '../utils/partyBalance.js';
+
+export function PoliticalDetails({ ruling_party_id, definitions, state, userId }) {
+  const detailsContainer = document.createElement('div');
+  detailsContainer.className = 'political-details';
+  const rulingParty = definitions.parties[ruling_party_id];
+  // Получаем массив партий с актуальной популярностью
+  const partiesPopularity = { ...state?.parties_popularity };
+  const partiesWithPopularity = definitions.parties_array.map(party => ({
+    ...party,
+    popularity: partiesPopularity[party.id] ?? 0
+  }));
+  detailsContainer.innerHTML = `<div class="ruling-party-info"><strong>${rulingParty ? rulingParty.name : '...'}<\/strong><br><small>Следующие выборы: скоро<\/small><\/div><div class="political-system-info-container"><div class="pol-sys-upper"><div class="pol-sys-icon-wrapper"><img src="history/parties_emblems/democracy.png" alt="Полит. Система" class="flag"><\/div><div class="pol-sys-text-wrapper">Российск.<br>Политическая<br>Система<\/div><\/div><button class="balance-btn">Баланс<\/button><\/div><div class="party-popularity"><div class="pie-chart"><canvas id="partyPieChartCanvas" width="160" height="160"><\/canvas><\/div><ul class="party-list" id="partyListContainer"><\/ul><\/div>`;
+
+  // Firestore setup
+  const db = getFirestore(firebaseApp);
+  const stateDocRef = doc(db, 'state', 'main');
+  const profile = state.profile || {};
+  const canInfluence = profile.abilities?.can_influence_party === true;
+  let userPP = profile.political_power ?? 0;
+  const profileDocRef = userId ? doc(db, 'profiles', userId) : null;
+
+  // DEBUG LOGS
+  console.log('PoliticalDetails: profile', profile);
+  console.log('PoliticalDetails: abilities', profile.abilities);
+  console.log('PoliticalDetails: canInfluence', canInfluence);
+  console.log('PoliticalDetails: userId', userId);
+
+  // Интерактив
+  const canvas = detailsContainer.querySelector('#partyPieChartCanvas');
+  const partyListUl = detailsContainer.querySelector('#partyListContainer');
+  drawPoliticalPieChart(canvas, partiesWithPopularity);
+  updatePartyList(partyListUl, partiesWithPopularity, ruling_party_id);
+  const balanceButton = detailsContainer.querySelector('.balance-btn');
+  if (balanceButton) {
+    balanceButton.addEventListener('click', () => {
+      openModal('Баланс Сил', 'Здесь будет содержимое окна баланса...');
+    });
+  }
+
+  // === Кнопка справа от списка партий ===
+  const partyBlock = detailsContainer.querySelector('.party-popularity');
+  if (partyBlock) {
+    partyBlock.style.display = 'flex';
+    partyBlock.style.alignItems = 'flex-start';
+    const btn = document.createElement('button');
+    btn.className = 'mini-party-actions-btn';
+    btn.title = 'Показать действия с партиями';
+    btn.style.width = '28px';
+    btn.style.height = '28px';
+    btn.style.background = '#222';
+    btn.style.border = '1.5px solid #888';
+    btn.style.borderRadius = '6px';
+    btn.style.marginLeft = '8px';
+    btn.style.display = 'flex';
+    btn.style.alignItems = 'center';
+    btn.style.justifyContent = 'center';
+    btn.style.cursor = 'pointer';
+    btn.innerHTML = '<img src="history/icons/political_power.png" alt="Действия" style="width:18px;height:18px;">';
+    const panel = document.createElement('div');
+    panel.className = 'mini-party-actions-panel';
+    panel.style.display = 'none';
+    panel.style.position = 'absolute';
+    panel.style.minWidth = '220px';
+    panel.style.background = '#232323';
+    panel.style.border = '1.5px solid #888';
+    panel.style.borderRadius = '8px';
+    panel.style.boxShadow = '2px 2px 12px #000a';
+    panel.style.padding = '10px 12px';
+    panel.style.right = '-240px';
+    panel.style.top = '0';
+    panel.style.zIndex = '200';
+    function renderPanel() {
+      panel.innerHTML = '<div style="font-weight:bold;margin-bottom:8px;">Партии</div>';
+      // Сортировка по популярности (по убыванию)
+      const sortedParties = [...partiesWithPopularity].sort((a, b) => b.popularity - a.popularity);
+      sortedParties.forEach((p, idx) => {
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.marginBottom = '6px';
+        row.style.gap = '7px';
+        const colorBox = document.createElement('span');
+        colorBox.style.display = 'inline-block';
+        colorBox.style.width = '13px';
+        colorBox.style.height = '13px';
+        colorBox.style.background = p.color || '#ccc';
+        colorBox.style.border = '1px solid #555';
+        colorBox.style.borderRadius = '2px';
+        const nameSpan = document.createElement('span');
+        nameSpan.style.flex = '1';
+        nameSpan.textContent = p.name;
+        const popSpan = document.createElement('span');
+        popSpan.style.color = '#ffe082';
+        popSpan.style.fontSize = '0.95em';
+        popSpan.textContent = `${p.popularity}%`;
+        // Кнопка вверх
+        const upBtn = document.createElement('button');
+        upBtn.style.width = '22px';
+        upBtn.style.height = '22px';
+        upBtn.style.background = '#2a2';
+        upBtn.style.border = '1px solid #393';
+        upBtn.style.borderRadius = '4px';
+        upBtn.style.marginLeft = '4px';
+        upBtn.style.display = 'flex';
+        upBtn.style.alignItems = 'center';
+        upBtn.style.justifyContent = 'center';
+        upBtn.style.cursor = 'pointer';
+        upBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 2 L10 8 H2 Z" fill="#fff"/></svg>';
+        addTooltipEvents(upBtn, '', 'Повысить популярность', '');
+        // Кнопка вниз
+        const downBtn = document.createElement('button');
+        downBtn.style.width = '22px';
+        downBtn.style.height = '22px';
+        downBtn.style.background = '#a22';
+        downBtn.style.border = '1px solid #933';
+        downBtn.style.borderRadius = '4px';
+        downBtn.style.marginLeft = '2px';
+        downBtn.style.display = 'flex';
+        downBtn.style.alignItems = 'center';
+        downBtn.style.justifyContent = 'center';
+        downBtn.style.cursor = 'pointer';
+        downBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 10 L2 4 H10 Z" fill="#fff"/></svg>';
+        addTooltipEvents(downBtn, '', 'Понизить популярность', '');
+        const canClick = canInfluence && userPP >= 25 && profileDocRef;
+        upBtn.disabled = !canClick;
+        downBtn.disabled = !canClick;
+        // Логика ↑
+        upBtn.onclick = async () => {
+          if (!canInfluence) return alert('Нет права на влияние на партии!');
+          if (userPP < 25) return alert('Недостаточно политических очков!');
+          if (!profileDocRef) return alert('Ошибка профиля пользователя!');
+          if (p.popularity >= 100) return;
+          // Используем новую функцию перераспределения
+          const newPopularities = redistributePopularity(p.id, partiesPopularity, 1);
+          const newPP = userPP - 25;
+          upBtn.disabled = true;
+          downBtn.disabled = true;
+          try {
+            await updateDoc(stateDocRef, { parties_popularity: newPopularities });
+            await updateDoc(profileDocRef, { political_power: newPP });
+            Object.assign(partiesPopularity, newPopularities);
+            partiesWithPopularity.forEach(pp => { pp.popularity = newPopularities[pp.id] ?? 0; });
+            userPP = newPP;
+            if (state.profile) state.profile.political_power = newPP;
+            // Мгновенно обновляем отображение политических очков в верхней панели:
+            const ppValueEl = document.querySelector('.user-resources-bar .resource-value');
+            if (ppValueEl) ppValueEl.textContent = newPP;
+            renderPanel();
+            drawPoliticalPieChart(canvas, partiesWithPopularity);
+            updatePartyList(partyListUl, partiesWithPopularity, ruling_party_id);
+          } catch (e) {
+            alert('Ошибка обновления: ' + e.message);
+          }
+          upBtn.disabled = false;
+          downBtn.disabled = false;
+        };
+        // Логика ↓
+        downBtn.onclick = async () => {
+          if (!canInfluence) return alert('Нет права на влияние на партии!');
+          if (userPP < 25) return alert('Недостаточно политических очков!');
+          if (!profileDocRef) return alert('Ошибка профиля пользователя!');
+          if (p.popularity <= 0) return;
+          // Используем новую функцию перераспределения
+          const newPopularities = redistributePopularity(p.id, partiesPopularity, -1);
+          const newPP = userPP - 25;
+          upBtn.disabled = true;
+          downBtn.disabled = true;
+          try {
+            await updateDoc(stateDocRef, { parties_popularity: newPopularities });
+            await updateDoc(profileDocRef, { political_power: newPP });
+            Object.assign(partiesPopularity, newPopularities);
+            partiesWithPopularity.forEach(pp => { pp.popularity = newPopularities[pp.id] ?? 0; });
+            userPP = newPP;
+            if (state.profile) state.profile.political_power = newPP;
+            // Мгновенно обновляем отображение политических очков в верхней панели:
+            const ppValueEl = document.querySelector('.user-resources-bar .resource-value');
+            if (ppValueEl) ppValueEl.textContent = newPP;
+            renderPanel();
+            drawPoliticalPieChart(canvas, partiesWithPopularity);
+            updatePartyList(partyListUl, partiesWithPopularity, ruling_party_id);
+          } catch (e) {
+            alert('Ошибка обновления: ' + e.message);
+          }
+          upBtn.disabled = false;
+          downBtn.disabled = false;
+        };
+        row.appendChild(colorBox);
+        row.appendChild(nameSpan);
+        row.appendChild(popSpan);
+        row.appendChild(upBtn);
+        row.appendChild(downBtn);
+        panel.appendChild(row);
+      });
+    }
+    renderPanel();
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      panel.style.display = (panel.style.display === 'none' || !panel.style.display) ? 'block' : 'none';
+    };
+    document.addEventListener('click', (e) => {
+      if (panel.style.display === 'block' && !panel.contains(e.target) && e.target !== btn) {
+        panel.style.display = 'none';
+      }
+    });
+    partyBlock.appendChild(btn);
+    partyBlock.style.position = 'relative';
+    partyBlock.appendChild(panel);
+  }
+
+  return detailsContainer;
+} 

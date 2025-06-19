@@ -1,5 +1,5 @@
 import './style.css';
-import { addTooltipEvents } from '../../tooltip.js';
+import { addTooltipEvents } from '../../components/Tooltip.js';
 import { openSidePanel } from '../../sidePanel.js';
 
 export default function AdvisorSlotWidget(props) {
@@ -22,7 +22,8 @@ export default function AdvisorSlotWidget(props) {
     }
   }
 
-  slot.addEventListener('click', () => {
+  slot.addEventListener('click', (event) => {
+    if (!event.isTrusted) return;
     const title = `Выбор: ${slot_title || 'Советник'}`;
     const options = Object.values(definitions.leaders);
     const onSelect = (selectedId) => {
@@ -31,13 +32,15 @@ export default function AdvisorSlotWidget(props) {
       // supabase.from('state_advisors').update({ assigned_id: selectedId }).eq('slot_type', type);
 
       // А пока обновляем состояние в памяти для мгновенной реакции интерфейса
+      if (!state.advisors_selected) state.advisors_selected = {};
       state.advisors_selected[type] = { slot_type: type, assigned_id: selectedId };
       updateView(selectedId);
     };
     openSidePanel(title, options, onSelect, 'advisor-style');
   });
 
-  const assigned_id = state.advisors_selected[type]?.assigned_id;
+  const advisorsSelected = state?.advisors_selected || {};
+  const assigned_id = advisorsSelected[type]?.assigned_id;
   updateView(assigned_id);
   return slot;
 }

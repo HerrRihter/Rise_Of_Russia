@@ -13,7 +13,7 @@
     margin-right: 20px;
 }
 .leader-portrait {
-    width: 156px; height: 210px; background-color: #555;
+    width: 210px; height: 270px; background-color: #555;
     border: 1px solid #777; margin-bottom: 8px;
 }
 .leader-portrait img { width: 100%; height: 100%; object-fit: cover; }

@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Справочники: только чтение для всех ---
+    match /leaders/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /ideologies/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /parties/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /corporations/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /constitutional_principles/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /development_areas/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /focus_tree_nodes/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /national_spirits/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /national_focus_data/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /layout/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // --- State: только для авторизованных пользователей ---
+    match /state/{doc} {
+      allow read, write: if request.auth != null;
+    }
+
+    // --- Профили: только для владельца ---
+    match /profiles/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

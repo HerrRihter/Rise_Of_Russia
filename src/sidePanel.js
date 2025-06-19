@@ -1,5 +1,5 @@
 // src/sidePanel.js
-import { addTooltipEvents } from './tooltip.js'; // <-- ИМПОРТИРУЕМ НАШ МОДУЛЬ ТУЛТИПОВ!
+import { addTooltipEvents } from './components/Tooltip.js'; // <-- ИМПОРТИРУЕМ НАШ МОДУЛЬ ТУЛТИПОВ!
 
 let panelEl, titleEl, contentEl, closeBtn;
 let currentOnSelectCallback = null;
@@ -10,7 +10,14 @@ function closeSidePanel() {
 }
 
 export function openSidePanel(title, options, onSelect, styleClass = 'icon-style') {
+  console.log('openSidePanel вызван:', { title, options, stack: new Error().stack });
   if (!panelEl) return;
+  if (!Array.isArray(options) || options.length === 0) {
+    // Для отладки:
+    console.warn('openSidePanel вызван с пустыми options:', { title, options, stack: new Error().stack });
+    panelEl.style.display = 'none';
+    return;
+  }
 
   panelEl.classList.remove('advisor-style', 'icon-style');
   panelEl.classList.add(styleClass);

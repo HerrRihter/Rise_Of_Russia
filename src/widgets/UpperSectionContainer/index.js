@@ -10,7 +10,7 @@ export default function UpperSectionContainerWidget(props) {
       const widgetName = childProps.$ref?.substring(1);
       const WidgetComponent = widgets[widgetName];
       if (WidgetComponent) {
-        const childEl = WidgetComponent({ ...childProps, definitions: props.definitions, state: props.state });
+        const childEl = WidgetComponent({ ...childProps, definitions: props.definitions, state: props.state, userId: props.userId });
         container.appendChild(childEl);
       }
     });
