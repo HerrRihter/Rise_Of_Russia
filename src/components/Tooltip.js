@@ -37,10 +37,31 @@ function hideTooltip() {
 function moveTooltip(e) {
   const tooltip = document.querySelector('.tooltip');
   if (!tooltip) return;
-  let x = e.clientX + 15;
-  let y = e.clientY + 15;
-  if (x + tooltip.offsetWidth + 10 > window.innerWidth) x = e.clientX - tooltip.offsetWidth - 15;
-  if (y + tooltip.offsetHeight + 10 > window.innerHeight) y = e.clientY - tooltip.offsetHeight - 15;
+  const padding = 12;
+  let x = e.clientX + padding;
+  let y = e.clientY - tooltip.offsetHeight - padding;
+
+  // Если тултип уходит за верх — показываем снизу
+  let showBelow = false;
+  if (y < 0) {
+    y = e.clientY + padding;
+    showBelow = true;
+  }
+  // Если тултип уходит за правую границу — сдвигаем влево
+  if (x + tooltip.offsetWidth > window.innerWidth) {
+    x = window.innerWidth - tooltip.offsetWidth - padding;
+  }
+  // Если тултип уходит за левую границу — прижимаем к левому краю
+  if (x < 0) x = padding;
+  // Если тултип уходит за нижнюю границу — прижимаем к низу окна
+  if (showBelow && y + tooltip.offsetHeight > window.innerHeight) {
+    y = window.innerHeight - tooltip.offsetHeight - padding;
+  }
+  // Если даже сверху не помещается — прижимаем к низу
+  if (!showBelow && y < 0) {
+    y = window.innerHeight - tooltip.offsetHeight - padding;
+  }
+
   tooltip.style.left = `${x}px`;
   tooltip.style.top = `${y}px`;
 } 

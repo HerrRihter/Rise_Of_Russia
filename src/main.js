@@ -4,8 +4,9 @@ import { ensureTooltipExists } from './components/Tooltip.js';
 import { initModal } from './modal.js';
 import { initSidePanel } from './sidePanel.js';
 import { onAuthStateChanged } from './auth.js';
-import { getFirestore, collection, getDocs, getDoc, doc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, getDoc, doc, onSnapshot } from 'firebase/firestore';
 import { firebaseApp } from './firebaseClient.js';
+import { ProfileDrawer } from './components/ProfileDrawer.js';
 
 function arrayToIdObject(array, key = 'id') {
   if (!Array.isArray(array)) return {};
@@ -20,35 +21,98 @@ const db = getFirestore(firebaseApp);
 
 function reRenderApp() {
   if (appContainer) {
+    // Удаляем старую панель профиля, если есть
+    const oldDrawer = document.querySelector('.profile-drawer');
+    if (oldDrawer) oldDrawer.remove();
+    const oldBtn = document.querySelector('.profile-drawer-open-btn');
+    if (oldBtn) oldBtn.remove();
+
     renderDashboard(appContainer, state, definitions, currentUser);
+
+    // Добавляем вертикальную кнопку для открытия панели профиля
+    const openBtn = document.createElement('button');
+    openBtn.className = 'profile-drawer-open-btn';
+    openBtn.innerHTML = '☰';
+    openBtn.title = 'Профиль';
+    openBtn.style.position = 'fixed';
+    openBtn.style.top = '50%';
+    openBtn.style.left = '0';
+    openBtn.style.transform = 'translateY(-50%)';
+    openBtn.style.width = '32px';
+    openBtn.style.height = '80px';
+    openBtn.style.background = '#232323';
+    openBtn.style.color = '#ffd700';
+    openBtn.style.border = '1.5px solid #444';
+    openBtn.style.borderRadius = '0 8px 8px 0';
+    openBtn.style.zIndex = '1200';
+    openBtn.style.cursor = 'pointer';
+    openBtn.style.fontSize = '1.5em';
+    openBtn.style.display = 'flex';
+    openBtn.style.alignItems = 'center';
+    openBtn.style.justifyContent = 'center';
+    openBtn.style.boxShadow = '2px 0 8px rgba(0,0,0,0.18)';
+    document.body.appendChild(openBtn);
+
+    openBtn.onclick = () => {
+      // Получаем профиль и лидера (если есть leader_id)
+      const profile = state.profile || {};
+      let leader = null;
+      if (profile.leader_id && definitions.leaders && definitions.leaders[profile.leader_id]) {
+        leader = definitions.leaders[profile.leader_id];
+      }
+      // Создаём и показываем панель
+      const drawer = ProfileDrawer({
+        profile,
+        leader,
+        onClose: () => {
+          drawer.remove();
+          openBtn.style.display = 'flex';
+        }
+      });
+      document.body.appendChild(drawer);
+      openBtn.style.display = 'none';
+    };
   }
 }
 
-async function fetchStateData() {
-  console.log("Загрузка данных состояния и профиля пользователя...");
-  // Загружаем state из одного документа
+function subscribeToStateAndProfile(user, onUpdate) {
+  const db = getFirestore(firebaseApp);
   const stateDocRef = doc(db, 'state', 'main');
-  const stateSnap = await getDoc(stateDocRef);
-  if (!stateSnap.exists()) {
-    throw new Error('Документ state/main не найден!');
-  }
-  const stateData = stateSnap.data();
+  let unsubProfile = null;
 
-  // Загружаем профиль пользователя, если есть
-  let userProfile = null;
-  if (currentUser) {
-    const profileDocRef = doc(db, 'profiles', currentUser.uid);
-    const profileSnap = await getDoc(profileDocRef);
-    userProfile = profileSnap.exists() ? profileSnap.data() : null;
-  }
-
-  // Обновляем state
-  state = {
-    ...state,
-    ...stateData,
-    profile: userProfile,
+  // Подписка на state/main
+  const unsubState = onSnapshot(stateDocRef, (stateSnap) => {
+    if (!stateSnap.exists()) return;
+    const stateData = stateSnap.data();
+    let userProfile = null;
+    if (user) {
+      const profileDocRef = doc(db, 'profiles', user.uid);
+      if (unsubProfile) unsubProfile();
+      unsubProfile = onSnapshot(profileDocRef, (profileSnap) => {
+        userProfile = profileSnap.exists() ? profileSnap.data() : null;
+        state = {
+          ...state,
+          ...stateData,
+          profile: userProfile,
+        };
+        onUpdate();
+      });
+    } else {
+      state = {
+        ...state,
+        ...stateData,
+        profile: null,
+      };
+      onUpdate();
+    }
+  });
+  return () => {
+    unsubState();
+    if (unsubProfile) unsubProfile();
   };
 }
+
+let unsubscribeStateProfile = null;
 
 async function fetchInitialData() {
   console.log("Загрузка первоначальных данных (справочников и layout) из Firestore...");
@@ -65,8 +129,6 @@ async function fetchInitialData() {
 
   // Преобразуем данные в definitions
   const principles = arrayToIdObject(results['constitutional_principles']);
-  // development_areas и focus_tree_nodes аналогично, если есть вложенные уровни — обработать отдельно
-
   definitions = {
     leaders: arrayToIdObject(results['leaders']),
     ideologies: arrayToIdObject(results['ideologies']),
@@ -81,14 +143,11 @@ async function fetchInitialData() {
     layout: results['layout'] || []
   };
 
-  // В state сохраняем только layout (остальное загрузим в fetchStateData)
+  // В state сохраняем только layout (остальное загрузим в подписке)
   state = {
     dashboardTitle: "Политический интерфейс",
     layout: definitions.layout
   };
-
-  // После загрузки справочников, загружаем изменяемое состояние
-  await fetchStateData();
 }
 
 async function main() {
@@ -101,9 +160,11 @@ async function main() {
   // Firebase Auth: слушаем изменения статуса пользователя
   onAuthStateChanged(async (user) => {
     currentUser = user;
+    if (unsubscribeStateProfile) unsubscribeStateProfile();
     if (currentUser) {
       try {
         await fetchInitialData();
+        unsubscribeStateProfile = subscribeToStateAndProfile(currentUser, reRenderApp);
       } catch (err) {
         console.error('Ошибка при загрузке данных:', err);
         appContainer.innerHTML = `<h1 style="color:red;">Ошибка: ${err.message}</h1>`;
@@ -111,8 +172,8 @@ async function main() {
     } else {
       state = {};
       definitions = {};
+      reRenderApp();
     }
-    reRenderApp();
   });
 
   // Гарантируем наличие тултипа в DOM

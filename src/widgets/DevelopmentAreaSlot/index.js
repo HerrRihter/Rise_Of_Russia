@@ -38,7 +38,13 @@ export default function DevelopmentAreaSlotWidget(props) {
         if (!event.isTrusted) return;
         if (!areaDef || !areaDef.levels) return;
         const title = `Выбор уровня: ${areaDef.name}`;
-        const options = Object.values(areaDef.levels);
+        const options = Object.values(areaDef.levels).sort((a, b) => {
+            const getLevelNum = (level) => {
+                const match = level.id.match(/(\d+)$/);
+                return match ? parseInt(match[1], 10) : 0;
+            };
+            return getLevelNum(a) - getLevelNum(b);
+        });
         const onSelect = (selectedId) => {
             console.log(`Для области '${type}' выбран уровень: ${selectedId}`);
             if (state.development_areas_state && state.development_areas_state[type]) {

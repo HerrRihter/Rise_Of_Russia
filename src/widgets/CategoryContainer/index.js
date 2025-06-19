@@ -21,7 +21,7 @@ export default function CategoryContainerWidget(props) {
       const widgetName = childProps.$ref?.substring(1);
       const WidgetComponent = widgets[widgetName];
       if (WidgetComponent) {
-        const childWidgetEl = WidgetComponent({ ...childProps, definitions, state });
+        const childWidgetEl = WidgetComponent({ ...childProps, definitions, state, userId: props.userId });
         itemsContainer.appendChild(childWidgetEl);
       }
     });

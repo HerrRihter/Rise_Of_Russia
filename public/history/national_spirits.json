@@ -159,6 +159,13 @@
             "effects_summary": "Суммарные импульсы к развитию:\n  Образование: ±X\n  Здравоохранение: ±X\n  Достаток: ±X\n  Сельское хозяйство: ±X\n  Промышленность: ±X\n  Внутренняя Безопасность: ±X\n  Военная Мощь: ±X\n  Общественное развитие: ±X",
             "is_aggregator": true,
             "development_impulses": {}
+        },
+        {
+            "id": "spirit_roll_mods_aggregator",
+            "name": "Сводка модификаторов бросков",
+            "icon_path": "history/national_spirits_icons/aggregator.png",
+            "is_aggregator": true,
+            "description": "Показывает все модификаторы бросков, действующие от активных национальных духов."
         }
     ]
 }
