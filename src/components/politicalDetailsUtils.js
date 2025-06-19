@@ -2,6 +2,7 @@ import { addTooltipEvents } from './Tooltip.js';
 
 let activeSectorIndex = null;
 let fadeTimeout = null;
+let isTooltipDocListenerAttached = false;
 
 export function handlePieChartMouseMove(event, canvas, parties, sectors, tooltipEl) {
   if (!tooltipEl) return;
@@ -50,6 +51,7 @@ export function handlePieChartMouseMove(event, canvas, parties, sectors, tooltip
 }
 
 export function handlePieChartMouseLeave(tooltipEl, canvas, parties) {
+  clearTimeout(fadeTimeout);
   if (tooltipEl) tooltipEl.style.display = 'none';
   activeSectorIndex = null;
   if (canvas && parties) drawPoliticalPieChart(canvas, parties, null);
@@ -117,6 +119,16 @@ export function drawPoliticalPieChart(canvas, parties, highlightIndex = null, fa
   canvas._handleMouseLeave = () => handlePieChartMouseLeave(tooltipEl, canvas, filteredParties);
   canvas.addEventListener('mousemove', canvas._handleMouseMove);
   canvas.addEventListener('mouseleave', canvas._handleMouseLeave);
+  // === Глобальный обработчик document для скрытия тултипа ===
+  if (!isTooltipDocListenerAttached) {
+    document.addEventListener('click', (e) => {
+      if (tooltipEl && tooltipEl.style.display === 'block') {
+        tooltipEl.style.display = 'none';
+        clearTimeout(fadeTimeout);
+      }
+    });
+    isTooltipDocListenerAttached = true;
+  }
 }
 
 export function updatePartyList(listContainer, parties, rulingPartyId) { if (!listContainer || !parties || parties.length === 0) return; const sortedParties = [...parties].filter(p => p.popularity > 0 || p.id === rulingPartyId).sort((a, b) => b.popularity - a.popularity); listContainer.innerHTML = ''; sortedParties.forEach(party => { const listItem = document.createElement('li'); if (party.id === rulingPartyId) listItem.classList.add('highlighted'); const colorBox = document.createElement('div'); colorBox.className = 'party-color-box'; colorBox.style.backgroundColor = party.color || '#cccccc'; const partyNameSpan = document.createElement('span'); partyNameSpan.textContent = ` ${party.name} (${party.popularity}%)`; listItem.appendChild(colorBox); listItem.appendChild(partyNameSpan); addTooltipEvents(listItem, party.name, `Популярность: ${party.popularity}%`, party.short_description); listContainer.appendChild(listItem); }); } 

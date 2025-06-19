@@ -5,6 +5,10 @@ import { getFirestore, doc, updateDoc } from 'firebase/firestore';
 import { firebaseApp } from '../firebaseClient.js';
 import { redistributePopularity } from '../utils/partyBalance.js';
 
+// === Состояние открытия мини-панели партий (глобально для модуля) ===
+let isMiniPartyPanelOpen = false;
+let isMiniPartyPanelListenerAttached = false;
+
 export function PoliticalDetails({ ruling_party_id, definitions, state, userId }) {
   const detailsContainer = document.createElement('div');
   detailsContainer.className = 'political-details';
@@ -76,7 +80,30 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
     panel.style.top = '0';
     panel.style.zIndex = '200';
     function renderPanel() {
+      console.log('[mini-party-panel] renderPanel, isMiniPartyPanelOpen =', isMiniPartyPanelOpen);
       panel.innerHTML = '<div style="font-weight:bold;margin-bottom:8px;">Партии</div>';
+      // === Кнопка-крестик ===
+      const closeBtn = document.createElement('button');
+      closeBtn.innerHTML = '&times;';
+      closeBtn.title = 'Закрыть';
+      closeBtn.style.position = 'absolute';
+      closeBtn.style.top = '7px';
+      closeBtn.style.right = '10px';
+      closeBtn.style.width = '24px';
+      closeBtn.style.height = '24px';
+      closeBtn.style.background = 'transparent';
+      closeBtn.style.color = '#fff';
+      closeBtn.style.border = 'none';
+      closeBtn.style.fontSize = '1.5em';
+      closeBtn.style.cursor = 'pointer';
+      closeBtn.style.zIndex = '210';
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.style.display = 'none';
+        isMiniPartyPanelOpen = false;
+        console.log('[mini-party-panel] closeBtn: закрытие панели, isMiniPartyPanelOpen =', isMiniPartyPanelOpen);
+      });
+      panel.appendChild(closeBtn);
       // Сортировка по популярности (по убыванию)
       const sortedParties = [...partiesWithPopularity].sort((a, b) => b.popularity - a.popularity);
       sortedParties.forEach((p, idx) => {
@@ -151,6 +178,7 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
             // Мгновенно обновляем отображение политических очков в верхней панели:
             const ppValueEl = document.querySelector('.user-resources-bar .resource-value');
             if (ppValueEl) ppValueEl.textContent = newPP;
+            console.log('[mini-party-panel] renderPanel after upBtn (популярность увеличена)');
             renderPanel();
             drawPoliticalPieChart(canvas, partiesWithPopularity);
             updatePartyList(partyListUl, partiesWithPopularity, ruling_party_id);
@@ -181,6 +209,7 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
             // Мгновенно обновляем отображение политических очков в верхней панели:
             const ppValueEl = document.querySelector('.user-resources-bar .resource-value');
             if (ppValueEl) ppValueEl.textContent = newPP;
+            console.log('[mini-party-panel] renderPanel after downBtn (популярность уменьшена)');
             renderPanel();
             drawPoliticalPieChart(canvas, partiesWithPopularity);
             updatePartyList(partyListUl, partiesWithPopularity, ruling_party_id);
@@ -197,17 +226,32 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
         row.appendChild(downBtn);
         panel.appendChild(row);
       });
+      // После рендера — восстановить состояние открытия панели
+      panel.style.display = isMiniPartyPanelOpen ? 'block' : 'none';
+      console.log('[mini-party-panel] panel.style.display =', panel.style.display);
     }
     renderPanel();
     btn.onclick = (e) => {
       e.stopPropagation();
-      panel.style.display = (panel.style.display === 'none' || !panel.style.display) ? 'block' : 'none';
+      isMiniPartyPanelOpen = !(panel.style.display === 'block');
+      panel.style.display = isMiniPartyPanelOpen ? 'block' : 'none';
+      console.log('[mini-party-panel] btn.onclick, isMiniPartyPanelOpen =', isMiniPartyPanelOpen, ', panel.style.display =', panel.style.display);
     };
-    document.addEventListener('click', (e) => {
-      if (panel.style.display === 'block' && !panel.contains(e.target) && e.target !== btn) {
-        panel.style.display = 'none';
-      }
-    });
+    // === Добавляем обработчик document только один раз ===
+    if (!isMiniPartyPanelListenerAttached) {
+      document.addEventListener('click', (e) => {
+        // Ищем актуальные элементы в DOM
+        const panel = document.querySelector('.mini-party-actions-panel');
+        const btn = document.querySelector('.mini-party-actions-btn');
+        if (panel && panel.style.display === 'block' && !panel.contains(e.target) && e.target !== btn) {
+          panel.style.display = 'none';
+          isMiniPartyPanelOpen = false;
+          console.log('[mini-party-panel] document click: закрытие панели (универсально), isMiniPartyPanelOpen =', isMiniPartyPanelOpen);
+          console.trace('[mini-party-panel] document click stack');
+        }
+      });
+      isMiniPartyPanelListenerAttached = true;
+    }
     partyBlock.appendChild(btn);
     partyBlock.style.position = 'relative';
     partyBlock.appendChild(panel);

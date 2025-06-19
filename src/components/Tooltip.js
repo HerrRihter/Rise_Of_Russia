@@ -64,4 +64,9 @@ function moveTooltip(e) {
 
   tooltip.style.left = `${x}px`;
   tooltip.style.top = `${y}px`;
+}
+
+export function hideTooltipGlobal() {
+  const tooltip = document.querySelector('.tooltip');
+  if (tooltip) tooltip.style.display = 'none';
 } 
