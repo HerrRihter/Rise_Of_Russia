@@ -22,16 +22,17 @@ export default function DevelopmentAreaSlotWidget(props) {
         const progressPercentage = (current_progress / progressPerLevel) * 100;
         wrapper.innerHTML = `
             <div class="development-area-slot">
-                <img src="${currentLevel.icon_path}" alt="${areaDef.name}">
-                <span class="item-slot-label-small">${currentLevel.name_display}</span>
+                <img src="${currentLevel.icon_path}" alt="${currentLevel.name_display}">
             </div>
             <div class="dev-progress-bar-container">
                 <div class="dev-progress-bar-fill" style="width: ${progressPercentage}%;"></div>
                 <span class="dev-progress-bar-text">${current_progress}/${progressPerLevel}</span>
             </div>
+            <div class="development-area-title">${areaDef.name}</div>
         `;
+        const tooltipTitle = currentLevel.name_display;
         const tooltipEffects = `Прогресс: ${current_progress}/${progressPerLevel}\n${currentLevel.effects_summary || ''}`;
-        addTooltipEvents(wrapper.querySelector('.development-area-slot'), areaDef.name, tooltipEffects, currentLevel.description);
+        addTooltipEvents(wrapper.querySelector('.development-area-slot'), tooltipTitle, tooltipEffects, currentLevel.description);
     }
 
     wrapper.addEventListener('click', (event) => {

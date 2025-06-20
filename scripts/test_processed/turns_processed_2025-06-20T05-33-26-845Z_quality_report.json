@@ -1,0 +1,18 @@
+{
+  "total_turns": 2,
+  "validation_errors": 0,
+  "average_word_count": 2404,
+  "average_sections": 10,
+  "sentiment_distribution": {
+    "neutral": 2
+  },
+  "theme_distribution": {},
+  "entity_coverage": {
+    "people": 0,
+    "organizations": 0,
+    "locations": 0,
+    "events": 0,
+    "concepts": 0
+  },
+  "processing_date": "2025-06-20T05:33:26.898Z"
+}

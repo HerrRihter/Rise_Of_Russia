@@ -8,21 +8,30 @@ export default function ConstitutionalPrincipleSlotWidget(props) {
   const principlesSelected = state?.constitutional_principles_selected_options || {};
   const assigned_id = principlesSelected[type]?.selected_option_id;
 
+  const wrapper = document.createElement('div');
+  wrapper.className = 'constitutional-principle-wrapper';
+
   const slot = document.createElement('div');
   slot.className = 'constitutional-principle-slot';
 
   function updateView(optionId) {
     const selectedOption = principleDef?.options?.[optionId];
+    slot.innerHTML = '';
     if (principleDef && selectedOption) {
-      slot.innerHTML = `<img src="${principleDef.icon_path}" alt="${principleDef.name}"><span class="item-slot-label-small">${selectedOption.name_display || selectedOption.name}</span>`;
+      slot.innerHTML = `<img src="${principleDef.icon_path}" alt="${selectedOption.name_display}">`;
       slot.classList.remove('empty');
-      addTooltipEvents(slot, selectedOption.name, null, selectedOption.description);
+      addTooltipEvents(slot.querySelector('img'), selectedOption.name_display, null, selectedOption.description);
     } else {
       slot.innerHTML = '';
       slot.classList.add('empty');
-      const title = principleDef ? principleDef.name : 'Принцип не найден';
-      addTooltipEvents(slot, title, 'Опция не выбрана. Нажмите для выбора.', null);
     }
+    let titleDiv = wrapper.querySelector('.constitutional-principle-title');
+    if (!titleDiv) {
+      titleDiv = document.createElement('div');
+      titleDiv.className = 'constitutional-principle-title';
+      wrapper.appendChild(titleDiv);
+    }
+    titleDiv.textContent = principleDef ? principleDef.name : '';
   }
 
   slot.addEventListener('click', (event) => {
@@ -31,7 +40,6 @@ export default function ConstitutionalPrincipleSlotWidget(props) {
     const title = `Выбор: ${principleDef.name}`;
     const options = Object.values(principleDef.options);
     const onSelect = (selectedId) => {
-      console.log(`Для принципа '${type}' выбрана опция: ${selectedId}`);
       if (!state.constitutional_principles_selected_options) state.constitutional_principles_selected_options = {};
       state.constitutional_principles_selected_options[type] = { principle_id: type, selected_option_id: selectedId };
       updateView(selectedId);
@@ -39,6 +47,7 @@ export default function ConstitutionalPrincipleSlotWidget(props) {
     openSidePanel(title, options, onSelect, 'icon-style');
   });
 
+  wrapper.appendChild(slot);
   updateView(assigned_id);
-  return slot;
+  return wrapper;
 }

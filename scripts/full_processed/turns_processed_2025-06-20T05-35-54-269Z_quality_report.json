@@ -1,0 +1,25 @@
+{
+  "total_turns": 10,
+  "validation_errors": 0,
+  "average_word_count": 2265,
+  "average_sections": 10,
+  "sentiment_distribution": {
+    "positive": 9,
+    "neutral": 1
+  },
+  "theme_distribution": {
+    "politics": 46,
+    "security": 35,
+    "society": 18,
+    "economy": 39,
+    "international": 14
+  },
+  "entity_coverage": {
+    "people": 222,
+    "organizations": 364,
+    "locations": 30,
+    "events": 0,
+    "concepts": 0
+  },
+  "processing_date": "2025-06-20T05:35:54.498Z"
+}
