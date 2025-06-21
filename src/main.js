@@ -51,26 +51,50 @@ function reRenderApp() {
     openBtn.style.alignItems = 'center';
     openBtn.style.justifyContent = 'center';
     openBtn.style.boxShadow = '2px 0 8px rgba(0,0,0,0.18)';
+    openBtn.style.transition = 'left 0.3s cubic-bezier(.4,0,.2,1)';
     document.body.appendChild(openBtn);
 
     openBtn.onclick = () => {
+      // Проверяем, открыта ли уже панель
+      const existingDrawer = document.querySelector('.profile-drawer');
+      if (existingDrawer) {
+        // Если панель открыта - закрываем её
+        existingDrawer.remove();
+        openBtn.innerHTML = '☰';
+        openBtn.title = 'Профиль';
+        // Возвращаем кнопку на место
+        openBtn.style.left = '0';
+        openBtn.style.borderRadius = '0 8px 8px 0';
+        return;
+      }
+
       // Получаем профиль и лидера (если есть leader_id)
       const profile = state.profile || {};
       let leader = null;
       if (profile.leader_id && definitions.leaders && definitions.leaders[profile.leader_id]) {
         leader = definitions.leaders[profile.leader_id];
       }
+      
       // Создаём и показываем панель
       const drawer = ProfileDrawer({
         profile,
         leader,
         onClose: () => {
           drawer.remove();
-          openBtn.style.display = 'flex';
+          openBtn.innerHTML = '☰';
+          openBtn.title = 'Профиль';
+          // Возвращаем кнопку на место
+          openBtn.style.left = '0';
+          openBtn.style.borderRadius = '0 8px 8px 0';
         }
       });
       document.body.appendChild(drawer);
-      openBtn.style.display = 'none';
+      
+      // Меняем кнопку на закрытие и двигаем её вправо (торчит наружу)
+      openBtn.innerHTML = '✕';
+      openBtn.title = 'Закрыть профиль';
+      openBtn.style.left = '320px'; // Ширина панели - кнопка торчит справа
+      openBtn.style.borderRadius = '0 8px 8px 0'; // Оставляем то же скругление, что и слева
     };
   }
 }

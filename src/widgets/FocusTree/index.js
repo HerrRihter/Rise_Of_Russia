@@ -14,9 +14,29 @@ export default function FocusTreeWidget(props) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.classList.add('focus-tree-svg');
   const nodeCenters = {};
+  
   console.log('--- ПРОВЕРКА ДАННЫХ ВНУТРИ FOCUSTREE ---');
   console.log('Выполненные фокусы (массив):', completed_focuses);
+  console.log('Всего фокусов в дереве:', Object.keys(focus_tree).length);
 
+  // Вычисляем общую высоту дерева для правильного размера SVG
+  let maxY = 0;
+  for (const focusId in focus_tree) {
+    const focusData = focus_tree[focusId];
+    const nodeBottom = focusData.y * GRID_GAP_Y + PADDING + NODE_HEIGHT;
+    if (nodeBottom > maxY) {
+      maxY = nodeBottom;
+    }
+  }
+  
+  // Устанавливаем правильную высоту SVG для всех фокусов
+  const svgHeight = Math.max(maxY + PADDING, 70 * window.innerHeight / 100); // минимум 70vh
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', `${svgHeight}px`);
+  
+  console.log(`📏 Высота SVG установлена: ${svgHeight}px (максимальная Y: ${maxY}px)`);
+
+  // Создаем все узлы и вычисляем их центры
   for (const focusId in focus_tree) {
     const isCompleted = completed_focuses.includes(focusId);
     console.log(`Проверяем фокус: ID='${focusId}'. Найден в выполненных? ${isCompleted ? 'ДА' : 'НЕТ'}`);
@@ -24,6 +44,9 @@ export default function FocusTreeWidget(props) {
     const left = focusData.x * GRID_GAP_X + PADDING;
     const top = focusData.y * GRID_GAP_Y + PADDING;
     nodeCenters[focusId] = { x: left + NODE_WIDTH / 2, y: top + NODE_HEIGHT / 2 };
+    
+    console.log(`📍 Координаты фокуса "${focusData.title}": (${left}, ${top}) -> центр: (${nodeCenters[focusId].x}, ${nodeCenters[focusId].y})`);
+    
     const node = document.createElement('div');
     node.className = 'focus-node';
     node.style.left = `${left}px`;
@@ -47,9 +70,17 @@ export default function FocusTreeWidget(props) {
     container.appendChild(node);
   }
 
+  // Строим линии между всеми фокусами
+  console.log('🔗 Строим соединительные линии...');
+  let linesCreated = 0;
+  
   for (const focusId in focus_tree) {
     const focusData = focus_tree[focusId];
-    if (!focusData.prerequisites || focusData.prerequisites.length === 0) continue;
+    if (!focusData.prerequisites || focusData.prerequisites.length === 0) {
+      console.log(`⚠️ Фокус "${focusData.title}" не имеет prerequisites`);
+      continue;
+    }
+    
     const childCenter = nodeCenters[focusId];
     focusData.prerequisites.forEach(prereqId => {
       const parentCenter = nodeCenters[prereqId];
@@ -63,9 +94,19 @@ export default function FocusTreeWidget(props) {
           line.classList.add('completed');
         }
         svg.appendChild(line);
+        linesCreated++;
+        console.log(`✅ Линия создана: "${focus_tree[prereqId]?.title}" -> "${focusData.title}"`);
+      } else {
+        console.error(`❌ Не удалось создать линию для "${focusData.title}":`, {
+          childCenter: !!childCenter,
+          parentCenter: !!parentCenter,
+          prereqId
+        });
       }
     });
   }
+  
+  console.log(`🎯 Всего создано линий: ${linesCreated}`);
 
   container.insertBefore(svg, container.firstChild);
   return container;

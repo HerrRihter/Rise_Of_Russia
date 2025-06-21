@@ -13,8 +13,9 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  /* height: 100%; - УБИРАЕМ это ограничение, теперь высота устанавливается динамически */
   pointer-events: none; /* Чтобы SVG не мешал кликать на иконки */
+  z-index: 1; /* Убеждаемся, что SVG находится под узлами */
 }
 
 .focus-tree-svg line {
@@ -38,6 +39,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2; /* Узлы должны быть поверх SVG */
 }
 .focus-node:hover {
   border-color: #aaa;

@@ -1,0 +1,50 @@
+{
+  "total_actions": 284,
+  "characters": {
+    "boris_dolgov": 72,
+    "yaroslav_khomyakov": 68,
+    "oleg_kovalev": 72,
+    "alexander_khantsev": 72
+  },
+  "turns": {
+    "turn_11": 24,
+    "turn_12": 24,
+    "turn_13": 24,
+    "turn_14": 24,
+    "turn_15": 24,
+    "turn_16": 24,
+    "turn_17": 24,
+    "turn_18": 24,
+    "turn_19": 24,
+    "turn_20": 24,
+    "turn_21": 24,
+    "turn_22": 20
+  },
+  "success_distribution": {
+    "high": 105,
+    "medium": 64,
+    "low": 115
+  },
+  "sentiment_distribution": {
+    "positive": 129,
+    "neutral": 93,
+    "negative": 62
+  },
+  "theme_distribution": {
+    "politics": 66,
+    "infrastructure": 29,
+    "diplomacy": 14,
+    "economy": 44,
+    "security": 42,
+    "education": 13,
+    "culture": 7
+  },
+  "entity_coverage": {
+    "people": 383,
+    "organizations": 204,
+    "locations": 44,
+    "events": null,
+    "concepts": null
+  },
+  "processing_date": "2025-06-21T05:19:15.901Z"
+}

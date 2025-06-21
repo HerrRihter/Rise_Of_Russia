@@ -1,4 +1,5 @@
 import './ProfileDrawer.css';
+import { marked } from 'marked';
 
 const ABILITIES_LABELS = {
   can_enact_advisors: 'Может менять советников',
@@ -9,14 +10,6 @@ const ABILITIES_LABELS = {
 export function ProfileDrawer({ profile, leader, onClose }) {
   const drawer = document.createElement('div');
   drawer.className = 'profile-drawer';
-
-  // Кнопка закрытия
-  const closeBtn = document.createElement('button');
-  closeBtn.className = 'profile-drawer-close-btn';
-  closeBtn.innerHTML = '⟨';
-  closeBtn.title = 'Закрыть';
-  closeBtn.onclick = onClose;
-  drawer.appendChild(closeBtn);
 
   // Имя
   const nameDiv = document.createElement('div');
@@ -48,11 +41,13 @@ export function ProfileDrawer({ profile, leader, onClose }) {
     drawer.appendChild(abilitiesDiv);
   }
 
-  // Био только из profile, с заголовком
+  // Био только из profile, без заголовка
   if (profile?.bio) {
     const bioDiv = document.createElement('div');
     bioDiv.className = 'profile-drawer-bio';
-    bioDiv.innerHTML = '<strong>Биография:</strong><br>' + profile.bio;
+    // Преобразуем Markdown в HTML
+    const bioHtml = marked.parse(profile.bio);
+    bioDiv.innerHTML = bioHtml;
     drawer.appendChild(bioDiv);
   }
 
