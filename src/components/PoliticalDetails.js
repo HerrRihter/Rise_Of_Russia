@@ -30,10 +30,10 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
   const profileDocRef = userId ? doc(db, 'profiles', userId) : null;
 
   // DEBUG LOGS
-  console.log('PoliticalDetails: profile', profile);
-  console.log('PoliticalDetails: abilities', profile.abilities);
-  console.log('PoliticalDetails: canInfluence', canInfluence);
-  console.log('PoliticalDetails: userId', userId);
+  // console.log('PoliticalDetails: profile', profile);
+  // console.log('PoliticalDetails: abilities', profile.abilities);
+  // console.log('PoliticalDetails: canInfluence', canInfluence);
+  // console.log('PoliticalDetails: userId', userId);
 
   // Интерактив
   const canvas = detailsContainer.querySelector('#partyPieChartCanvas');
@@ -156,7 +156,7 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
     panel.style.top = '0';
     panel.style.zIndex = '200';
     function renderPanel() {
-      console.log('[mini-party-panel] renderPanel, isMiniPartyPanelOpen =', isMiniPartyPanelOpen);
+      // console.log('[mini-party-panel] renderPanel, isMiniPartyPanelOpen =', isMiniPartyPanelOpen);
       panel.innerHTML = '<div style="font-weight:bold;margin-bottom:8px;">Партии</div>';
       // === Кнопка-крестик ===
       const closeBtn = document.createElement('button');
@@ -177,7 +177,7 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
         e.stopPropagation();
         panel.style.display = 'none';
         isMiniPartyPanelOpen = false;
-        console.log('[mini-party-panel] closeBtn: закрытие панели, isMiniPartyPanelOpen =', isMiniPartyPanelOpen);
+        // console.log('[mini-party-panel] closeBtn: закрытие панели, isMiniPartyPanelOpen =', isMiniPartyPanelOpen);
       });
       panel.appendChild(closeBtn);
       // Сортировка по популярности (по убыванию)
@@ -254,7 +254,7 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
             // Мгновенно обновляем отображение политических очков в верхней панели:
             const ppValueEl = document.querySelector('.user-resources-bar .resource-value');
             if (ppValueEl) ppValueEl.textContent = newPP;
-            console.log('[mini-party-panel] renderPanel after upBtn (популярность увеличена)');
+            // console.log('[mini-party-panel] renderPanel after upBtn (популярность увеличена)');
             renderPanel();
             drawPoliticalPieChart(canvas, partiesWithPopularity);
             updatePartyList(partyListUl, partiesWithPopularity, ruling_party_id);
@@ -285,7 +285,7 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
             // Мгновенно обновляем отображение политических очков в верхней панели:
             const ppValueEl = document.querySelector('.user-resources-bar .resource-value');
             if (ppValueEl) ppValueEl.textContent = newPP;
-            console.log('[mini-party-panel] renderPanel after downBtn (популярность уменьшена)');
+            // console.log('[mini-party-panel] renderPanel after downBtn (популярность уменьшена)');
             renderPanel();
             drawPoliticalPieChart(canvas, partiesWithPopularity);
             updatePartyList(partyListUl, partiesWithPopularity, ruling_party_id);
@@ -304,14 +304,14 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
       });
       // После рендера — восстановить состояние открытия панели
       panel.style.display = isMiniPartyPanelOpen ? 'block' : 'none';
-      console.log('[mini-party-panel] panel.style.display =', panel.style.display);
+      // console.log('[mini-party-panel] panel.style.display =', panel.style.display);
     }
     renderPanel();
     btn.onclick = (e) => {
       e.stopPropagation();
       isMiniPartyPanelOpen = !(panel.style.display === 'block');
       panel.style.display = isMiniPartyPanelOpen ? 'block' : 'none';
-      console.log('[mini-party-panel] btn.onclick, isMiniPartyPanelOpen =', isMiniPartyPanelOpen, ', panel.style.display =', panel.style.display);
+      // console.log('[mini-party-panel] btn.onclick, isMiniPartyPanelOpen =', isMiniPartyPanelOpen, ', panel.style.display =', panel.style.display);
     };
     // === Добавляем обработчик document только один раз ===
     if (!isMiniPartyPanelListenerAttached) {
@@ -322,7 +322,7 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
         if (panel && panel.style.display === 'block' && !panel.contains(e.target) && e.target !== btn) {
           panel.style.display = 'none';
           isMiniPartyPanelOpen = false;
-          console.log('[mini-party-panel] document click: закрытие панели (универсально), isMiniPartyPanelOpen =', isMiniPartyPanelOpen);
+          // console.log('[mini-party-panel] document click: закрытие панели (универсально), isMiniPartyPanelOpen =', isMiniPartyPanelOpen);
           console.trace('[mini-party-panel] document click stack');
         }
       });

@@ -23,12 +23,17 @@ async function uploadLayout() {
     await doc.ref.delete();
   }
   // Загружаем новый layout
+  const batch = db.batch();
+
   for (let i = 0; i < layoutArr.length; i++) {
-    await layoutCol.doc(String(i)).set(layoutArr[i]);
-    console.log(`layout/${i} загружен`);
+    const docRef = db.collection('layout').doc(String(i));
+    batch.set(docRef, layoutArr[i]);
+    // console.log(`layout/${i} загружен`);
   }
-  console.log('Layout успешно обновлён в Firestore!');
+
+  await batch.commit();
+  // console.log('Layout успешно обновлён в Firestore!');
   process.exit(0);
 }
 
-uploadLayout();
+uploadLayout().catch(console.error);

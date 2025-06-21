@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const fs = require('fs');
 const path = require('path');
+const { getFirestore, collection, getDocs, writeBatch, doc, setDoc } = require('firebase-admin/firestore');
 
 // Пути к файлам
 const serviceAccount = require('../serviceAccountKey.json');
@@ -11,12 +12,13 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-const db = admin.firestore();
+const db = getFirestore();
 
 async function updateFocusCoordinates() {
-  console.log('🔄 Обновление координат фокусов...');
-  
   try {
+    // console.log('🔄 Обновление координат фокусов...');
+    
+    const focusTreeFilePath = path.join(__dirname, '..', 'public', 'history', 'presidential_focus_tree.json');
     // Читаем данные фокусов
     const focusTreeData = JSON.parse(fs.readFileSync(focusTreeFile, 'utf8'));
     const focusNodes = focusTreeData.focus_tree_nodes;

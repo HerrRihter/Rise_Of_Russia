@@ -5,6 +5,7 @@ const ABILITIES_LABELS = {
   can_enact_advisors: 'Может менять советников',
   can_influence_party: 'Может влиять на партии',
   can_change_laws: 'Может менять законы',
+  can_influence_on_president: 'Влияние на президента',
   // Добавьте другие ключи по необходимости
 };
 

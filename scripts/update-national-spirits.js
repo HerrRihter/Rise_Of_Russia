@@ -62,17 +62,14 @@ async function updateSpirits() {
   for (const spirit of spirits) {
     const ref = doc(db, 'national_spirits', spirit.id);
     await updateDoc(ref, { roll_modifiers: spirit.roll_modifiers });
-    console.log(`Обновлён дух: ${spirit.id}`);
+    // console.log(`Обновлён дух: ${spirit.id}`);
   }
   // Удаляем moscow_advance
-  await deleteDoc(doc(db, 'national_spirits', 'moscow_advance'));
-  console.log('moscow_advance удалён');
+  const oldSpiritRef = doc(db, 'national_spirits', 'moscow_advance');
+  if ((await deleteDoc(oldSpiritRef)).exists) {
+    // console.log('moscow_advance удалён');
+  }
+  // console.log('Готово!');
 }
 
-updateSpirits().then(() => {
-  console.log('Готово!');
-  process.exit(0);
-}).catch(e => {
-  console.error('Ошибка:', e);
-  process.exit(1);
-}); 
+updateSpirits().catch(console.error); 

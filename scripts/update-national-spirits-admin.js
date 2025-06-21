@@ -66,11 +66,15 @@ async function updateSpirits() {
   for (const spirit of spirits) {
     const ref = db.collection('national_spirits').doc(spirit.id);
     await ref.update({ roll_modifiers: spirit.roll_modifiers });
-    console.log(`Обновлён дух: ${spirit.id}`);
+    // console.log(`Обновлён дух: ${spirit.id}`);
   }
   // Удаляем moscow_advance
-  await db.collection('national_spirits').doc('moscow_advance').delete();
-  console.log('moscow_advance удалён');
+  const oldSpiritRef = db.collection('national_spirits').doc('moscow_advance');
+  if ((await oldSpiritRef.get()).exists) {
+    await oldSpiritRef.delete();
+    // console.log('moscow_advance удалён');
+  }
+  // console.log('Готово!');
 }
 
 updateSpirits().then(() => {

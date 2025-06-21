@@ -26,10 +26,10 @@ async function uploadCorporations() {
   // Загружаем новые данные
   for (const corp of corporationsArr) {
     await col.doc(corp.id).set(corp);
-    console.log(`corporations/${corp.id} загружен`);
+    // console.log(`corporations/${corp.id} загружен`);
   }
-  console.log('Corporations успешно обновлены в Firestore!');
+  // console.log('Corporations успешно обновлены в Firestore!');
   process.exit(0);
 }
 
-uploadCorporations(); 
+uploadCorporations().catch(console.error); 
