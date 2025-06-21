@@ -4,7 +4,7 @@ import { collection, getDocs, doc, updateDoc, increment, arrayUnion } from "fire
 import { addTooltipEvents } from '../../components/Tooltip.js';
 
 // --- Constants ---
-const ICONS_PATH = 'public/history/diplomacy_icons/';
+const ICONS_PATH = '/history/diplomacy_icons/';
 
 // --- Main Widget Function ---
 export default function InteractiveMapWidget(props) {
@@ -100,9 +100,9 @@ export default function InteractiveMapWidget(props) {
     }
 
     function updateCountrySidebar() {
-        const influenceIcon = `<img src="public/history/icons/political_power.png" class="country-stat-icon" alt="Influence">`;
-        const intelligenceIcon = `<img src="public/history/icons/Solar.png" class="country-stat-icon" alt="Intelligence">`;
-        const relationsIcon = `<img src="public/history/icons/Lunar.png" class="country-stat-icon" alt="Relations">`;
+        const influenceIcon = `<img src="/history/icons/political_power.png" class="country-stat-icon" alt="Influence">`;
+        const intelligenceIcon = `<img src="/history/icons/Solar.png" class="country-stat-icon" alt="Intelligence">`;
+        const relationsIcon = `<img src="/history/icons/Lunar.png" class="country-stat-icon" alt="Relations">`;
         const sortedCountries = [...allCountriesData.entries()].sort((a, b) => (countryIdToName[a[0]] || a[0]).localeCompare(countryIdToName[b[0]] || b[0]));
         
         countryList.innerHTML = sortedCountries.map(([countryId, data]) => `
@@ -277,14 +277,14 @@ export default function InteractiveMapWidget(props) {
 
     async function loadMap() {
         try {
-            const response = await fetch('public/history/MiddleEastMap.svg');
+            const response = await fetch('history/MiddleEastMap.svg');
             if (!response.ok) throw new Error(`Network response was not ok`);
             const svgText = await response.text();
             mapContainer.innerHTML = svgText;
             makeCountriesInteractive(mapContainer.querySelector('svg'));
         } catch (error) {
             console.error('Map Widget: Error loading SVG:', error);
-            mapContainer.innerHTML = `<p style="color:red;">Ошибка загрузки SVG карты.</p>`;
+            mapContainer.innerHTML = `<p style=\"color:red;\">Ошибка загрузки SVG карты.</p>`;
         }
     }
     
