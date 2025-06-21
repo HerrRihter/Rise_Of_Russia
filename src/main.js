@@ -102,33 +102,45 @@ function reRenderApp() {
 function subscribeToStateAndProfile(user, onUpdate) {
   const stateDocRef = doc(db, 'state', 'main');
   let unsubProfile = null;
+  let stateData = null; // Будем хранить данные из state/main здесь
+  let userProfile = null; // и данные профиля здесь
 
-  // Подписка на state/main
-  const unsubState = onSnapshot(stateDocRef, (stateSnap) => {
-    if (!stateSnap.exists()) return;
-    const stateData = stateSnap.data();
-    let userProfile = null;
-    if (user) {
-      const profileDocRef = doc(db, 'profiles', user.uid);
-      if (unsubProfile) unsubProfile();
-      unsubProfile = onSnapshot(profileDocRef, (profileSnap) => {
-        userProfile = profileSnap.exists() ? profileSnap.data() : null;
-        state = {
-          ...state,
-          ...stateData,
-          profile: userProfile,
-        };
-        onUpdate();
-      });
-    } else {
+  const tryUpdate = () => {
+    // Вызываем onUpdate, только когда оба набора данных загружены
+    if (stateData !== null && userProfile !== null) {
       state = {
         ...state,
         ...stateData,
-        profile: null,
+        profile: userProfile,
       };
       onUpdate();
     }
+  };
+
+  // Подписка на state/main
+  const unsubState = onSnapshot(stateDocRef, (stateSnap) => {
+    if (stateSnap.exists()) {
+      stateData = stateSnap.data();
+      // Убираем layout из данных, чтобы он не перезаписывал основной
+      delete stateData.layout;
+    } else {
+      stateData = {}; // Если документа нет, используем пустой объект
+    }
+    tryUpdate();
   });
+
+  if (user) {
+    const profileDocRef = doc(db, 'profiles', user.uid);
+    unsubProfile = onSnapshot(profileDocRef, (profileSnap) => {
+      userProfile = profileSnap.exists() ? profileSnap.data() : { uid: user.uid }; // Если профиля нет, создаем минимальный
+      tryUpdate();
+    });
+  } else {
+    // Если пользователя нет, профиль известен (null), можно сразу пытаться обновить
+    userProfile = null;
+    tryUpdate();
+  }
+  
   return () => {
     unsubState();
     if (unsubProfile) unsubProfile();
