@@ -47,12 +47,12 @@ export default function PoliticalActionsWidget(props) {
     const upBtn = document.createElement('button');
     upBtn.className = 'party-action-btn up';
     upBtn.textContent = '↑';
-    addTooltipEvents(upBtn, 'Продвигать партию', 'Увеличить популярность на 1% (−25 очков)', null);
+    addTooltipEvents(upBtn, 'Продвигать партию', 'Увеличить популярность на 1% (−75 очков)', null);
     // Кнопка ↓
     const downBtn = document.createElement('button');
     downBtn.className = 'party-action-btn down';
     downBtn.textContent = '↓';
-    addTooltipEvents(downBtn, 'Подавлять партию', 'Уменьшить популярность на 1% (−25 очков)', null);
+    addTooltipEvents(downBtn, 'Подавлять партию', 'Уменьшить популярность на 1% (−75 очков)', null);
     partyRow.appendChild(upBtn);
     partyRow.appendChild(downBtn);
     partiesList.appendChild(partyRow);

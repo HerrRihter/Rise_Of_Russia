@@ -241,7 +241,7 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
           if (p.popularity >= 100) return;
           // Используем новую функцию перераспределения
           const newPopularities = redistributePopularity(p.id, partiesPopularity, 1);
-          const newPP = userPP - 25;
+          const newPP = userPP - 75;
           upBtn.disabled = true;
           downBtn.disabled = true;
           try {
@@ -272,7 +272,7 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
           if (p.popularity <= 0) return;
           // Используем новую функцию перераспределения
           const newPopularities = redistributePopularity(p.id, partiesPopularity, -1);
-          const newPP = userPP - 25;
+          const newPP = userPP - 75;
           upBtn.disabled = true;
           downBtn.disabled = true;
           try {
