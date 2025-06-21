@@ -8,6 +8,7 @@ import ConstitutionalPrincipleSlotWidget from './ConstitutionalPrincipleSlot/ind
 import CorporationSlotWidget from './CorporationSlot/index.js';
 import DevelopmentAreaSlotWidget from './DevelopmentAreaSlot/index.js';
 import FocusTreeWidget from './FocusTree/index.js';
+import InteractiveMapWidget from './InteractiveMap/index.js';
 import KpiWidget from './kpi/index.js';
 import LeaderPaneWidget from './LeaderPane/index.js';
 import NationalInfoPaneWidget from './NationalInfoPane/index.js';
@@ -23,6 +24,7 @@ const widgets = {
   'corporation-slot': CorporationSlotWidget,
   'development-area-slot': DevelopmentAreaSlotWidget,
   'focus-tree': FocusTreeWidget,
+  'interactive-map': InteractiveMapWidget,
   'kpi': KpiWidget,
   'leader-pane': LeaderPaneWidget,
   'national-info-pane': NationalInfoPaneWidget,

@@ -1,0 +1,146 @@
+[
+  {
+    "id": "Turquie",
+    "name": "Турция",
+    "influence": 0,
+    "intelligence": 0,
+    "history": [],
+    "statuses": {
+      "trade_agreement": true
+    }
+  },
+  {
+    "id": "Syrie",
+    "name": "Сирия",
+    "influence": 5,
+    "intelligence": 5,
+    "history": [
+      { "turn": 0, "action": "Начальная расстановка сил", "details": "Установлены начальные уровни влияния и разведки." }
+    ],
+    "statuses": {
+      "military_base": true,
+      "alliance": true,
+      "puppet_government": false
+    }
+  },
+  {
+    "id": "Jordanie",
+    "name": "Иордания",
+    "influence": 0,
+    "intelligence": 0,
+    "history": []
+  },
+  {
+    "id": "Liban",
+    "name": "Ливан",
+    "influence": 0,
+    "intelligence": 0,
+    "history": []
+  },
+  {
+    "id": "Israel",
+    "name": "Израиль",
+    "influence": 0,
+    "intelligence": 0,
+    "history": [],
+    "statuses": {
+      "alliance": true,
+      "investment_agreement": true
+    }
+  },
+  {
+    "id": "Koweit",
+    "name": "Кувейт",
+    "influence": 0,
+    "intelligence": 0,
+    "history": []
+  },
+  {
+    "id": "Qatar",
+    "name": "Катар",
+    "influence": 0,
+    "intelligence": 0,
+    "history": []
+  },
+  {
+    "id": "Yemen",
+    "name": "Йемен",
+    "influence": 0,
+    "intelligence": 0,
+    "history": []
+  },
+  {
+    "id": "Oman",
+    "name": "Оман",
+    "influence": 0,
+    "intelligence": 0,
+    "history": []
+  },
+  {
+    "id": "Irak",
+    "name": "Ирак",
+    "influence": 2,
+    "intelligence": 2,
+    "history": [
+      { "turn": 0, "action": "Начальная расстановка сил", "details": "Установлены начальные уровни влияния и разведки." }
+    ],
+    "statuses": {
+      "puppet_government": true
+    }
+  },
+  {
+    "id": "Iran",
+    "name": "Иран",
+    "influence": 3,
+    "intelligence": 4,
+    "history": [
+      { "turn": 0, "action": "Начальная расстановка сил", "details": "Установлены начальные уровни влияния и разведки." }
+    ],
+    "statuses": {
+      "trade_agreement": true,
+      "investment_agreement": true
+    }
+  },
+  {
+    "id": "Egypte",
+    "name": "Египет",
+    "influence": 0,
+    "intelligence": 0,
+    "history": [],
+    "statuses": {
+      "visa_free": true,
+      "cultural_exchange": true
+    }
+  },
+  {
+    "id": "Soudan",
+    "name": "Судан",
+    "influence": 0,
+    "intelligence": 0,
+    "history": []
+  },
+  {
+    "id": "Lybie",
+    "name": "Ливия",
+    "influence": 0,
+    "intelligence": 0,
+    "history": []
+  },
+  {
+    "id": "Arabie_Saoudite",
+    "name": "Саудовская Аравия",
+    "influence": 1,
+    "intelligence": 1,
+    "history": [
+      { "turn": 0, "action": "Начальная расстановка сил", "details": "Установлены начальные уровни влияния и разведки." }
+    ]
+  },
+  {
+    "id": "Emirats_Arabes_Unis",
+    "name": "ОАЭ",
+    "influence": 0,
+    "intelligence": 0,
+    "history": [],
+    "statuses": {}
+  }
+] 

@@ -1,0 +1,55 @@
+[
+  {
+    "id": "strengthen_diplomacy",
+    "name": "Укрепить дипломатические связи",
+    "description": "Отправить дипломатическую миссию для улучшения отношений и получения базовой информации.",
+    "cost": {
+      "political_power": 10
+    },
+    "effects": {
+      "influence": 1,
+      "intelligence": 1
+    },
+    "cooldown_turns": 1
+  },
+  {
+    "id": "establish_spy_network",
+    "name": "Создать сеть информаторов",
+    "description": "Завербовать местных агентов для сбора подробной разведывательной информации.",
+    "cost": {
+      "political_power": 25,
+      "money": 50
+    },
+    "effects": {
+      "intelligence": 5
+    },
+    "cooldown_turns": 2,
+    "requirements": {
+      "influence": 2
+    }
+  },
+  {
+    "id": "provide_economic_aid",
+    "name": "Оказать экономическую помощь",
+    "description": "Инвестировать в экономику страны для значительного повышения своего влияния.",
+    "cost": {
+      "money": 200
+    },
+    "effects": {
+      "influence": 10
+    },
+    "cooldown_turns": 3
+  },
+  {
+    "id": "propaganda_campaign",
+    "name": "Пропагандистская кампания",
+    "description": "Запустить медиа-кампанию для формирования положительного образа в глазах населения.",
+    "cost": {
+      "political_power": 15
+    },
+    "effects": {
+      "influence": 3
+    },
+    "cooldown_turns": 2
+  }
+] 

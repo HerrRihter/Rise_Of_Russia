@@ -5,8 +5,9 @@ import { initModal, initDetailsModal } from './modal.js';
 import { initSidePanel } from './sidePanel.js';
 import { onAuthStateChanged } from './auth.js';
 import { getFirestore, collection, getDocs, getDoc, doc, onSnapshot } from 'firebase/firestore';
-import { firebaseApp } from './firebaseClient.js';
+import { firebaseApp, db } from './firebaseClient.js';
 import { ProfileDrawer } from './components/ProfileDrawer.js';
+import 'vite/modulepreload-polyfill';
 
 function arrayToIdObject(array, key = 'id') {
   if (!Array.isArray(array)) return {};
@@ -17,7 +18,6 @@ let definitions = {};
 let state = {};
 let currentUser = null;
 const appContainer = document.getElementById('app');
-const db = getFirestore(firebaseApp);
 
 function reRenderApp() {
   if (appContainer) {
@@ -100,7 +100,6 @@ function reRenderApp() {
 }
 
 function subscribeToStateAndProfile(user, onUpdate) {
-  const db = getFirestore(firebaseApp);
   const stateDocRef = doc(db, 'state', 'main');
   let unsubProfile = null;
 
@@ -147,6 +146,10 @@ async function fetchInitialData() {
   ];
   const results = {};
   for (const col of collectionsToFetch) {
+    // Убедимся что db существует перед вызовом
+    if (!db) {
+        throw new Error("Firestore DB instance is not available. Check firebaseClient.js and its imports.");
+    }
     const snap = await getDocs(collection(db, col));
     results[col] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   }
