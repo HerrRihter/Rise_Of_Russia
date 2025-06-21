@@ -7,16 +7,28 @@
 </head>
 <body>
 <div id="app"></div>
-<script type="module" src="/src/main.js"></script>
-<!-- Каркас для модальных окон -->
+<div id="tooltip" style="display:none; position:absolute; z-index:1000;"></div>
 <div id="genericModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h4 class="modal-title">Заголовок</h4>
-            <span class="modal-close-button">×</span>
+            <h2 class="modal-title">Заголовок</h2>
+            <button class="modal-close-button">&times;</button>
         </div>
         <div class="modal-body">
-            <!-- Сюда будет вставляться контент -->
+            <!-- Контент будет вставлен сюда -->
+        </div>
+    </div>
+</div>
+
+<!-- Новое модальное окно для деталей -->
+<div id="detailsModal" class="modal">
+    <div class="modal-content small">
+        <div class="modal-header">
+            <h2 class="modal-title">Детали</h2>
+            <button class="modal-close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Детальный контент -->
         </div>
     </div>
 </div>
@@ -31,5 +43,6 @@
     </div>
 </div>
 
+<script type="module" src="/src/main.js"></script>
 </body>
 </html>

@@ -43,7 +43,83 @@ export function PoliticalDetails({ ruling_party_id, definitions, state, userId }
   const balanceButton = detailsContainer.querySelector('.balance-btn');
   if (balanceButton) {
     balanceButton.addEventListener('click', () => {
-      openModal('Баланс Сил', 'Здесь будет содержимое окна баланса...');
+      const modalContentContainer = document.createElement('div');
+
+      const renderContent = () => {
+        const balance = state.balance ?? 0;
+        const profile = state.profile || {};
+        const userPP = profile.political_power ?? 0;
+        const canInfluence = profile.abilities?.can_influence_on_president === true;
+
+        // Конвертируем баланс из [-50, 50] в проценты [0, 100]
+        const solarPercentage = balance + 50;
+        const lunarPercentage = 100 - solarPercentage;
+
+        modalContentContainer.innerHTML = `
+          <div class="balance-modal-content">
+              <div class="balance-display">
+                  <span class="balance-label-lunar">Лунар</span>
+                  <strong class="balance-value">${balance}</strong>
+                  <span class="balance-label-solar">Солар</span>
+              </div>
+              <div class="balance-bar-container">
+                   <div class="balance-bar">
+                      <div class="balance-bar-lunar" style="width: ${lunarPercentage}%;"><\/div>
+                      <div class="balance-bar-solar" style="width: ${solarPercentage}%;"><\/div>
+                  </div>
+              </div>
+              <div class="balance-actions">
+                  <button class="balance-change-btn decrease-btn" title="Сместить к Лунар (-1)" ${!canInfluence || userPP < 100 || balance <= -50 ? 'disabled' : ''}>-</button>
+                  <div class="balance-cost">
+                      <img src="history/icons/political_power.png" alt="PP" />
+                      <span>100</span>
+                  </div>
+                  <button class="balance-change-btn increase-btn" title="Сместить к Солар (+1)" ${!canInfluence || userPP < 100 || balance >= 50 ? 'disabled' : ''}>+</button>
+              </div>
+              ${!canInfluence ? '<p class="disclaimer">У вас нет права влиять на президента.</p>' : (userPP < 100 && balance > -50 && balance < 50 ? '<p class="disclaimer">Недостаточно полит. очков.</p>' : '')}
+          </div>
+        `;
+
+        const handleBalanceChange = async (change) => {
+          if (!canInfluence || userPP < 100 || !profileDocRef) return;
+          
+          const newBalance = Math.max(-50, Math.min(50, balance + change));
+          if (newBalance === balance) return;
+          
+          const newPP = userPP - 100;
+
+          // Блокируем кнопки на время операции
+          modalContentContainer.querySelectorAll('.balance-change-btn').forEach(b => { b.disabled = true; });
+
+          try {
+            await updateDoc(stateDocRef, { balance: newBalance });
+            await updateDoc(profileDocRef, { political_power: newPP });
+
+            // Обновляем состояние локально для мгновенного отклика
+            state.balance = newBalance;
+            if (state.profile) state.profile.political_power = newPP;
+            
+            // Обновляем очки в главном интерфейсе
+            const ppValueEl = document.querySelector('.user-resources-bar .resource-value');
+            if (ppValueEl) ppValueEl.textContent = newPP;
+
+            // Перерисовываем содержимое модального окна
+            renderContent();
+          } catch (e) {
+            alert('Ошибка обновления: ' + e.message);
+            // Перерисовываем в случае ошибки, чтобы вернуть кнопки в норм состояние
+            renderContent();
+          }
+        };
+        
+        modalContentContainer.querySelector('.decrease-btn')?.addEventListener('click', () => handleBalanceChange(-1));
+        modalContentContainer.querySelector('.increase-btn')?.addEventListener('click', () => handleBalanceChange(1));
+      };
+
+      // Первый рендер содержимого
+      renderContent();
+      // Открываем модальное окно с созданным контейнером
+      openModal('Баланс Сил', modalContentContainer, 'balance-modal');
     });
   }
 

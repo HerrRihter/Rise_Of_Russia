@@ -1,7 +1,7 @@
 import './style.css';
 import { renderDashboard } from './renderer.js';
 import { ensureTooltipExists } from './components/Tooltip.js';
-import { initModal } from './modal.js';
+import { initModal, initDetailsModal } from './modal.js';
 import { initSidePanel } from './sidePanel.js';
 import { onAuthStateChanged } from './auth.js';
 import { getFirestore, collection, getDocs, getDoc, doc, onSnapshot } from 'firebase/firestore';
@@ -176,6 +176,7 @@ async function fetchInitialData() {
 
 async function main() {
   initModal();
+  initDetailsModal();
   initSidePanel();
   if (!appContainer) return;
 

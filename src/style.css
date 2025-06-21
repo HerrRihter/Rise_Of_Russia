@@ -71,9 +71,9 @@ body {
 
 /* Стили для модальных окон */
 .modal {
-  display: none; /* Скрыто по умолчанию */
+  display: none;
   position: fixed;
-  z-index: 1001;
+  z-index: 1000; /* Базовый z-index для модалок */
   left: 0;
   top: 0;
   width: 100%;
@@ -84,26 +84,38 @@ body {
   align-items: center;
 }
 
+/* Делаем вторую модалку поверх первой */
+#detailsModal {
+    z-index: 1100;
+}
+
 .modal-content {
-  background-color: #3a3a3a;
-  color: #e0e0e0;
-  margin: auto;
-  border: 1px solid #888;
-  width: 95%;
-  max-width: 1000px;
+  background-color: #333;
+  padding: 20px;
   border-radius: 5px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+  border: 1px solid #555;
+  min-width: 300px;
+  width: 90vw;
+  height: 85vh;
   display: flex;
   flex-direction: column;
+  position: relative; /* Для дочерних flex-элементов */
+}
+
+/* Стили для малого модального окна */
+.modal-content.small {
+    width: 400px;
+    height: auto;
+    max-height: 80vh;
 }
 
 .modal-header {
-  padding: 10px 15px;
-  background-color: #2a2a2a;
-  border-bottom: 1px solid #555;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #555; /* Добавим разделитель */
 }
 
 .modal-title {
@@ -112,18 +124,16 @@ body {
 }
 
 .modal-close-button {
+  border: none;
+  background: none;
   color: #aaa;
-  font-size: 28px;
-  font-weight: bold;
+  font-size: 2em;
   cursor: pointer;
-}
-.modal-close-button:hover {
-  color: #fff;
 }
 
 .modal-body {
-  padding: 20px;
-  text-align: center;
+  flex-grow: 1; /* Позволяет телу занимать все доступное место */
+  overflow: hidden; /* Убираем прокрутку здесь */
 }
 
 /* Специфичные стили для модального окна Баланса */
@@ -218,4 +228,148 @@ body {
   overflow-y: auto;
   padding: 10px;
   border-top: 1px solid #444;
+}
+
+#modal.large .modal-content {
+    width: 95vw;
+    height: 95vh;
+}
+
+/* Специфичные стили для модального окна Баланса */
+#modal.balance-modal .modal-content {
+    width: 400px;
+    height: auto;
+    min-height: 150px;
+}
+
+.balance-modal-content {
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Расстояние между блоками */
+}
+
+.balance-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1em;
+}
+
+.balance-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    padding: 0 15px;
+}
+
+.balance-label-lunar {
+    color: #5dade2; /* Синий */
+}
+
+.balance-label-solar {
+    color: #f5b041; /* Желтый */
+}
+
+.balance-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.balance-bar-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1em;
+    min-width: 80px;
+}
+
+.balance-bar-label img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+}
+
+.balance-bar {
+    flex-grow: 1;
+    height: 25px;
+    display: flex;
+    border: 2px solid #555;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #222;
+}
+
+.balance-bar-solar {
+    background-color: #f1c40f; /* Яркий желтый/золотой */
+    transition: width 0.5s ease-in-out;
+}
+
+.balance-bar-lunar {
+    background-color: #3498db; /* Яркий синий/голубой */
+    transition: width 0.5s ease-in-out;
+}
+
+.balance-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.balance-change-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #777;
+    font-size: 2em;
+    line-height: 1;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+    transition: background-color 0.2s, border-color 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 4px; /* визуальная коррекция */
+}
+
+.balance-change-btn:hover:not(:disabled) {
+    background-color: #444;
+    border-color: #999;
+}
+
+.balance-change-btn:disabled {
+    cursor: not-allowed;
+    background-color: #222;
+    color: #555;
+    border-color: #444;
+}
+
+.balance-cost {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.balance-cost img {
+    width: 24px;
+    height: 24px;
+}
+
+.disclaimer {
+    font-size: 0.85em;
+    color: #aaa;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+#toast-container {
+    position: fixed;
 }

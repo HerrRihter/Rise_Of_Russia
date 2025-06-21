@@ -1,36 +1,42 @@
 .focus-tree-container {
   position: relative;
   width: 100%;
-  height: 70vh; /* Высота области просмотра дерева */
+  height: 100%;
   background-color: #222;
-  overflow: auto; /* Позволяет скроллить, если дерево большое */
+  overflow: auto; 
   border-radius: 4px;
   border: 1px solid #444;
+  cursor: grab; /* Курсор в виде "руки" */
+  user-select: none; /* Запрещаем выделение текста при перетаскивании */
+}
+
+.focus-tree-container.grabbing {
+    cursor: grabbing; /* Курсор в виде "сжатой руки" */
 }
 
 .focus-tree-svg {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
   /* height: 100%; - УБИРАЕМ это ограничение, теперь высота устанавливается динамически */
   pointer-events: none; /* Чтобы SVG не мешал кликать на иконки */
   z-index: 1; /* Убеждаемся, что SVG находится под узлами */
 }
 
-.focus-tree-svg line {
+.focus-tree-svg path {
+  fill: none;
   stroke: #555;
   stroke-width: 3px;
 }
 
-.focus-tree-svg line.completed {
+.focus-tree-svg path.completed {
   stroke: #8a7321; /* Цвет для выполненных веток */
 }
 
 .focus-node {
   position: absolute;
-  width: 90px;
-  height: 90px;
+  width: 180px;
+  height: 180px;
   background-color: #383838;
   border: 2px solid #5c5c5c;
   border-radius: 4px;
@@ -53,4 +59,42 @@
   width: 90%;
   height: 90%;
   object-fit: contain;
+}
+
+/* Стили для деталей фокуса */
+.focus-details-content {
+  padding: 10px;
+  color: #ddd;
+}
+
+.focus-details-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.focus-details-header img {
+  width: 160px;
+  height: 160px;
+  margin-right: 20px;
+  border: 2px solid #666;
+  border-radius: 8px;
+}
+
+.focus-details-header h2 {
+  margin: 0;
+  font-size: 1.4em;
+}
+
+.focus-details-back-btn {
+  margin-bottom: 20px;
+  padding: 8px 15px;
+  background-color: #4a4a4a;
+  border: 1px solid #666;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.focus-details-back-btn:hover {
+  background-color: #5a5a5a;
 }
