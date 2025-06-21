@@ -5,7 +5,7 @@ import { NationalSpirits } from '../../components/NationalSpirits.js';
 import { PoliticalDetails } from '../../components/PoliticalDetails.js';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
-export function NationalInfoPaneWidget({ definitions, state, userId }) {
+export default function NationalInfoPaneWidget({ definitions, state, userId }) {
   const element = document.createElement('div');
   element.className = 'national-info-pane';
 

@@ -1,23 +1,23 @@
-const admin = require('firebase-admin');
-const fs = require('fs');
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
+const fs = require('fs').promises;
 const path = require('path');
-const { getFirestore, collection, doc, setDoc } = require('firebase-admin/firestore');
 
-// Путь к сервисному ключу (в корне проекта)
+// Путь к сервисному ключу (предполагаем, что он в корне проекта)
 const serviceAccount = require('../serviceAccountKey.json');
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+initializeApp({
+  credential: cert(serviceAccount),
 });
 
 const db = getFirestore();
 
-async function uploadLeadersExtended() {
+async function uploadLeaders() {
   try {
     // console.log('Загрузка расширенных лидеров в Firestore...');
     
     const leadersFilePath = path.join(__dirname, '..', 'public', 'history', 'leaders_extended.json');
-    const leadersFileContent = await fs.promises.readFile(leadersFilePath, 'utf8');
+    const leadersFileContent = await fs.readFile(leadersFilePath, 'utf8');
     const leadersData = JSON.parse(leadersFileContent);
 
     if (!leadersData || !leadersData.options || !Array.isArray(leadersData.options)) {
@@ -25,11 +25,10 @@ async function uploadLeadersExtended() {
     }
 
     // console.log(`Найдено ${leadersData.options.length} лидеров`);
-    const leadersCollection = collection(db, 'leaders');
+    const leadersCollection = db.collection('leaders');
     
     for (const leader of leadersData.options) {
-      const docRef = doc(leadersCollection, leader.id);
-      await setDoc(docRef, leader);
+      await leadersCollection.doc(leader.id).set(leader);
       // console.log(`✓ Загружен лидер: ${leader.name} (${leader.id})`);
     }
 
@@ -42,4 +41,6 @@ async function uploadLeadersExtended() {
   }
 }
 
-uploadLeadersExtended(); 
+uploadLeaders().then(() => {
+    // console.log('✅ Загрузка лидеров завершена.');
+}); 
