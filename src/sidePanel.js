@@ -9,16 +9,12 @@ function closeSidePanel() {
   currentOnSelectCallback = null;
 }
 
-/**
- * @param {string} title - Заголовок панели выбора.
- * @param {string[]} options - Массив опций для отображения.
- */
 export function openSidePanel(title, options, onSelect, styleClass = 'icon-style') {
-  // console.log('openSidePanel вызван:', { title, options, stack: new Error().stack });
+  console.log('openSidePanel вызван:', { title, options, stack: new Error().stack });
   if (!panelEl) return;
   if (!Array.isArray(options) || options.length === 0) {
     // Для отладки:
-    // console.warn('openSidePanel вызван с пустыми options:', { title, options, stack: new Error().stack });
+    console.warn('openSidePanel вызван с пустыми options:', { title, options, stack: new Error().stack });
     panelEl.style.display = 'none';
     return;
   }

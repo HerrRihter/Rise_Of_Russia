@@ -28,7 +28,7 @@ export default function CorporationSlotWidget(props) {
     const title = `Выбор корпорации`;
     const options = Object.values(definitions.corporations);
     const onSelect = (selectedId) => {
-      // console.log(`Для слота корпорации '${type}' выбран ID: ${selectedId}`);
+      console.log(`Для слота корпорации '${type}' выбран ID: ${selectedId}`);
       if (!state.corporations_selected) state.corporations_selected = {};
       state.corporations_selected[type] = { slot_type: type, assigned_id: selectedId };
       updateView(selectedId);

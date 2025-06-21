@@ -138,51 +138,40 @@ function subscribeToStateAndProfile(user, onUpdate) {
 
 let unsubscribeStateProfile = null;
 
-async function loadInitialData() {
-    const db = getFirestore(firebaseApp);
-    const definitions = {};
-    let layout = null;
+async function fetchInitialData() {
+  console.log("Загрузка первоначальных данных (справочников и layout) из Firestore...");
+  const collectionsToFetch = [
+    'leaders', 'ideologies', 'parties', 'corporations',
+    'constitutional_principles', 'development_areas',
+    'focus_tree_nodes', 'national_spirits', 'national_focus_data', 'layout'
+  ];
+  const results = {};
+  for (const col of collectionsToFetch) {
+    const snap = await getDocs(collection(db, col));
+    results[col] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
 
-    // console.log("Загрузка первоначальных данных (справочников и layout) из Firestore...");
-    try {
-        const collectionsToFetch = [
-            'actions', 'corporations', 'development_areas',
-            'leaders', 'ideologies', 'parties', 'constitutional_principles',
-            'focus_tree_nodes', 'national_spirits', 'national_focus_data', 'layout'
-        ];
-        const results = {};
-        for (const col of collectionsToFetch) {
-            const snap = await getDocs(collection(db, col));
-            results[col] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        }
+  // Преобразуем данные в definitions
+  const principles = arrayToIdObject(results['constitutional_principles']);
+  definitions = {
+    leaders: arrayToIdObject(results['leaders']),
+    ideologies: arrayToIdObject(results['ideologies']),
+    parties: arrayToIdObject(results['parties']),
+    parties_array: results['parties'] || [],
+    corporations: arrayToIdObject(results['corporations']),
+    constitutional_principles: principles,
+    development_areas: arrayToIdObject(results['development_areas']),
+    national_focus_tree: arrayToIdObject(results['focus_tree_nodes']),
+    national_spirits: arrayToIdObject(results['national_spirits']),
+    national_focus_data: arrayToIdObject(results['national_focus_data']),
+    layout: results['layout'] || []
+  };
 
-        // Преобразуем данные в definitions
-        const principles = arrayToIdObject(results['constitutional_principles']);
-        definitions = {
-            leaders: arrayToIdObject(results['leaders']),
-            ideologies: arrayToIdObject(results['ideologies']),
-            parties: arrayToIdObject(results['parties']),
-            parties_array: results['parties'] || [],
-            corporations: arrayToIdObject(results['corporations']),
-            constitutional_principles: principles,
-            development_areas: arrayToIdObject(results['development_areas']),
-            national_focus_tree: arrayToIdObject(results['focus_tree_nodes']),
-            national_spirits: arrayToIdObject(results['national_spirits']),
-            national_focus_data: arrayToIdObject(results['national_focus_data']),
-            layout: results['layout'] || []
-        };
-
-        // В state сохраняем только layout (остальное загрузим в подписке)
-        state = {
-            dashboardTitle: "Политический интерфейс",
-            layout: definitions.layout
-        };
-    } catch (err) {
-        console.error('Ошибка при загрузке данных:', err);
-        state = {};
-        definitions = {};
-        reRenderApp();
-    }
+  // В state сохраняем только layout (остальное загрузим в подписке)
+  state = {
+    dashboardTitle: "Политический интерфейс",
+    layout: definitions.layout
+  };
 }
 
 async function main() {
@@ -199,7 +188,7 @@ async function main() {
     if (unsubscribeStateProfile) unsubscribeStateProfile();
     if (currentUser) {
       try {
-        await loadInitialData();
+        await fetchInitialData();
         unsubscribeStateProfile = subscribeToStateAndProfile(currentUser, reRenderApp);
       } catch (err) {
         console.error('Ошибка при загрузке данных:', err);

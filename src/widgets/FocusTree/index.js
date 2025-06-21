@@ -16,9 +16,9 @@ export default function FocusTreeWidget(props) {
   svg.classList.add('focus-tree-svg');
   const nodeCenters = {};
   
-  // console.log('--- ПРОВЕРКА ДАННЫХ ВНУТРИ FOCUSTREE ---');
-  // console.log('Выполненные фокусы (массив):', completed_focuses);
-  // console.log('Всего фокусов в дереве:', Object.keys(focus_tree).length);
+  console.log('--- ПРОВЕРКА ДАННЫХ ВНУТРИ FOCUSTREE ---');
+  console.log('Выполненные фокусы (массив):', completed_focuses);
+  console.log('Всего фокусов в дереве:', Object.keys(focus_tree).length);
 
   // Вычисляем общую высоту и ширину дерева для правильного размера SVG
   let maxX = 0;
@@ -41,18 +41,18 @@ export default function FocusTreeWidget(props) {
   svg.setAttribute('width', `${svgWidth}px`);
   svg.setAttribute('height', `${svgHeight}px`);
   
-  // console.log(`📏 Размеры SVG установлены: ${svgWidth}px (ширина) x ${svgHeight}px (высота)`);
+  console.log(`📏 Размеры SVG установлены: ${svgWidth}px (ширина) x ${svgHeight}px (высота)`);
 
   // Создаем все узлы и вычисляем их центры
   for (const focusId in focus_tree) {
     const isCompleted = completed_focuses.includes(focusId);
-    // console.log(`Проверяем фокус: ID='${focusId}'. Найден в выполненных? ${isCompleted ? 'ДА' : 'НЕТ'}`);
+    console.log(`Проверяем фокус: ID='${focusId}'. Найден в выполненных? ${isCompleted ? 'ДА' : 'НЕТ'}`);
     const focusData = focus_tree[focusId];
     const left = focusData.x * GRID_GAP_X + PADDING;
     const top = focusData.y * GRID_GAP_Y + PADDING;
     nodeCenters[focusId] = { x: left + NODE_WIDTH / 2, y: top + NODE_HEIGHT / 2 };
     
-    // console.log(`📍 Координаты фокуса "${focusData.title}": (${left}, ${top}) -> центр: (${nodeCenters[focusId].x}, ${nodeCenters[focusId].y})`);
+    console.log(`📍 Координаты фокуса "${focusData.title}": (${left}, ${top}) -> центр: (${nodeCenters[focusId].x}, ${nodeCenters[focusId].y})`);
     
     const node = document.createElement('div');
     node.className = 'focus-node';
@@ -86,13 +86,13 @@ export default function FocusTreeWidget(props) {
   }
 
   // Строим линии между всеми фокусами
-  // console.log('🔗 Строим соединительные линии...');
+  console.log('🔗 Строим соединительные линии...');
   let linesCreated = 0;
   
   for (const focusId in focus_tree) {
     const focusData = focus_tree[focusId];
     if (!focusData.prerequisites || focusData.prerequisites.length === 0) {
-      // console.log(`⚠️ Фокус "${focusData.title}" не имеет prerequisites`);
+      console.log(`⚠️ Фокус "${focusData.title}" не имеет prerequisites`);
       continue;
     }
     
@@ -118,18 +118,18 @@ export default function FocusTreeWidget(props) {
         }
         svg.appendChild(path);
         linesCreated++;
-        // console.log(`✅ Ортогональная линия создана: "${focus_tree[prereqId]?.title}" -> "${focusData.title}"`);
+        console.log(`✅ Ортогональная линия создана: "${focus_tree[prereqId]?.title}" -> "${focusData.title}"`);
       } else {
-        // console.error(`❌ Не удалось создать линию для "${focusData.title}":`, {
-        //   childCenter: !!childCenter,
-        //   parentCenter: !!parentCenter,
-        //   prereqId
-        // });
+        console.error(`❌ Не удалось создать линию для "${focusData.title}":`, {
+          childCenter: !!childCenter,
+          parentCenter: !!parentCenter,
+          prereqId
+        });
       }
     });
   }
   
-  // console.log(`🎯 Всего создано линий: ${linesCreated}`);
+  console.log(`🎯 Всего создано линий: ${linesCreated}`);
 
   // Финальная реализация перетаскивания, решающая проблему с закрытием
   let isMouseDown = false;

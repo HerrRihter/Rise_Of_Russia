@@ -47,6 +47,7 @@ export default function DevelopmentAreaSlotWidget(props) {
             return getLevelNum(a) - getLevelNum(b);
         });
         const onSelect = (selectedId) => {
+            console.log(`Для области '${type}' выбран уровень: ${selectedId}`);
             if (state.development_areas_state && state.development_areas_state[type]) {
                 state.development_areas_state[type].current_level_id = selectedId;
             }

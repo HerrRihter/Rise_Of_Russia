@@ -1,7 +1,6 @@
 const admin = require('firebase-admin');
 const fs = require('fs');
 const path = require('path');
-const { getFirestore, collection, getDocs, writeBatch, doc, setDoc } = require('firebase-admin/firestore');
 
 // Пути к файлам
 const serviceAccount = require('../serviceAccountKey.json');
@@ -12,46 +11,65 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-const db = getFirestore();
+const db = admin.firestore();
 
 async function uploadFocusTree() {
-  try {
-    // console.log('🌳 Загрузка древа фокусов в Firestore...');
-    const focusTreeFilePath = path.join(__dirname, '..', 'public', 'history', 'focus_tree_nodes.json');
-    const focusTreeFileContent = await fs.readFile(focusTreeFilePath, 'utf8');
-    const focusNodes = JSON.parse(focusTreeFileContent);
-    // console.log(`📊 Найдено фокусов: ${focusNodes.length}`);
-    const focusTreeCollection = collection(db, 'focus_tree_nodes');
-    const existingDocs = await getDocs(focusTreeCollection);
-    if (!existingDocs.empty) {
-      // console.log(`🗑️  Удаление ${existingDocs.size} существующих документов...`);
-      const batch = writeBatch(db);
-      existingDocs.forEach(doc => batch.delete(doc.ref));
-      await batch.commit();
-    }
-    // console.log('📤 Загрузка фокусов в Firestore...');
-    const batch = writeBatch(db);
-    focusNodes.forEach(focus => {
-      const docId = focus.id;
-      const docRef = doc(focusTreeCollection, docId);
-      batch.set(docRef, focus);
-      // console.log(`✅ Загружен фокус: ${focus.title} (${docId})`);
-    });
-    await batch.commit();
-    // console.log(`🎉 Успешно загружено ${focusNodes.length} фокусов в коллекцию 'focus_tree_nodes'`);
-    const metadataDocRef = doc(db, 'national_focus_data', 'metadata');
-    const metadata = {
-      total_count: focusNodes.length,
-      last_updated: new Date().toISOString(),
-    };
-    await setDoc(metadataDocRef, metadata, { merge: true });
-    // console.log('📋 Метаданные древа фокусов обновлены');
-    // console.log('✅ Загрузка завершена успешно!');
-  } catch (error) {
-    console.error('❌ Ошибка при загрузке древа фокусов:', error);
+  console.log('🌳 Загрузка древа фокусов в Firestore...');
+  
+  // Проверяем существование файла
+  if (!fs.existsSync(focusTreeFile)) {
+    console.error('❌ Файл presidential_focus_tree.json не найден!');
     process.exit(1);
   }
   
+  try {
+    // Читаем данные фокусов
+    const focusTreeData = JSON.parse(fs.readFileSync(focusTreeFile, 'utf8'));
+    const focusNodes = focusTreeData.focus_tree_nodes;
+    
+    console.log(`📊 Найдено фокусов: ${focusNodes.length}`);
+    
+    // Очищаем существующую коллекцию focus_tree_nodes
+    const focusCollection = db.collection('focus_tree_nodes');
+    const existingDocs = await focusCollection.get();
+    
+    console.log(`🗑️  Удаление ${existingDocs.size} существующих документов...`);
+    for (const doc of existingDocs.docs) {
+      await doc.ref.delete();
+    }
+    
+    // Загружаем новые фокусы
+    console.log('📤 Загрузка фокусов в Firestore...');
+    for (const focus of focusNodes) {
+      const docId = focus.id;
+      await focusCollection.doc(docId).set({
+        ...focus,
+        uploaded_at: admin.firestore.FieldValue.serverTimestamp()
+      });
+      console.log(`✅ Загружен фокус: ${focus.title} (${docId})`);
+    }
+    
+    console.log(`🎉 Успешно загружено ${focusNodes.length} фокусов в коллекцию 'focus_tree_nodes'`);
+    
+    // Создаем сводный документ с метаданными
+    const metadata = {
+      total_focuses: focusNodes.length,
+      last_updated: admin.firestore.FieldValue.serverTimestamp(),
+      version: '1.0',
+      description: 'Древо национальных фокусов: решения президента',
+      periods: focusNodes.map(f => f.metadata?.period).filter(Boolean),
+      categories: ['presidential_decisions']
+    };
+    
+    await db.collection('focus_tree_metadata').doc('current').set(metadata);
+    console.log('📋 Метаданные древа фокусов обновлены');
+    
+  } catch (error) {
+    console.error('❌ Ошибка при загрузке фокусов:', error);
+    process.exit(1);
+  }
+  
+  console.log('✅ Загрузка завершена успешно!');
   process.exit(0);
 }
 
