@@ -2,10 +2,13 @@ import { addTooltipEvents } from './Tooltip.js';
 import { openModal } from '../modal.js';
 import widgets from '../widgets/index.js';
 
-export function FocusBanner({ completed_focuses, definitions }) {
+export function FocusBanner({ completed_focuses, definitions, turnImage }) {
   const focusBanner = document.createElement('div');
   focusBanner.className = 'national-focus-banner';
-  focusBanner.innerHTML = `<img src="history/turn_images/Autumn2003.png" alt="Дерево фокусов" class="focus-bg"><div class="focus-title-bar">Национальные Фокусы</div>`;
+
+  const imageUrl = turnImage || 'history/turn_images/Autumn2003.png'; // Фоллбэк на старое изображение
+
+  focusBanner.innerHTML = `<img src="${imageUrl}" alt="Дерево фокусов" class="focus-bg"><div class="focus-title-bar">Национальные Фокусы</div>`;
   addTooltipEvents(focusBanner, 'Дерево Национальных Фокусов', 'Нажмите, чтобы открыть дерево фокусов...', null);
   focusBanner.addEventListener('click', () => {
     const FocusTreeWidget = widgets['focus-tree'];

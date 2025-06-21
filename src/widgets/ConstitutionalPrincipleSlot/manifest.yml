@@ -2,3 +2,4 @@ name: constitutional-principle-slot
 title: ConstitutionalPrincipleSlotWidget
 props:
   label: string
+  userId: string

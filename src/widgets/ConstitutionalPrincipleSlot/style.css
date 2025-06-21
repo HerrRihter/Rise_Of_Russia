@@ -45,3 +45,29 @@
   justify-content: center;
   line-height: 1.2;
 }
+.constitutional-principle-save-btn {
+  width: 90%;
+  margin: 0 auto;
+  display: block;
+  background-color: #2a572a;
+  border: 1.5px solid #3f803f;
+  color: #fff;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 8px 0 7px 0;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background-color 0.18s, color 0.18s, border-color 0.18s;
+}
+.constitutional-principle-save-btn:hover:not(:disabled) {
+  background-color: #3a753a;
+  color: #eaffea;
+}
+.constitutional-principle-save-btn:disabled {
+  background-color: #333;
+  color: #aaa;
+  border-color: #444;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
